@@ -77,6 +77,13 @@ def getCommandLineArgs():
         Considers egoism of each item in multilevel selection"""),
         action='store_true')
 
+    # We want to save final status
+    theArgParser.add_argument(
+        "--saveExcel", help=textwrap.dedent("""\
+        Save stats in 'Excel' file"""),
+        action='store_true')
+
+
 
     # We want to save final status
     theArgParser.add_argument(
