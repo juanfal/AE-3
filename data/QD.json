@@ -1,0 +1,44 @@
+{
+    "NumberOfCells": 30,
+    "NumberOfRsrcsInEachCell": 33,
+    "MultilevelDeath1Percent": 0.00,
+    "LambdaForEgoism": 0.0,
+    "species": [
+        {
+        "id": "ACM",
+        "NumberOfItems": 10,
+        "DirectOffspring": 3,
+
+        "GroupPartner":   "",
+        "PhenotypicFlexibility": 0.0,
+
+        "AssociatedSpecies":   "ACM",
+        "IndirectOffspring": 10,
+        "StandardDeviation": 0.0
+        },
+        {
+        "id": "Rec1",
+        "NumberOfItems": 100,
+        "DirectOffspring": 3,
+
+        "GroupPartner":   "",
+        "PhenotypicFlexibility": 0.0,
+
+        "AssociatedSpecies":   "Rec2",
+        "IndirectOffspring": 10,
+        "StandardDeviation": 0.0
+        },
+        {
+        "id": "Rec2",
+        "NumberOfItems": 100,
+        "DirectOffspring": 3,
+
+        "GroupPartner":   "",
+        "PhenotypicFlexibility": 0.0,
+
+        "AssociatedSpecies":   "Rec1",
+        "IndirectOffspring": 10,
+        "StandardDeviation": 0.0
+        }
+    ]
+}

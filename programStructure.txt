@@ -1,0 +1,29 @@
+programStructure
+
+
+
+Especie: Digital organism
+
+Ambient data
+    Nodes: Number of cells                                   -> NumberOfCells
+    Resources: Cell amount of resources                      -> NumberOfRsrcsInEachCell
+    Consumption: Number of resources for each offspring      -> RsrcOffsp (%) -> RsrcEfficacy (real+) ELIMINADO
+    Deaths: Percentage of deaths due to multilevel selection -> MultilevelDeath1Percent ->
+
+Data_Especies
+    Row -> different species
+
+    col0 -> Direct fitness   :  Direct offspring     -> DirectOffspring
+    col1 -> Starting quantity                        -> NumberOfItems
+    col2 -> Asociation                               -> AssociatedSpecies
+            OJO: En el original significa de quién eres tú receptor
+    col3 -> Agrupation partner                       -> GroupPartner
+    col4 -> Indirect fitness  : Indirect offspring   -> IOffspr
+    col5 -> Fenotipic flexibility                    -> PhenotypicFlexibility
+    col6 -> -
+    col7 -> Agrupation new species                   -> GroupNewSp
+    col8 -> Parent for agrupation                    -> ParentGroup
+
+
+Interesantes:
+    https://plato.stanford.edu/entries/cellular-automata/#Oth

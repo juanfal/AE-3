@@ -1,0 +1,107 @@
+{
+    "NumberOfCells": 4,
+    "NumberOfRsrcsInEachCell": 1000,
+    "MultilevelDeath1Percent": 10,
+    "LambdaForEgoism": 0.0,
+    "species": [
+        {"id": "A",
+        "NumberOfItems": 10000,
+        "DirectOffspring": 5,
+
+        "GroupPartner":   "",
+        "PhenotypicFlexibility": 0.0,
+
+        "AssociatedSpecies":   "A",
+        "IndirectOffspring": 2,
+        "StandardDeviation": 1
+        },
+        {"id": "B",
+        "NumberOfItems": 10000,
+        "DirectOffspring": 5,
+
+        "GroupPartner":   "",
+        "PhenotypicFlexibility": 0.0,
+
+        "AssociatedSpecies":   "C",
+        "IndirectOffspring": 2,
+        "StandardDeviation": 1
+        },
+        {"id": "C",
+        "NumberOfItems": 10000,
+        "DirectOffspring": 5,
+
+        "GroupPartner":   "",
+        "PhenotypicFlexibility": 0.0,
+
+        "AssociatedSpecies":   "D",
+        "IndirectOffspring": 2,
+        "StandardDeviation": 1
+        },
+        {"id": "D",
+        "NumberOfItems": 10000,
+        "DirectOffspring": 5,
+
+        "GroupPartner":   "",
+        "PhenotypicFlexibility": 0.0,
+
+        "AssociatedSpecies":   "B",
+        "IndirectOffspring": 2,
+        "StandardDeviation": 1
+        },
+        {"id": "E",
+        "NumberOfItems": 10000,
+        "DirectOffspring": 5,
+
+        "GroupPartner":   "",
+        "PhenotypicFlexibility": 0.0,
+
+        "AssociatedSpecies":   "H",
+        "IndirectOffspring": 2,
+        "StandardDeviation": 1
+        },
+        {"id": "F",
+        "NumberOfItems": 10000,
+        "DirectOffspring": 5,
+
+        "GroupPartner":   "",
+        "PhenotypicFlexibility": 0.0,
+
+        "AssociatedSpecies":   "G",
+        "IndirectOffspring": 2,
+        "StandardDeviation": 1
+        },
+        {"id": "G",
+        "NumberOfItems": 10000,
+        "DirectOffspring": 5,
+
+        "GroupPartner":   "",
+        "PhenotypicFlexibility": 0.0,
+
+        "AssociatedSpecies":   "",
+        "IndirectOffspring": 2,
+        "StandardDeviation": 1
+        },
+        {"id": "H",
+        "NumberOfItems": 10000,
+        "DirectOffspring": 5,
+
+        "GroupPartner":   "",
+        "PhenotypicFlexibility": 0.0,
+
+        "AssociatedSpecies":   "K",
+        "IndirectOffspring": 2,
+        "StandardDeviation": 1
+        },
+        {"id": "K",
+        "NumberOfItems": 10000,
+        "DirectOffspring": 5,
+
+        "GroupPartner":   "",
+        "PhenotypicFlexibility": 0.0,
+
+        "AssociatedSpecies":   "H",
+        "IndirectOffspring": 2,
+        "StandardDeviation": 1
+        }
+    ]
+}

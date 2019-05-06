@@ -1,0 +1,74 @@
+{
+    "LambdaForEgoism": 0.0,
+    "MultilevelDeath1Percent": 0.0,
+    "NumberOfCells": 1,
+    "NumberOfRsrcsInEachCell": 100000,
+    "species": [
+        {
+            "AssociatedSpecies": "",
+            "DirectOffspring": 0,
+            "GroupPartner": "B",
+            "InclusiveFitness": 0,
+            "IndirectOffspring": 0,
+            "NumberOfItems": 100,
+            "PhenotypicFlexibility": 1.0,
+            "StandardDeviation": 0.0,
+            "id": "A"
+        },
+        {
+            "AssociatedSpecies": "",
+            "DirectOffspring": 0,
+            "GroupPartner": "",
+            "InclusiveFitness": 0,
+            "IndirectOffspring": 0,
+            "NumberOfItems": 100,
+            "PhenotypicFlexibility": 0.0,
+            "StandardDeviation": 0.0,
+            "id": "B"
+        },
+        {
+            "AssociatedSpecies": "B",
+            "DirectOffspring": 0,
+            "GroupPartner": "",
+            "InclusiveFitness": 0,
+            "IndirectOffspring": 0,
+            "NumberOfItems": 100,
+            "PhenotypicFlexibility": 0.5,
+            "StandardDeviation": 0.0,
+            "id": "C"
+        },
+        {
+            "AssociatedSpecies": "",
+            "DirectOffspring": 10,
+            "GroupPartner": "C",
+            "InclusiveFitness": 10,
+            "IndirectOffspring": 0,
+            "NumberOfItems": 0,
+            "PhenotypicFlexibility": 0.6,
+            "StandardDeviation": 0.0,
+            "id": "A|B"
+        },
+        {
+            "AssociatedSpecies": "",
+            "DirectOffspring": 10,
+            "GroupPartner": "A",
+            "InclusiveFitness": 10,
+            "IndirectOffspring": 0,
+            "NumberOfItems": 0,
+            "PhenotypicFlexibility": 0.05,
+            "StandardDeviation": 0.0,
+            "id": "A|B|C"
+        },
+        {
+            "AssociatedSpecies": "",
+            "DirectOffspring": 10,
+            "GroupPartner": "",
+            "InclusiveFitness": 10,
+            "IndirectOffspring": 0,
+            "NumberOfItems": 0,
+            "PhenotypicFlexibility": 0.05,
+            "StandardDeviation": 0.0,
+            "id": "A|B|C|A"
+        }
+    ]
+}
