@@ -755,10 +755,11 @@ def saveExcel(sh, numGen):
 
 def saveConf():
     # thedatetime = datetime.now().strftime("%Y%m%d-%H%M%S.%f")
-    if not gInitConfFile.endswith(gContExt):
+    newConfFile = gInitConfFile
+    if not newConfFile.endswith(gContExt):
         newConfFile += gContExt
-    jsonOut = os.path.join("data", gInitConfFile + ".json")
-    with open(jsonOut, 'w') as outfile:
+    newConfFile = os.path.join("data", newConfFile + ".json")
+    with open(newConfFile, 'w') as outfile:
         json.dump(gConf, outfile, sort_keys = True, indent = 4,
                    ensure_ascii = False)
 
