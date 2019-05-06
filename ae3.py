@@ -77,11 +77,6 @@ def getCommandLineArgs():
         Considers egoism of each item in multilevel selection"""),
         action='store_true')
 
-    # We want to save final status
-    theArgParser.add_argument(
-        "--saveExcel", help=textwrap.dedent("""\
-        Save stats in 'Excel' file"""),
-        action='store_true')
 
     # We want to save final status
     theArgParser.add_argument(
@@ -234,6 +229,7 @@ gNumberOfSpecies = len(gConf["species"])
 gNumberOfCells   = gConf["NumberOfCells"]
 gEgoism          = []
 gExcelSaved      = []
+gContExt         = "_cont"
 gListOfAssociationActors = [] # list of species starting association
 for iSpecies in range(gNumberOfSpecies):
     gConf["species"][iSpecies]["InclusiveFitness"] = gConf["species"][iSpecies]["DirectOffspring"] + gConf["species"][iSpecies]["IndirectOffspring"]
@@ -752,7 +748,9 @@ def saveExcel(sh, numGen):
 
 def saveConf():
     # thedatetime = datetime.now().strftime("%Y%m%d-%H%M%S.%f")
-    jsonOut = os.path.join("data", gInitConfFile + "_cont.json")
+    if not gInitConfFile.endswith(gContExt):
+        newConfFile += gContExt
+    jsonOut = os.path.join("data", gInitConfFile + ".json")
     with open(jsonOut, 'w') as outfile:
         json.dump(gConf, outfile, sort_keys = True, indent = 4,
                    ensure_ascii = False)
