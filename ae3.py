@@ -4,7 +4,7 @@
 # Carlos Villagrasa, Javier Falgueras
 # juanfc 2019-02-16
 
-__version__ = 0.047 # 2019-05-07
+__version__ = 0.049 # 2019-05-07
 
 import os
 import sys
@@ -578,7 +578,7 @@ def checkConf(conf):
                     (aId, theId)
 
 
-        if itemsspecies.issubset(conf["species"][i].keys()):
+        if not itemsspecies.issubset(conf["species"][i].keys()):
             problems += "Some essential item(s) of species %s is not defined\n\t Check the next items for all species are all there:\n\t%s\n" % (theId, str(list(itemsspecies)))
 
     if problems:
