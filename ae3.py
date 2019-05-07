@@ -25,126 +25,13 @@ from datetime import datetime
 # finalForms goes to results/
 if not os.path.isdir("results"): os.mkdir("results")
 
-# ###############################################################################
-#                             ARGS AND CONF PROCESSING
-# ###############################################################################
+INDIVIDUAL = 0   # they consume df
+ACTOR      = 1   # they consume df+if of recipient
+RECIPIENT  = 2   # they consume df (it doesn't consume directly)
+RECIPROCAL = 3   # they consume (intra 2x df+if) (inter df1+if1+df2+if2)
+gNumberOfForms = 4
 
 
-
-def getCommandLineArgs():
-    """Parses and returns command line arguments"""
-
-    theArgParser = argparse.ArgumentParser(description="Evolutionary Automata",
-                    formatter_class=argparse.RawTextHelpFormatter)
-
-
-    # initial configuration to load from a file
-    theArgParser.add_argument(
-        "initFile",
-        nargs="?",
-        default="defaultInit",
-        help=textwrap.dedent("""\
-        When provided it sets the file with the initial configuration.
-        All the configuration files are inside the './data' directory.
-        Do not add the .extension to the file name.
-        If not provided, it defaults to 'defaultInit'""")
-    )
-
-    # Number of generations to run
-    theArgParser.add_argument(
-        "--numGen", type=int,
-        default=10,
-        metavar="int",
-        help="Sets the number of generations to run, default: ")
-
-    # We want gaussian phenotypic variability
-    theArgParser.add_argument(
-        "--varia", help=textwrap.dedent("""\
-        Computes the offspring using gaussian variations,
-        False if not provided"""),
-        action='store_true')
-
-    # We want gaussian phenotypic variability
-    theArgParser.add_argument(
-        "--verbose", help=textwrap.dedent("""\
-        Gives as much detailed information as it can"""),
-        default=False,
-        action='store_true')
-
-    # We want egoism multilevel selection
-    theArgParser.add_argument(
-        "--egoism", help=textwrap.dedent("""\
-        Considers egoism of each item in multilevel selection"""),
-        action='store_true')
-
-    # We want to save final status
-    theArgParser.add_argument(
-        "--saveExcel", help=textwrap.dedent("""\
-        Save stats in 'Excel' file"""),
-        action='store_true')
-
-
-
-    # We want to save final status
-    theArgParser.add_argument(
-        "--cont", help=textwrap.dedent("""\
-        It takes the file _cont instead the original"""),
-        action='store_true')
-
-    theArgParser.add_argument(
-        "--NumberOfCells", type=int,
-        default=argparse.SUPPRESS, metavar="int",
-        help="Sets the total number of cells in our world")
-    theArgParser.add_argument(
-        "--NumberOfRsrcsInEachCell", type=float,
-        default=argparse.SUPPRESS, metavar="float",
-        help="Sets the items of resources in each cell for each generation")
-    theArgParser.add_argument(
-        "--MultilevelDeath1Percent", type=int,
-        default=argparse.SUPPRESS, metavar="int",
-        help="Sets MultilevelDeath1Percent to. Range 0.0 to 1.0")
-    theArgParser.add_argument(
-        "--LambdaForEgoism", type=float,
-        default=argparse.SUPPRESS, metavar="float",
-        help="Sets the coef. for egoism application")
-
-    theArgParser.add_argument(
-        "--species", type=str,
-        default=argparse.SUPPRESS, metavar="'str'",
-        help=textwrap.dedent("""\
-    Sets one or more species parameters
-    Surround everything with " "
-    No spaces
-
-    Put first the 0-index of the species:
-        --species="0,DirectOffspring=8,1,IndirectOffspring=1"
-    Changes the DirectOffspring of the first species and the
-    IndirectOffspring of the second.
-
-    A series of indexes separated by spaces is valid:
-        --species="0,3,1,DirectOffspring=8"
-    changes DirectOffspring of species 0, 3 and 1
-
-    A Python standard range (no 'steps' here) is valid:
-        --species="0,8:10,DirectOffspring=8"
-    as with Python 8:10 means 8,9 (10 is not included)
-
-    When an index is negative, is suppose from the end:
-        --species="0,3,1,8:-2,DirectOffspring=8"
-    where 8:-2  is  8,9,10,11,12,13  if there were 15 species.
-
-    An empty index in ranges means a extreme:
-        --species=":,DirectOffspring=8"
-    means change all species
-    """))
-    return vars(theArgParser.parse_args())
-
-def readInitConfFile(fileName):
-    """Load config from init file"""
-    with open(fileName) as f:
-        conf = json.load(f)
-
-    return conf
 
 #
 def printv(*args, **kwargs):
@@ -155,89 +42,6 @@ def printv(*args, **kwargs):
             pprint(args)
 
 #
-
-
-gArgs = getCommandLineArgs()
-gInitConfFile = gArgs["initFile"]  # base file name
-gInitConfCompName = os.path.join("data", gInitConfFile + ".json")
-printv(gArgs)
-
-def replaceArgsInConf(conf, args):
-    """Replace the conf args with the args provided in the command line"""
-    def parseSpeciesArgs(s):
-        def isInt(anyNumberOrString):
-            try:
-                int(anyNumberOrString)
-                return True
-            except ValueError :
-                return False
-
-        lenSpecies = len(conf["species"])
-        l = s.split(',')
-        indxsRead = True
-        for arg in l:
-            if isInt(arg) or ':' in arg:   # int (+-) or range
-                if indxsRead:
-                    ns = []
-                    indxsRead = False
-                if isInt(arg):
-                    ns.append(int(arg))
-                else:
-                    if arg == ':':
-                        first = 0
-                        last = lenSpecies
-                    elif arg.startswith(':'):
-                        first = 0
-                        last = int(arg[1:])
-                    elif arg.endswith(':'):
-                        first = int(arg[1:])
-                        last = lenSpecies
-                    else:
-                        first, last = map(int,arg.split(':'))
-                    if first < 0: first += lenSpecies
-                    if last  < 0: last  += lenSpecies
-                    ns += list(range(first, last))
-                    printv(ns)
-            else:
-                indxsRead = True
-                k, val=arg.split('=')
-                for n in ns:
-                    t = type(conf["species"][n][k])
-                    conf["species"][n][k] = t(val)
-
-    # substitute init file conf specific parameters
-    # provided through the args in the command line
-    for param in args:
-        if param in conf:
-            if param == "species":
-                parseSpeciesArgs(args["species"])
-            else:
-                t = type(conf[param])
-                conf[param] = t(args[param])
-    return conf
-
-
-gConf = replaceArgsInConf(readInitConfFile(gInitConfCompName), gArgs)
-
-printv(gConf)
-
-
-# TO DO
-# verify gConf so
-#   - it has DirectOffspring >= 0
-#   - groups agree
-#
-
-# ###############################################################################
-#                                     GLOBALS
-# ###############################################################################
-
-gNumberOfSpecies = len(gConf["species"])
-gNumberOfCells   = gConf["NumberOfCells"]
-gEgoism          = []
-gExcelSaved      = []
-gContExt         = "_cont"
-gListOfAssociationActors = [] # list of species starting association
 
 
 def getListOfOrigGroups():
@@ -254,17 +58,8 @@ def getListOfOrigGroups():
             gConf["species"][i]["id"].count('|'), reverse=True)
     return theList
 
-gWithPartnerList = getListOfOrigGroups()
 
-printv("gWithPartnerList:", gWithPartnerList)
 
-INDIVIDUAL = 0   # they consume df
-ACTOR      = 1   # they consume df+if of recipient
-RECIPIENT  = 2   # they consume df (it doesn't consume directly)
-RECIPROCAL = 3   # they consume (intra 2x df+if) (inter df1+if1+df2+if2)
-gNumberOfForms = 4
-
-printv(gConf)
 
 
 # ###############################################################################
@@ -762,16 +557,243 @@ def saveConf():
     if not newConfFile.endswith(gContExt):
         newConfFile += gContExt
     newConfFile = os.path.join("data", newConfFile + ".json")
-    print("(Re)writing", newConfFile)
+    # print("(Re)writing", newConfFile)
     with open(newConfFile, 'w') as outfile:
         json.dump(gConf, outfile, sort_keys = True, indent = 4,
                    ensure_ascii = False)
+
+def checkConf():
+    """Verifies conf returning inconsistencies or an empty string"""
+    # TO DO
+    # verify gConf so
+    #   - it has DirectOffspring >= 0
+    #   - groups agree
+    #
+
+    return ""
+
+
+
+# ###############################################################################
+#                             ARGS AND CONF PROCESSING
+# ###############################################################################
+
+
+
+def getCommandLineArgs():
+    """Parses and returns command line arguments"""
+
+    theArgParser = argparse.ArgumentParser(description="Evolutionary Automata",
+                    formatter_class=argparse.RawTextHelpFormatter)
+
+
+    # initial configuration to load from a file
+    theArgParser.add_argument(
+        "initFile",
+        nargs="?",
+        default="defaultInit",
+        help=textwrap.dedent("""\
+        When provided it sets the file with the initial configuration.
+        All the configuration files are inside the './data' directory.
+        Do not add the .extension to the file name.
+        If not provided, it defaults to 'defaultInit'""")
+    )
+
+    # Number of generations to run
+    theArgParser.add_argument(
+        "--numGen", type=int,
+        default=10,
+        metavar="int",
+        help="Sets the number of generations to run, default: ")
+
+    # We want gaussian phenotypic variability
+    theArgParser.add_argument(
+        "--varia", help=textwrap.dedent("""\
+        Computes the offspring using gaussian variations,
+        False if not provided"""),
+        action='store_true')
+
+    # We want gaussian phenotypic variability
+    theArgParser.add_argument(
+        "--verbose", help=textwrap.dedent("""\
+        Gives as much detailed information as it can"""),
+        default=False,
+        action='store_true')
+
+    # We want egoism multilevel selection
+    theArgParser.add_argument(
+        "--egoism", help=textwrap.dedent("""\
+        Considers egoism of each item in multilevel selection"""),
+        action='store_true')
+
+    # We want to save final status
+    theArgParser.add_argument(
+        "--saveExcel", help=textwrap.dedent("""\
+        Save stats in 'Excel' file"""),
+        action='store_true')
+
+
+
+    # We want to save final status
+    theArgParser.add_argument(
+        "--cont", help=textwrap.dedent("""\
+        It takes the file _cont instead the original"""),
+        action='store_true')
+
+    theArgParser.add_argument(
+        "--NumberOfCells", type=int,
+        default=argparse.SUPPRESS, metavar="int",
+        help="Sets the total number of cells in our world")
+    theArgParser.add_argument(
+        "--NumberOfRsrcsInEachCell", type=float,
+        default=argparse.SUPPRESS, metavar="float",
+        help="Sets the items of resources in each cell for each generation")
+    theArgParser.add_argument(
+        "--MultilevelDeath1Percent", type=int,
+        default=argparse.SUPPRESS, metavar="int",
+        help="Sets MultilevelDeath1Percent to. Range 0.0 to 1.0")
+    theArgParser.add_argument(
+        "--LambdaForEgoism", type=float,
+        default=argparse.SUPPRESS, metavar="float",
+        help="Sets the coef. for egoism application")
+
+    theArgParser.add_argument(
+        "--species", type=str,
+        default=argparse.SUPPRESS, metavar="'str'",
+        help=textwrap.dedent("""\
+    Sets one or more species parameters
+    Surround everything with " "
+    No spaces
+
+    Put first the 0-index of the species:
+        --species="0,DirectOffspring=8,1,IndirectOffspring=1"
+    Changes the DirectOffspring of the first species and the
+    IndirectOffspring of the second.
+
+    A series of indexes separated by spaces is valid:
+        --species="0,3,1,DirectOffspring=8"
+    changes DirectOffspring of species 0, 3 and 1
+
+    A Python standard range (no 'steps' here) is valid:
+        --species="0,8:10,DirectOffspring=8"
+    as with Python 8:10 means 8,9 (10 is not included)
+
+    When an index is negative, is suppose from the end:
+        --species="0,3,1,8:-2,DirectOffspring=8"
+    where 8:-2  is  8,9,10,11,12,13  if there were 15 species.
+
+    An empty index in ranges means a extreme:
+        --species=":,DirectOffspring=8"
+    means change all species
+    """))
+    return vars(theArgParser.parse_args())
+
+def readInitConfFile(fileName):
+    """Load config from init file"""
+    with open(fileName) as f:
+        conf = json.load(f)
+
+    return conf
+
+def replaceArgsInConf(conf, args):
+    """Replace the conf args with the args provided in the command line"""
+    def parseSpeciesArgs(s):
+        def isInt(anyNumberOrString):
+            try:
+                int(anyNumberOrString)
+                return True
+            except ValueError :
+                return False
+
+        lenSpecies = len(conf["species"])
+        l = s.split(',')
+        indxsRead = True
+        for arg in l:
+            if isInt(arg) or ':' in arg:   # int (+-) or range
+                if indxsRead:
+                    ns = []
+                    indxsRead = False
+                if isInt(arg):
+                    ns.append(int(arg))
+                else:
+                    if arg == ':':
+                        first = 0
+                        last = lenSpecies
+                    elif arg.startswith(':'):
+                        first = 0
+                        last = int(arg[1:])
+                    elif arg.endswith(':'):
+                        first = int(arg[1:])
+                        last = lenSpecies
+                    else:
+                        first, last = map(int,arg.split(':'))
+                    if first < 0: first += lenSpecies
+                    if last  < 0: last  += lenSpecies
+                    ns += list(range(first, last))
+                    printv(ns)
+            else:
+                indxsRead = True
+                k, val=arg.split('=')
+                for n in ns:
+                    t = type(conf["species"][n][k])
+                    conf["species"][n][k] = t(val)
+
+    # substitute init file conf specific parameters
+    # provided through the args in the command line
+    for param in args:
+        if param in conf:
+            if param == "species":
+                parseSpeciesArgs(args["species"])
+            else:
+                t = type(conf[param])
+                conf[param] = t(args[param])
+    return conf
+
 
 # ###############################################################################
 #                                    MAIN
 # ###############################################################################
 
+# GLOBALS
+
+gArgs = getCommandLineArgs()
+gInitConfFile = gArgs["initFile"]  # base file name
+gInitConfCompName = os.path.join("data", gInitConfFile + ".json")
+printv(gArgs)
+
+gConf = replaceArgsInConf(readInitConfFile(gInitConfCompName), gArgs)
+
+s = checkConf()
+if s:
+    print(s)
+    sys.exit(1)
+
+printv(gConf)
+
+
+
+gNumberOfSpecies = len(gConf["species"])
+gNumberOfCells   = gConf["NumberOfCells"]
+gEgoism          = []
+gExcelSaved      = []
+gContExt         = "_cont"
+gListOfAssociationActors = [] # list of species starting association
 gListOfAssociationActors = collectAssociationActors() # list of species starting association
+
+
+
+
+printv(gConf)
+
+gWithPartnerList = getListOfOrigGroups()
+printv("gWithPartnerList:", gWithPartnerList)
+
+
+#
+# LETS DO IT
+#
+
+
 
 gWorld, gStatsAnt, gStatsPost = newWorld()
 
@@ -780,9 +802,6 @@ if gArgs["egoism"]:
 
 doInitialSpreading() # pprint(gWorld)
 
-#
-# LETS DO IT
-#
 
 
 if gArgs["saveExcel"]:
