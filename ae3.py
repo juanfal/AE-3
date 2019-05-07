@@ -466,9 +466,9 @@ def ranking(l, value):
     return 1+where(rank==value)[0][0]
 
 def initExcel():
-    global gExcelCellHeader, gExcelCellID
-    thedatetime = datetime.now().strftime("%Y%m%d-%H%M%S")
-    excelOut = os.path.join("results", gInitConfFile + '_' + thedatetime + ".xlsx")
+    global gExcelCellHeader, gExcelCellID, gThedatetime
+    gThedatetime = datetime.now().strftime("%Y%m%d-%H%M%S")
+    excelOut = os.path.join("results", gInitConfFile + '_' + gThedatetime + ".xlsx")
 
     workbook = xlsxwriter.Workbook(excelOut)
     worksheet = workbook.add_worksheet()
@@ -478,7 +478,7 @@ def initExcel():
 
     workbook.set_properties({
         'title':    'Evolutionary Automata',
-        'subject':  gInitConfFile + '_' + thedatetime,
+        'subject':  gInitConfFile + '_' + gThedatetime,
         'author':   'Javier Falgueras, Juan Falgueras, Santiago Elena',
         'manager':  'Javier Falgueras, Juan Falgueras, Santiago Elena',
         'company':  'Univ. Valencia + Univ. Málaga',
@@ -505,6 +505,9 @@ def saveExcel(sh, numGen):
         for iSpecies in range(gNumberOfSpecies):
             sh.write_row(0,globalsW+iSpecies*totNumCol, header, gExcelCellHeader)
 
+    txtOutName = os.path.join("results", gInitConfFile + '_' + gThedatetime + ".txt")
+    txtOut = open(txtOutName, "a")
+
     for iSpecies in range(gNumberOfSpecies):
         sh.write(numGen, globalsW+iSpecies*totNumCol,
                  gConf["species"][iSpecies]["id"], gExcelCellID)
@@ -525,17 +528,19 @@ def saveExcel(sh, numGen):
              gStatsPost[iSpecies,RECIPROCAL]
             ]
         sh.write_row(numGen, globalsW+iSpecies*totNumCol+1, toWrite)
+        print("\t".join(map(str,toWrite)), file=txtOut, end="")
 
         if numGen == 1:
             ori = iSpecies*totNumCol + 1 + globalsW
             end = ori + totNumCol - 2
             worksheet.set_column(ori, end, None, None, {'level': 1, 'hidden': True})
 
+    print(file=txtOut)
 def saveConf():
     """Save conf in a new _cont.json file
     if not there, or rewrite previous _cont.json file if was the initial conf loaded"""
 
-    # thedatetime = datetime.now().strftime("%Y%m%d-%H%M%S.%f")
+    # gThedatetime = datetime.now().strftime("%Y%m%d-%H%M%S.%f")
     newConfFile = gInitConfFile
     if not newConfFile.endswith(gContExt):
         newConfFile += gContExt
