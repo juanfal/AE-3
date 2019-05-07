@@ -4,7 +4,7 @@
 # Carlos Villagrasa, Javier Falgueras
 # juanfc 2019-02-16
 
-__version__ = 0.049 # 2019-05-07
+__version__ = 0.050 # 2019-05-07
 
 import os
 import sys
@@ -552,13 +552,22 @@ def checkConf(conf):
     #   - groups agree
     #
     problems = ""
-    items = {"NumberOfCells", "NumberOfRsrcsInEachCell", "MultilevelDeath1Percent", "LambdaForEgoism", "species"}
+
+    items = {"NumberOfCells", "NumberOfRsrcsInEachCell",
+        "MultilevelDeath1Percent", "LambdaForEgoism", "species"}
+
     itemsspecies = {"id", "NumberOfItems", "DirectOffspring",
-        "GroupPartner", "PhenotypicFlexibility", "AssociatedSpecies", "IndirectOffspring", "StandardDeviation"}
+        "GroupPartner", "PhenotypicFlexibility", "AssociatedSpecies",
+        "IndirectOffspring", "StandardDeviation"}
+
     if not items.issubset(conf.keys()):
         problems += "Some essential item(s) is not defined\n\t Check the next items are all there:\n\t%s\n" % str(list(items))
+
     previousIds = set([])
-    for i in range(len(conf["species"])):
+    longListSpecies = len(conf["species"])
+    if type(conf["species"]) != list or longListSpecies == 0:
+        problems += "Species must be a list with species inside\n"
+    for i in range(longListSpecies):
         theId = conf["species"][i]["id"]
         partnerId = conf["species"][i]["GroupPartner"]
         if theId in previousIds:
