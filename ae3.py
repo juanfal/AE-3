@@ -238,8 +238,6 @@ gEgoism          = []
 gExcelSaved      = []
 gContExt         = "_cont"
 gListOfAssociationActors = [] # list of species starting association
-for iSpecies in range(gNumberOfSpecies):
-    gConf["species"][iSpecies]["InclusiveFitness"] = gConf["species"][iSpecies]["DirectOffspring"] + gConf["species"][iSpecies]["IndirectOffspring"]
 
 
 def getListOfOrigGroups():
@@ -509,8 +507,10 @@ def doConsumeAndOffspring():
         for iSpecies in range(gNumberOfSpecies):
             # CHANGE THE GLOBAL DirectOffspring gConf parameter
             if newDirFit[iSpecies]["N"]:
-                gConf["species"][iSpecies]["DirectOffspring"] = round(newDirFit[iSpecies]["sum"] / newDirFit[iSpecies]["N"])
-                gConf["species"][iSpecies]["IndirectOffspring"] = gConf["species"][iSpecies]["InclusiveFitness"] - gConf["species"][iSpecies]["DirectOffspring"]
+                incFit = gConf["species"][iSpecies]["DirectOffspring"] + gConf["species"][iSpecies]["IndirectOffspring"]
+                dirFit = round(newDirFit[iSpecies]["sum"] / newDirFit[iSpecies]["N"])
+                gConf["species"][iSpecies]["DirectOffspring"] = dirFit
+                gConf["species"][iSpecies]["IndirectOffspring"] = incFit - dirFit
 
 def doEnqueueing(iCell):
     # Setting up the queue to feed out
@@ -754,11 +754,15 @@ def saveExcel(sh, numGen):
             worksheet.set_column(ori, end, None, None, {'level': 1, 'hidden': True})
 
 def saveConf():
+    """Save conf in a new _cont.json file
+    if not there, or rewrite previous _cont.json file if was the initial conf loaded"""
+
     # thedatetime = datetime.now().strftime("%Y%m%d-%H%M%S.%f")
     newConfFile = gInitConfFile
     if not newConfFile.endswith(gContExt):
         newConfFile += gContExt
     newConfFile = os.path.join("data", newConfFile + ".json")
+    print("(Re)writing", newConfFile)
     with open(newConfFile, 'w') as outfile:
         json.dump(gConf, outfile, sort_keys = True, indent = 4,
                    ensure_ascii = False)
