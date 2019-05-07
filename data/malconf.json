@@ -1,0 +1,54 @@
+{
+    "NumberOfCells": 1,
+    "NumberOfRsrcsInEachCell": 1,
+    "MultilevelDeath1Percent": 0.0,
+    "species": [
+        {
+        "id": "A",
+        "NumberOfItems": 100,
+        "DirectOffspring": 2,
+
+        "GroupPartner":   "B",
+        "PhenotypicFlexibility": 1.00,
+
+        "AssociatedSpecies":   "",
+        "IndirectOffspring": 0,
+        "StandardDeviation": 0.0
+        },
+        {
+        "id": "A",
+        "NumberOfItems": 100,
+        "DirectOffspring": 2,
+
+        "GroupPartner":   "B",
+        "PhenotypicFlexibility": 1.00,
+
+        "AssociatedSpecies":   "",
+        "IndirectOffspring": 0,
+        "StandardDeviation": 0.0
+        },
+        {
+        "id": "A|B",
+        "NumberOfItems": 0,
+
+        "GroupPartner":   "C",
+        "PhenotypicFlexibility": 0.5,
+
+        "AssociatedSpecies":   "",
+        "IndirectOffspring": 0,
+        "StandardDeviation": 0.0
+        },
+        {
+        "id": "A|B|C",
+        "NumberOfItems": 0,
+        "DirectOffspring": 20,
+
+        "GroupPartner":   "",
+        "PhenotypicFlexibility": 0.05,
+
+        "AssociatedSpecies":   "",
+        "IndirectOffspring": 0,
+        "StandardDeviation": 0.0
+        }
+    ]
+}

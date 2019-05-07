@@ -4,7 +4,7 @@
 # Carlos Villagrasa, Javier Falgueras
 # juanfc 2019-02-16
 
-__version__ = 0.046 # 2019-05-06
+__version__ = 0.047 # 2019-05-07
 
 import os
 import sys
@@ -30,37 +30,6 @@ ACTOR      = 1   # they consume df+if of recipient
 RECIPIENT  = 2   # they consume df (it doesn't consume directly)
 RECIPROCAL = 3   # they consume (intra 2x df+if) (inter df1+if1+df2+if2)
 gNumberOfForms = 4
-
-
-
-#
-def printv(*args, **kwargs):
-    if gArgs["verbose"]:
-        if type(args[0]) == str:
-            print(*args)
-        else:
-            pprint(args)
-
-#
-
-
-def getListOfOrigGroups():
-    theList = []
-    for iSpecies in range(gNumberOfSpecies):
-        partner = gConf["species"][iSpecies]["GroupPartner"]
-        if partner != "":
-            groupStr = gConf["species"][iSpecies]["id"] + '|' +partner
-            theList += [iSpecies]
-
-    # Puts complex groups first
-    theList.sort(key = lambda i:
-            gConf["species"][i]["GroupPartner"].count('|') +
-            gConf["species"][i]["id"].count('|'), reverse=True)
-    return theList
-
-
-
-
 
 # ###############################################################################
 #                                MAIN SUBPROGRAMS
@@ -89,6 +58,7 @@ def genDist(nitems):
     r = sort(randint(0, nitems+1, gNumberOfCells-1))
     return concatenate((r,[nitems])) - concatenate(([0],r))
 
+# For faster traversing of the world, vectorize the genDist() function
 # https://hackernoon.com/speeding-up-your-code-2-vectorizing-the-loops-with-numpy-e380e939bed3
 vGenDist = vectorize(genDist, signature='()->(m)')
 
@@ -454,6 +424,19 @@ def iGetGroupStartingIn(iSpecies):
     toFindId = gConf["species"][iSpecies]["id"] + '|' + gConf["species"][iSpecies]["GroupPartner"]
     return iFrom_id(toFindId)
 
+def getListOfOrigGroups():
+    theList = []
+    for iSpecies in range(gNumberOfSpecies):
+        partner = gConf["species"][iSpecies]["GroupPartner"]
+        if partner != "":
+            theList += [iSpecies]
+
+    # Puts complex groups first
+    theList.sort(key = lambda i:
+            gConf["species"][i]["id"].count('|') +
+            gConf["species"][i]["GroupPartner"].count('|'), reverse=True)
+    return theList
+
 def collectAssociationActors():
     "Return a list of indexes of actors which are associated with any other"
     return [i for i in range(gNumberOfSpecies) if gConf["species"][i]["AssociatedSpecies"] != ""]
@@ -562,23 +545,54 @@ def saveConf():
         json.dump(gConf, outfile, sort_keys = True, indent = 4,
                    ensure_ascii = False)
 
-def checkConf():
+def checkConf(conf):
     """Verifies conf returning inconsistencies or an empty string"""
     # TO DO
     # verify gConf so
-    #   - it has DirectOffspring >= 0
     #   - groups agree
     #
+    problems = ""
+    items = {"NumberOfCells", "NumberOfRsrcsInEachCell", "MultilevelDeath1Percent", "LambdaForEgoism", "species"}
+    itemsspecies = {"id", "NumberOfItems", "DirectOffspring",
+        "GroupPartner", "PhenotypicFlexibility", "AssociatedSpecies", "IndirectOffspring", "StandardDeviation"}
+    if not items.issubset(conf.keys()):
+        problems += "Some essential item(s) is not defined\n\t Check the next items are all there:\n\t%s\n" % str(list(items))
+    previousIds = set([])
+    for i in range(len(conf["species"])):
+        theId = conf["species"][i]["id"]
+        partnerId = conf["species"][i]["GroupPartner"]
+        if theId in previousIds:
+            problems += "Id '%s' REPEATED\n" % theId
+        else:
+            previousIds.add(theId)
+        if partnerId != "":
+            if iGetPartner(i) == -1:
+                problems += "Species %d, id: '%s' has not the partner species '%s' in the conf\n" % \
+                    (i, theId, partnerId)
+            if iGetGroupStartingIn(i) == -1:
+                problems += "Group id: '%s' is not configured\n" % \
+                    (theId + '|' + partnerId)
+        for aId in theId.split('|'):
+            if iFrom_id(aId) == -1:
+                problems += "Component id: '%s' from group '%s' is not configured\n" % \
+                    (aId, theId)
 
-    return ""
 
+        if itemsspecies.issubset(conf["species"][i].keys()):
+            problems += "Some essential item(s) of species %s is not defined\n\t Check the next items for all species are all there:\n\t%s\n" % (theId, str(list(itemsspecies)))
 
+    if problems:
+        problems = "ERROR. The configuration file '%s' has inconsistencies:\n\n%s" % (gInitConfFile, problems)
+    return problems
 
-# ###############################################################################
-#                             ARGS AND CONF PROCESSING
-# ###############################################################################
+def printv(*args, **kwargs):
+    if gArgs["verbose"]:
+        if type(args[0]) == str:
+            print(*args)
+        else:
+            pprint(args)
 
-
+# ARGS AND CONF PROCESSING
 
 def getCommandLineArgs():
     """Parses and returns command line arguments"""
@@ -763,16 +777,15 @@ printv(gArgs)
 
 gConf = replaceArgsInConf(readInitConfFile(gInitConfCompName), gArgs)
 
-s = checkConf()
+gNumberOfSpecies = len(gConf["species"])
+
+s = checkConf(gConf)
 if s:
     print(s)
     sys.exit(1)
 
 printv(gConf)
 
-
-
-gNumberOfSpecies = len(gConf["species"])
 gNumberOfCells   = gConf["NumberOfCells"]
 gEgoism          = []
 gExcelSaved      = []
@@ -781,10 +794,6 @@ gListOfAssociationActors = [] # list of species starting association
 gListOfAssociationActors = collectAssociationActors() # list of species starting association
 
 
-
-
-printv(gConf)
-
 gWithPartnerList = getListOfOrigGroups()
 printv("gWithPartnerList:", gWithPartnerList)
 
@@ -792,8 +801,6 @@ printv("gWithPartnerList:", gWithPartnerList)
 #
 # LETS DO IT
 #
-
-
 
 gWorld, gStatsAnt, gStatsPost = newWorld()
 
