@@ -4,7 +4,7 @@
 # Carlos Villagrasa, Javier Falgueras
 # juanfc 2019-02-16
 
-__version__ = 0.050 # 2019-05-07
+__version__ = 0.052 # 2019-05-08
 
 import os
 import sys
@@ -492,11 +492,14 @@ def saveExcel(sh, numGen):
     # id, NumberOfItems, DirectOffspring, IndirectOffspring,
     # AssociatedSpecies, StandardDeviation, INDIVIDUAL, ACTOR, RECIPIENT,
     # RECIPROCAL
+    txtOutName = os.path.join("results", gInitConfFile + '_' + gThedatetime + ".txt")
+    txtOut = open(txtOutName, "a")
     globalsW = 2
     if numGen == 1:
         globalsHeader =  ["NCel", "RsCel"]
         sh.write_row(0,0, globalsHeader, gExcelCellHeader)
     sh.write_row(numGen,0, [gConf["NumberOfCells"], gConf["NumberOfRsrcsInEachCell"]])
+    print(gConf["NumberOfCells"], "\t", gConf["NumberOfRsrcsInEachCell"], "\t", file=txtOut, end="")
 
 
     totNumCol = 15
@@ -505,12 +508,12 @@ def saveExcel(sh, numGen):
         for iSpecies in range(gNumberOfSpecies):
             sh.write_row(0,globalsW+iSpecies*totNumCol, header, gExcelCellHeader)
 
-    txtOutName = os.path.join("results", gInitConfFile + '_' + gThedatetime + ".txt")
-    txtOut = open(txtOutName, "a")
 
     for iSpecies in range(gNumberOfSpecies):
         sh.write(numGen, globalsW+iSpecies*totNumCol,
                  gConf["species"][iSpecies]["id"], gExcelCellID)
+        print(gConf["species"][iSpecies]["id"] + "\t", file=txtOut, end="")
+
         toWrite =[
              gConf["species"][iSpecies]["DirectOffspring"],
              gConf["species"][iSpecies]["IndirectOffspring"],
@@ -529,6 +532,8 @@ def saveExcel(sh, numGen):
             ]
         sh.write_row(numGen, globalsW+iSpecies*totNumCol+1, toWrite)
         print("\t".join(map(str,toWrite)), file=txtOut, end="")
+        if iSpecies < gNumberOfSpecies-1:
+            print("\t", file=txtOut, end="")
 
         if numGen == 1:
             ori = iSpecies*totNumCol + 1 + globalsW
