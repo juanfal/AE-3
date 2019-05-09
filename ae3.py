@@ -616,7 +616,7 @@ def printv(*args, **kwargs):
 def getCommandLineArgs():
     """Parses and returns command line arguments"""
 
-    theArgParser = argparse.ArgumentParser(description="Evolutionary Automata",
+    theArgParser = argparse.ArgumentParser(description="* Evolutionary Automata *",
                     formatter_class=argparse.RawTextHelpFormatter)
 
 
@@ -637,12 +637,14 @@ def getCommandLineArgs():
         "--numGen", type=int,
         default=10,
         metavar="int",
-        help="Sets the number of generations to run, default: ")
+        help="Sets the number of generations to run, default: 10")
 
     # We want gaussian phenotypic variability
     theArgParser.add_argument(
         "--varia", help=textwrap.dedent("""\
-        Computes the offspring using gaussian variations,
+        Changes offpring number following a random normal distribution
+          around previous offpring with the standard deviation provided for
+          each species.
         False if not provided"""),
         action='store_true')
 
@@ -653,25 +655,20 @@ def getCommandLineArgs():
         default=False,
         action='store_true')
 
-    # We want egoism multilevel selection
-    theArgParser.add_argument(
-        "--egoism", help=textwrap.dedent("""\
-        Considers egoism of each item in multilevel selection"""),
-        action='store_true')
+    # # We want egoism multilevel selection
+    # theArgParser.add_argument(
+    #     "--egoism", help=textwrap.dedent("""\
+    #     Considers egoism of each item in multilevel selection"""),
+    #     action='store_true')
 
     # We want to save final status
     theArgParser.add_argument(
         "--saveExcel", help=textwrap.dedent("""\
-        Save stats in 'Excel' file"""),
+        Save stats in 'Excel' file and in a txt file.
+        See Excel header for meaning of txt columns"""),
         action='store_true')
 
 
-
-    # We want to save final status
-    theArgParser.add_argument(
-        "--cont", help=textwrap.dedent("""\
-        It takes the file _cont instead the original"""),
-        action='store_true')
 
     theArgParser.add_argument(
         "--NumberOfCells", type=int,
@@ -681,14 +678,14 @@ def getCommandLineArgs():
         "--NumberOfRsrcsInEachCell", type=float,
         default=argparse.SUPPRESS, metavar="float",
         help="Sets the items of resources in each cell for each generation")
-    theArgParser.add_argument(
-        "--MultilevelDeath1Percent", type=int,
-        default=argparse.SUPPRESS, metavar="int",
-        help="Sets MultilevelDeath1Percent to. Range 0.0 to 1.0")
-    theArgParser.add_argument(
-        "--LambdaForEgoism", type=float,
-        default=argparse.SUPPRESS, metavar="float",
-        help="Sets the coef. for egoism application")
+    # theArgParser.add_argument(
+    #     "--MultilevelDeath1Percent", type=int,
+    #     default=argparse.SUPPRESS, metavar="int",
+    #     help="Sets MultilevelDeath1Percent to. Range 0.0 to 1.0")
+    # theArgParser.add_argument(
+    #     "--LambdaForEgoism", type=float,
+    #     default=argparse.SUPPRESS, metavar="float",
+    #     help="Sets the coef. for egoism application")
 
     theArgParser.add_argument(
         "--species", type=str,
