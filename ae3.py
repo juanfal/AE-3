@@ -84,7 +84,7 @@ def doGrouping():
             n += 1
             stillPossibleGroupInCell = False
             permutedListOrigGroups = permutation(gWithPartnerList)
-            printv("Permuted list gWithPartnerList:", permutedListOrigGroups)
+            printv("Grouping permutation list:", permutedListOrigGroups)
             for iSpecies in permutedListOrigGroups:
                 phenFlex = gConf["species"][iSpecies]["PhenotypicFlexibility"]
                 i_partner = iGetPartner(iSpecies)          # i partner for the group

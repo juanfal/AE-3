@@ -1,0 +1,20 @@
+{
+    "NumberOfCells": 10,
+    "NumberOfRsrcsInEachCell": 100,
+    "MultilevelDeath1Percent": 0.00,
+    "LambdaForEgoism": 0.0,
+    "species": [
+        {
+        "id": "N.sertifer",
+        "NumberOfItems": 1000,
+        "DirectOffspring": 3,
+
+        "GroupPartner":   "",
+        "PhenotypicFlexibility": 0.00,
+
+        "AssociatedSpecies":   "",
+        "IndirectOffspring": 0,
+        "StandardDeviation": 0.0
+        }
+    ]
+}
