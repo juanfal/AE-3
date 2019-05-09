@@ -19,7 +19,7 @@ from numpy.random import seed, randint, shuffle, sample, permutation, random
 import xlsxwriter
 from datetime import datetime
 
-# seed(0)
+
 
 # Directories 'data' and 'results' are supposed being there
 # finalForms goes to results/
@@ -648,6 +648,17 @@ def getCommandLineArgs():
         False if not provided"""),
         action='store_true')
 
+    # Setting random seed to 0 to repeat pseudorandom values
+    theArgParser.add_argument(
+        "--setRandomSeed", type=int,
+        default=-1,
+        metavar="int",
+        help=textwrap.dedent("""\
+        Sets the random seed to a fixed initial value so
+          to repeat same random sequences. If not, each
+          running will start with different seeds"""),
+        )
+
     # We want gaussian phenotypic variability
     theArgParser.add_argument(
         "--verbose", help=textwrap.dedent("""\
@@ -818,9 +829,12 @@ printv("gWithPartnerList:", gWithPartnerList)
 # LETS DO IT
 #
 
+if gArgs["setRandomSeed"] != -1:
+    seed(int(gArgs["setRandomSeed"]))
+
 gWorld, gStatsAnt, gStatsPost = newWorld()
 
-if gArgs["egoism"]:
+if "egoism" in gArgs:
     calcEgoism()
 
 doInitialSpreading() # pprint(gWorld)
