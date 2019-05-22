@@ -4,7 +4,7 @@
 # Carlos Villagrasa, Javier Falgueras
 # juanfc 2019-02-16
 
-__version__ = 0.052 # 2019-05-08
+__version__ = 0.056 # 2019-05-22
 
 import os
 import sys
@@ -53,26 +53,74 @@ def newWorld():
             zeros((gNumberOfSpecies, gNumberOfForms), dtype=int)
             )
 
-def genDist(nitems):
+def averagedDist(iSpecies, pos, length):
+    """Returns the average of elements around pos"""
+    otherSide = pos - length
+    if otherSide < 0:
+        s = gWorld[iSpecies, otherSide:, INDIVIDUAL].sum() + \
+            gWorld[iSpecies, 0:pos+length+1, INDIVIDUAL].sum()
+    else:
+        s = gWorld[iSpecies, pos-length:pos+length+1, INDIVIDUAL].sum()
+    mean      = s // (2*length+1)
+    # remainder = s %  (2*length+1)
+    return mean
+
+def randomDist(nitems):
     """Returns a list of nitems numbers randomly distributed in gNumberOfCells"""
     r = sort(randint(0, nitems+1, gNumberOfCells-1))
     return concatenate((r,[nitems])) - concatenate(([0],r))
 
-# For faster traversing of the world, vectorize the genDist() function
+# For faster traversing of the world, vectorize the randomDist() function
 # https://hackernoon.com/speeding-up-your-code-2-vectorizing-the-loops-with-numpy-e380e939bed3
-vGenDist = vectorize(genDist, signature='()->(m)')
+vRandomDist = vectorize(randomDist, signature='()->(m)')
 
 def doInitialSpreading():
     """In fact this is unneccesary as first step in the generation process
                 will do it (again)"""
-    gWorld[:, :, 0] = vGenDist([gConf["species"][i]["NumberOfItems"] for i in range(gNumberOfSpecies)])
+    if gConf["Distribution"] == "100%":
+        gWorld[:, :, 0] = vRandomDist([gConf["species"][i]["NumberOfItems"] for i in range(gNumberOfSpecies)])
+    else:
+        # distribute all equally
+        for iSpecies in range(gNumberOfSpecies):
+            n = gConf["species"][iSpecies]["NumberOfItems"]
+            meanPerCell = n // gNumberOfCells
+            remainder   = n %  gNumberOfCells
+            gWorld[iSpecies, :, 0] = [meanPerCell for _ in range(gNumberOfCells)]
+            # the excess of items are equally given out to the first cells
+            for iCell in range(remainder):
+                gWorld[iSpecies, iCell, 0] += 1
 
 def doSpreadCells():
     """Spread each each species in each cell"""
     # We suppose here we have only INDIVIDUALs (form index 0)
     # and then sum all the items for all gWorld (axis=1) of each species
-    totalOfEachSpecies = gWorld[:,:,INDIVIDUAL].sum(axis=1)
-    gWorld[:, :, INDIVIDUAL] = vGenDist(totalOfEachSpecies)
+    if gConf["Distribution"].endswith("%"):
+        # only 100% implemented yet
+        perc = float(gConf["Distribution"][:-1])
+        totalOfEachSpecies = gWorld[:,:,INDIVIDUAL].sum(axis=1)
+        gWorld[:, :, INDIVIDUAL] = vRandomDist(totalOfEachSpecies)
+    else:
+        length = int(gConf["Distribution"])
+        if length > gNumberOfCells//2:
+            length = gNumberOfCells//2
+        # r = zeros((gNumberOfCells), dtype=int)
+        for iSpecies in range(gNumberOfSpecies):
+            nItemsiSpecies = gWorld[iSpecies, :, INDIVIDUAL].sum()
+            r = array([averagedDist(iSpecies, pos, length) \
+                                                for pos in range(gNumberOfCells)])
+            gWorld[iSpecies, :, INDIVIDUAL] = r
+            # print(r)
+            remainder = nItemsiSpecies - r.sum()
+            blocks = remainder // gNumberOfCells
+            if blocks > 0:
+                gWorld[iSpecies, :, INDIVIDUAL] += full((gNumberOfCells), blocks)
+            remainder = remainder % gNumberOfCells
+            for i in range(remainder):
+                gWorld[iSpecies, i, INDIVIDUAL] += 1
+            if nItemsiSpecies != gWorld[iSpecies, :, INDIVIDUAL].sum():
+                print("Inconsistent number of items after distribution: ",
+                nItemsiSpecies - gWorld[iSpecies, :, INDIVIDUAL].sum() )
+
 
 def doGrouping():
     """Form the groups following the group partner"""
@@ -316,6 +364,7 @@ def doEnqueueing(iCell):
     # Shrink the queue down to the real number of occupants
     queue.resize((iQueueTop))
     shuffle(queue)
+    # print(queue)
     return queue
 
 def doUngroup():
@@ -494,12 +543,12 @@ def saveExcel(sh, numGen):
     # RECIPROCAL
     txtOutName = os.path.join("results", gInitConfFile + '_' + gThedatetime + ".txt")
     txtOut = open(txtOutName, "a")
-    globalsW = 2
+    globalsW = 3
     if numGen == 1:
-        globalsHeader =  ["NCel", "RsCel"]
+        globalsHeader =  ["NCel", "RsCel", "Dist"]
         sh.write_row(0,0, globalsHeader, gExcelCellHeader)
-    sh.write_row(numGen,0, [gConf["NumberOfCells"], gConf["NumberOfRsrcsInEachCell"]])
-    print(gConf["NumberOfCells"], "\t", gConf["NumberOfRsrcsInEachCell"], "\t", file=txtOut, end="")
+    sh.write_row(numGen,0, [gConf["NumberOfCells"], gConf["NumberOfRsrcsInEachCell"], gConf["Distribution"]])
+    print(gConf["NumberOfCells"], "\t", gConf["NumberOfRsrcsInEachCell"],"\t", gConf["Distribution"], "\t", file=txtOut, end="")
 
 
     totNumCol = 15
@@ -541,6 +590,7 @@ def saveExcel(sh, numGen):
             worksheet.set_column(ori, end, None, None, {'level': 1, 'hidden': True})
 
     print(file=txtOut)
+
 def saveConf():
     """Save conf in a new _cont.json file
     if not there, or rewrite previous _cont.json file if was the initial conf loaded"""
@@ -642,8 +692,8 @@ def getCommandLineArgs():
     # We want gaussian phenotypic variability
     theArgParser.add_argument(
         "--varia", help=textwrap.dedent("""\
-        Changes offpring number following a random normal distribution
-          around previous offpring with the standard deviation provided for
+        Changes offspring number following a random normal distribution
+          around previous offspring with the standard deviation provided for
           each species.
         False if not provided"""),
         action='store_true')
@@ -679,12 +729,11 @@ def getCommandLineArgs():
         See Excel header for meaning of txt columns"""),
         action='store_true')
 
-
-
     theArgParser.add_argument(
         "--NumberOfCells", type=int,
         default=argparse.SUPPRESS, metavar="int",
         help="Sets the total number of cells in our world")
+
     theArgParser.add_argument(
         "--NumberOfRsrcsInEachCell", type=float,
         default=argparse.SUPPRESS, metavar="float",
@@ -697,6 +746,38 @@ def getCommandLineArgs():
     #     "--LambdaForEgoism", type=float,
     #     default=argparse.SUPPRESS, metavar="float",
     #     help="Sets the coef. for egoism application")
+
+
+    theArgParser.add_argument(
+        "--Distribution", type=str,
+        metavar="'str'",
+        default="100%",
+        help=textwrap.dedent("""\
+        It allows specify the desired type of distribution between:
+          a) Random           from 0%% to 100%% (with suffix %%)
+          b) Length to cover the average
+                           integer from 0 to number of cells N//2
+                           if N//2 then is like 0%% in (a)
+
+        When random, items are taken from cells forgetting
+          their previous position and then distributed randomly
+          0%%   means null random, it is equivalent to N//2
+                averaged in case (b)
+          100%% means _totally_ random numbers en each cell
+
+        When averaged through length, the number of cells given
+          is taken from the left, from the right and the
+          [i] cell to average and this mean is the
+          new value for [i]
+             [i-n][i-(n-1)][…][i][i+1][…][i+n]
+          The list is considered circular
+          0 means no cells around are considered,
+            so cells are isolated
+          3 for example, means 3x2+1 cells
+            are averaged: the central one plus the 3 at
+            the left plus the 3 at the right""")
+    )
+
 
     theArgParser.add_argument(
         "--species", type=str,
@@ -727,6 +808,8 @@ def getCommandLineArgs():
         --species=":,DirectOffspring=8"
     means change all species
     """))
+
+
     return vars(theArgParser.parse_args())
 
 def readInitConfFile(fileName):

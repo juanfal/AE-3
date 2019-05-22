@@ -1,0 +1,29 @@
+{
+    "Distribution": "20%",
+    "LambdaForEgoism": 0.0,
+    "MultilevelDeath1Percent": 0.0,
+    "NumberOfCells": 100,
+    "NumberOfRsrcsInEachCell": 1000,
+    "species": [
+        {
+            "AssociatedSpecies": "",
+            "DirectOffspring": 4,
+            "GroupPartner": "",
+            "IndirectOffspring": 0,
+            "NumberOfItems": 100,
+            "PhenotypicFlexibility": 0.0,
+            "StandardDeviation": 0.0,
+            "id": "Saccharomyces cerevisiae"
+        },
+        {
+            "AssociatedSpecies": "",
+            "DirectOffspring": 3,
+            "GroupPartner": "",
+            "IndirectOffspring": 0,
+            "NumberOfItems": 100,
+            "PhenotypicFlexibility": 0.0,
+            "StandardDeviation": 0.0,
+            "id": "Schizosaccharomyces kefir"
+        }
+    ]
+}

@@ -3,6 +3,7 @@
     "NumberOfRsrcsInEachCell": 1000,
     "MultilevelDeath1Percent": 10,
     "LambdaForEgoism": 0.0,
+    "Distribution": "100%",
     "species": [
         {"id": "A",
         "NumberOfItems": 10000,

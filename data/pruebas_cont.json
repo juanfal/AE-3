@@ -1,0 +1,59 @@
+{
+    "Distribution": "60",
+    "LambdaForEgoism": 0.0,
+    "MultilevelDeath1Percent": 0.05,
+    "NumberOfCells": 100,
+    "NumberOfRsrcsInEachCell": 100,
+    "species": [
+        {
+            "AssociatedSpecies": "B",
+            "DirectOffspring": 5,
+            "GroupPartner": "A",
+            "IndirectOffspring": 2,
+            "NumberOfItems": 100,
+            "PhenotypicFlexibility": 0.5,
+            "StandardDeviation": 1,
+            "id": "A"
+        },
+        {
+            "AssociatedSpecies": "B|A",
+            "DirectOffspring": 5,
+            "GroupPartner": "",
+            "IndirectOffspring": 2,
+            "NumberOfItems": 100,
+            "PhenotypicFlexibility": 0.8,
+            "StandardDeviation": 1,
+            "id": "B"
+        },
+        {
+            "AssociatedSpecies": "",
+            "DirectOffspring": 5,
+            "GroupPartner": "",
+            "IndirectOffspring": 0,
+            "NumberOfItems": 20,
+            "PhenotypicFlexibility": 0.5,
+            "StandardDeviation": 1,
+            "id": "B|A"
+        },
+        {
+            "AssociatedSpecies": "",
+            "DirectOffspring": 5,
+            "GroupPartner": "B",
+            "IndirectOffspring": 0,
+            "NumberOfItems": 30,
+            "PhenotypicFlexibility": 0.8,
+            "StandardDeviation": 1,
+            "id": "A|A"
+        },
+        {
+            "AssociatedSpecies": "A|A|B",
+            "DirectOffspring": 5,
+            "GroupPartner": "",
+            "IndirectOffspring": 2,
+            "NumberOfItems": 30,
+            "PhenotypicFlexibility": 0.9,
+            "StandardDeviation": 1,
+            "id": "A|A|B"
+        }
+    ]
+}

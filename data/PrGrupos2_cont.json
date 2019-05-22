@@ -1,5 +1,6 @@
 {
     "LambdaForEgoism": 0.0,
+    "Distribution": "100%",
     "MultilevelDeath1Percent": 0.0,
     "NumberOfCells": 1,
     "NumberOfRsrcsInEachCell": 100000,

@@ -3,6 +3,7 @@
     "NumberOfRsrcsInEachCell": 100,
     "MultilevelDeath1Percent": 0.00,
     "LambdaForEgoism": 0.0,
+    "Distribution": "100%",
     "species": [
         {
         "id": "N.sertifer",

@@ -1,7 +1,8 @@
 {
+    "Distribution": "2",
     "LambdaForEgoism": 0.0,
     "MultilevelDeath1Percent": 0.0,
-    "NumberOfCells": 1,
+    "NumberOfCells": 10,
     "NumberOfRsrcsInEachCell": 10000.0,
     "species": [
         {
