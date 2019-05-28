@@ -1,20 +1,20 @@
 {
-    "NumberOfCells": 10,
-    "NumberOfRsrcsInEachCell": 100,
+    "NumberOfCells": 100,
+    "NumberOfRsrcsInEachCell": 500,
     "MultilevelDeath1Percent": 0.00,
     "LambdaForEgoism": 0.0,
     "Distribution": "100r",
     "species": [
         {
-        "id": "N.sertifer",
-        "NumberOfItems": 1000,
+        "id": "ACM",
+        "NumberOfItems": 500,
         "DirectOffspring": 3,
 
         "GroupPartner":   "",
-        "PhenotypicFlexibility": 0.00,
+        "PhenotypicFlexibility": 0.0,
 
-        "AssociatedSpecies":   "",
-        "IndirectOffspring": 0,
+        "AssociatedSpecies":   "ACM",
+        "IndirectOffspring": 2,
         "StandardDeviation": 0.0
         }
     ]

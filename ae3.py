@@ -4,7 +4,7 @@
 # Carlos Villagrasa, Javier Falgueras
 # juanfc 2019-02-16
 
-__version__ = 0.056 # 2019-05-22
+__version__ = 0.057 # 2019-05-28
 
 import os
 import sys
@@ -14,7 +14,7 @@ import textwrap
 from pprint import pprint
 
 from numpy import *
-from numpy.random import seed, randint, shuffle, sample, permutation, random
+from numpy.random import seed, randint, shuffle, sample, permutation, normal
 
 import xlsxwriter
 from datetime import datetime
@@ -30,6 +30,11 @@ ACTOR      = 1   # they consume df+if of recipient
 RECIPIENT  = 2   # they consume df (it doesn't consume directly)
 RECIPROCAL = 3   # they consume (intra 2x df+if) (inter df1+if1+df2+if2)
 gNumberOfForms = 4
+
+# Types of distribution
+NEIGHBOURS_DISTRIBUTION = 0 # randomly distribute among neighbours around
+RANDOM_GLOBAL_AVG   = 1 # random change around global average
+
 
 # ###############################################################################
 #                                MAIN SUBPROGRAMS
@@ -53,20 +58,20 @@ def newWorld():
             zeros((gNumberOfSpecies, gNumberOfForms), dtype=int)
             )
 
-def averagedDist(iSpecies, pos, length):
-    """Returns the average of elements around pos"""
-    otherSide = pos - length
-    if otherSide < 0:
-        s = gWorld[iSpecies, otherSide:, INDIVIDUAL].sum() + \
-            gWorld[iSpecies, 0:pos+length+1, INDIVIDUAL].sum()
-    else:
-        s = gWorld[iSpecies, pos-length:pos+length+1, INDIVIDUAL].sum()
-    mean      = s // (2*length+1)
-    # remainder = s %  (2*length+1)
-    return mean
+# def averagedDist(iSpecies, pos, length):
+#     """Returns the average of elements around pos"""
+#     otherSide = pos - length
+#     if otherSide < 0:
+#         s = gWorld[iSpecies, otherSide:, INDIVIDUAL].sum() + \
+#             gWorld[iSpecies, 0:pos+length+1, INDIVIDUAL].sum()
+#     else:
+#         s = gWorld[iSpecies, pos-length:pos+length+1, INDIVIDUAL].sum()
+#     mean      = s // (2*length+1)
+#     return mean
 
 def randomDist(nitems):
     """Returns a list of nitems numbers randomly distributed in gNumberOfCells"""
+
     r = sort(randint(0, nitems+1, gNumberOfCells-1))
     return concatenate((r,[nitems])) - concatenate(([0],r))
 
@@ -77,7 +82,7 @@ vRandomDist = vectorize(randomDist, signature='()->(m)')
 def doInitialSpreading():
     """In fact this is unneccesary as first step in the generation process
                 will do it (again)"""
-    if gConf["Distribution"] == "100%":
+    if gConf["Distribution"].endswith("%"):
         gWorld[:, :, 0] = vRandomDist([gConf["species"][i]["NumberOfItems"] for i in range(gNumberOfSpecies)])
     else:
         # distribute all equally
@@ -90,36 +95,40 @@ def doInitialSpreading():
             for iCell in range(remainder):
                 gWorld[iSpecies, iCell, 0] += 1
 
-def doSpreadCells():
+def doDistribute():
     """Spread each each species in each cell"""
     # We suppose here we have only INDIVIDUALs (form index 0)
-    # and then sum all the items for all gWorld (axis=1) of each species
-    if gConf["Distribution"].endswith("%"):
-        # only 100% implemented yet
-        perc = float(gConf["Distribution"][:-1])
-        totalOfEachSpecies = gWorld[:,:,INDIVIDUAL].sum(axis=1)
-        gWorld[:, :, INDIVIDUAL] = vRandomDist(totalOfEachSpecies)
-    else:
-        length = int(gConf["Distribution"])
-        if length > gNumberOfCells//2:
-            length = gNumberOfCells//2
-        # r = zeros((gNumberOfCells), dtype=int)
-        for iSpecies in range(gNumberOfSpecies):
-            nItemsiSpecies = gWorld[iSpecies, :, INDIVIDUAL].sum()
-            r = array([averagedDist(iSpecies, pos, length) \
-                                                for pos in range(gNumberOfCells)])
-            gWorld[iSpecies, :, INDIVIDUAL] = r
-            # print(r)
-            remainder = nItemsiSpecies - r.sum()
-            blocks = remainder // gNumberOfCells
-            if blocks > 0:
-                gWorld[iSpecies, :, INDIVIDUAL] += full((gNumberOfCells), blocks)
-            remainder = remainder % gNumberOfCells
-            for i in range(remainder):
-                gWorld[iSpecies, i, INDIVIDUAL] += 1
-            if nItemsiSpecies != gWorld[iSpecies, :, INDIVIDUAL].sum():
-                print("Inconsistent number of items after distribution: ",
-                nItemsiSpecies - gWorld[iSpecies, :, INDIVIDUAL].sum() )
+    global gDistribution
+    totalOfEachSpecies = gWorld[:,:,INDIVIDUAL].sum(axis=1)
+
+    for iSpecies in range(gNumberOfSpecies):
+        distType, distVal = getDist(iSpecies)
+
+        tempDist = zeros((gNumberOfCells), dtype=int)
+        #             NEIGHBOURS_DISTRIBUTION
+        if distType == NEIGHBOURS_DISTRIBUTION:
+            distLen = int(gNumberOfCells*distVal/100/2)
+            for iCell in range(gNumberOfCells):
+                nitems = gWorld[iSpecies, iCell, INDIVIDUAL]
+                # TODO: if the number of items nitems
+                # is large, we could consider directly writing the
+                # average on each cell around
+                for _ in range(nitems):
+                    dist = randint(-distLen, distLen+1)
+                    p = iCell+dist
+                    if p >= gNumberOfCells:
+                        p %= gNumberOfCells
+                    tempDist[p] += 1
+            gWorld[iSpecies,:,INDIVIDUAL] = tempDist
+
+
+        else:       # RANDOM_GLOBAL_AVG: x_a (1-\sigma) + xm \sigma
+            nitems = gWorld[iSpecies,:,INDIVIDUAL].sum()
+            average  = nitems / gNumberOfCells
+            sigma = distVal/100
+            wildDist = vRandomDist(totalOfEachSpecies)
+            wildDist = wildDist * (1-sigma) + sigma * average
+            gWorld[:, :, INDIVIDUAL] = wildDist
 
 
 def doGrouping():
@@ -495,10 +504,28 @@ def iAssociatedTarget(iSpecies):
     if not associated is there, -1"""
     return iFrom_id(gConf["species"][iSpecies]["AssociatedSpecies"])
 
+def getDist(iSpecies):
+    """from 45n or 50n returns the integer and the type
+    n: NEIGHBOURS_DISTRIBUTION
+    r: RANDOM_GLOBAL_AVG
+    """
+    if "Distribution" in gConf["species"][iSpecies]:
+        dist = gConf["species"][iSpecies]["Distribution"]
+    else:
+        dist = gConf["Distribution"]
+
+    if dist.endswith("n"): # average neighbours distribution
+        distType = NEIGHBOURS_DISTRIBUTION
+    else:
+        distType = RANDOM_GLOBAL_AVG
+
+    distSpan = int(dist[:-1])
+    return distType, distSpan
+
 def randomNormal(mean, stddev):
     """Draw random samples from a normal (Gaussian) distribution, with
     mean and standard deviation"""
-    return random.normal(mean, stddev)
+    return normal(mean, stddev)
 
 def gauss(direct, indirect, stddev):
     inclusive = direct + indirect
@@ -897,11 +924,17 @@ if s:
 printv(gConf)
 
 gNumberOfCells   = gConf["NumberOfCells"]
+
+
 gEgoism          = []
 gExcelSaved      = []
 gContExt         = "_cont"
 gListOfAssociationActors = [] # list of species starting association
 gListOfAssociationActors = collectAssociationActors() # list of species starting association
+# if gConf["Distribution"].endswith("%"):
+#     gDistribution   = float(gConf["Distribution"][:-1])
+# else:
+#     gDistribution   = int(gConf["Distribution"][:-1])
 
 
 gWithPartnerList = getListOfOrigGroups()
@@ -930,7 +963,7 @@ if gArgs["saveExcel"]:
 set_printoptions(formatter={'int': '{: 7d}'.format})
 for genNumber in range(1, gArgs["numGen"]+1):
 
-    doSpreadCells()             # ; pprint(gWorld)
+    doDistribute()             # ; pprint(gWorld)
     #print("%3d: %s Tot Spread:   %d" % (genNumber, gWorld[:,:,0].sum(axis=1),  gWorld[:,:,0].sum(axis=1).sum()))
     doGrouping()                # ; pprint(gWorld)
     print("%3d: %s Tot Grouping: %d" % (genNumber, gWorld[:,:,0].sum(axis=1),  gWorld[:,:,0].sum(axis=1).sum()))

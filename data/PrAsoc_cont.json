@@ -1,0 +1,19 @@
+{
+    "Distribution": "100r",
+    "LambdaForEgoism": 0.0,
+    "MultilevelDeath1Percent": 0.0,
+    "NumberOfCells": 1,
+    "NumberOfRsrcsInEachCell": 50000,
+    "species": [
+        {
+            "AssociatedSpecies": "ACM",
+            "DirectOffspring": 3,
+            "GroupPartner": "",
+            "IndirectOffspring": 2,
+            "NumberOfItems": 500,
+            "PhenotypicFlexibility": 0.0,
+            "StandardDeviation": 0.0,
+            "id": "ACM"
+        }
+    ]
+}

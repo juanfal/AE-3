@@ -3,7 +3,7 @@
     "NumberOfRsrcsInEachCell": 1000,
     "MultilevelDeath1Percent": 0.00,
     "LambdaForEgoism": 0.0,
-    "Distribution": "10",
+    "Distribution": "2",
     "species": [
         {
         "id": "Saccharomyces cerevisiae",
