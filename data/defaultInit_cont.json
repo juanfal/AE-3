@@ -1,8 +1,8 @@
 {
-    "Distribution": "2",
+    "Distribution": "10n",
     "LambdaForEgoism": 0.0,
     "MultilevelDeath1Percent": 0.0,
-    "NumberOfCells": 10,
+    "NumberOfCells": 15,
     "NumberOfRsrcsInEachCell": 10000.0,
     "species": [
         {
@@ -10,7 +10,7 @@
             "DirectOffspring": 5,
             "GroupPartner": "A",
             "IndirectOffspring": 2,
-            "NumberOfItems": 100,
+            "NumberOfItems": 10,
             "PhenotypicFlexibility": 0.0,
             "StandardDeviation": 0.01,
             "id": "A"
@@ -20,7 +20,7 @@
             "DirectOffspring": 0,
             "GroupPartner": "",
             "IndirectOffspring": 2,
-            "NumberOfItems": 0,
+            "NumberOfItems": 10,
             "PhenotypicFlexibility": 0.0,
             "StandardDeviation": 0.02,
             "id": "A|A"

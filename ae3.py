@@ -4,7 +4,7 @@
 # Carlos Villagrasa, Javier Falgueras
 # juanfc 2019-02-16
 
-__version__ = 0.058 # 2019-05-29
+__version__ = 0.059 # 2019-05-29
 
 import os
 import sys
@@ -791,12 +791,12 @@ def getCommandLineArgs():
                            to distribute all the elements among every cell
                            0r    means in each cell the same value averaged
                            100r: means a total random number in each cell
+                           Items are taken from cells forgetting their
+                           previous position and then distributed randomly
           b) NEIGHBOURS_DISTRIBUTION     from 0n to 100n (with suffix n)
                            to distribute each cell items among the
-                           n/2 cells around
+                           n%%/2 cells around
 
-        When random, items are taken from cells forgetting
-          their previous position and then distributed randomly
           0r   means null random, it is equivalent to 100n
                 distributed in case (b)
           100r means _totally_ random numbers en each cell
