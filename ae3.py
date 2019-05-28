@@ -4,7 +4,7 @@
 # Carlos Villagrasa, Javier Falgueras
 # juanfc 2019-02-16
 
-__version__ = 0.057 # 2019-05-28
+__version__ = 0.058 # 2019-05-29
 
 import os
 import sys
@@ -107,6 +107,7 @@ def doDistribute():
         tempDist = zeros((gNumberOfCells), dtype=int)
         #             NEIGHBOURS_DISTRIBUTION
         if distType == NEIGHBOURS_DISTRIBUTION:
+
             distLen = int(gNumberOfCells*distVal/100/2)
             for iCell in range(gNumberOfCells):
                 nitems = gWorld[iSpecies, iCell, INDIVIDUAL]
@@ -123,11 +124,13 @@ def doDistribute():
 
 
         else:       # RANDOM_GLOBAL_AVG: x_a (1-\sigma) + xm \sigma
-            nitems = gWorld[iSpecies,:,INDIVIDUAL].sum()
-            average  = nitems / gNumberOfCells
             sigma = distVal/100
-            wildDist = vRandomDist(totalOfEachSpecies)
-            wildDist = wildDist * (1-sigma) + sigma * average
+            nitems = gWorld[:,:,INDIVIDUAL].sum(axis=1)
+            average = nitems / gNumberOfCells
+            average  = repeat(average, gNumberOfCells).reshape((gNumberOfSpecies,gNumberOfCells))
+            wildDist = vRandomDist(nitems)
+            wildDist = around(wildDist * (1-sigma) + sigma * average).astype(int)
+            wildDist[:,0] -= wildDist.sum(axis=1) - nitems
             gWorld[:, :, INDIVIDUAL] = wildDist
 
 
@@ -519,8 +522,11 @@ def getDist(iSpecies):
     else:
         distType = RANDOM_GLOBAL_AVG
 
-    distSpan = int(dist[:-1])
-    return distType, distSpan
+    distVal = int(dist[:-1])
+    if distVal > 100 or distVal < 0:
+        print("Error in Distribution val (should be 0<=x<=100. Is:", distVal)
+        sys.exit(1)
+    return distType, distVal
 
 def randomNormal(mean, stddev):
     """Draw random samples from a normal (Gaussian) distribution, with
@@ -778,30 +784,32 @@ def getCommandLineArgs():
     theArgParser.add_argument(
         "--Distribution", type=str,
         metavar="'str'",
-        default="100%",
+        default="100r",
         help=textwrap.dedent("""\
         It allows specify the desired type of distribution between:
-          a) Random           from 0%% to 100%% (with suffix %%)
-          b) Length to cover the average
-                           integer from 0 to number of cells N//2
-                           if N//2 then is like 0%% in (a)
+          a) RANDOM_GLOBAL_AVG           from 0r to 100r (with suffix r)
+                           to distribute all the elements among every cell
+                           0r    means in each cell the same value averaged
+                           100r: means a total random number in each cell
+          b) NEIGHBOURS_DISTRIBUTION     from 0n to 100n (with suffix n)
+                           to distribute each cell items among the
+                           n/2 cells around
 
         When random, items are taken from cells forgetting
           their previous position and then distributed randomly
-          0%%   means null random, it is equivalent to N//2
-                averaged in case (b)
-          100%% means _totally_ random numbers en each cell
+          0r   means null random, it is equivalent to 100n
+                distributed in case (b)
+          100r means _totally_ random numbers en each cell
 
-        When averaged through length, the number of cells given
+        When distributed through neighbours, the number of cells given
           is taken from the left, from the right and the
-          [i] cell to average and this mean is the
-          new value for [i]
+          [i] cell to distribute randomly among them
              [i-n][i-(n-1)][…][i][i+1][…][i+n]
           The list is considered circular
           0 means no cells around are considered,
             so cells are isolated
           3 for example, means 3x2+1 cells
-            are averaged: the central one plus the 3 at
+            are used for distribution: the central one plus the 3 at
             the left plus the 3 at the right""")
     )
 
