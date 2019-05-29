@@ -4,7 +4,7 @@
 # Carlos Villagrasa, Javier Falgueras
 # juanfc 2019-02-16
 
-__version__ = 0.060 # 2019-05-29
+__version__ = 0.061 # 2019-05-29
 
 import os
 import sys
@@ -15,30 +15,36 @@ from pprint import pprint
 
 from numpy import *
 from numpy.random import seed, randint, shuffle, sample, permutation, normal
+# format for printing numpy arrays
+set_printoptions(formatter={'int': '{: 7d}'.format})
 
 import xlsxwriter
 from datetime import datetime
-
 
 
 # Directories 'data' and 'results' are supposed being there
 # finalForms goes to results/
 if not os.path.isdir("results"): os.mkdir("results")
 
+
+# ######### #
+# CONSTANTS #
+# ######### #
+
+
 INDIVIDUAL = 0   # they consume df
 ACTOR      = 1   # they consume df+if of recipient
 RECIPIENT  = 2   # they consume df (it doesn't consume directly)
 RECIPROCAL = 3   # they consume (intra 2x df+if) (inter df1+if1+df2+if2)
-gNumberOfForms = 4
+NUMBER_OF_FORMS = 4
 
 # Types of distribution
 NEIGHBOURS_DISTRIBUTION = 0 # randomly distribute among neighbours around
-RANDOM_GLOBAL_AVG   = 1 # random change around global average
+RANDOM_GLOBAL_AVG       = 1 # random change around global average
 
-
-# ###############################################################################
-#                                MAIN SUBPROGRAMS
-# ###############################################################################
+# ############################################################################# #
+#                                MAIN SUBPROGRAMS                               #
+# ############################################################################# #
 
 def newWorld():
     """Build our world.
@@ -53,21 +59,10 @@ def newWorld():
         gWorld[iSpecies, iCell, iForm]
 
     """
-    return (zeros((gNumberOfSpecies, gNumberOfCells, gNumberOfForms), dtype=int),
-            zeros((gNumberOfSpecies, gNumberOfForms), dtype=int),
-            zeros((gNumberOfSpecies, gNumberOfForms), dtype=int)
+    return (zeros((gNumberOfSpecies, gNumberOfCells, NUMBER_OF_FORMS), dtype=int),
+            zeros((gNumberOfSpecies, NUMBER_OF_FORMS), dtype=int),
+            zeros((gNumberOfSpecies, NUMBER_OF_FORMS), dtype=int)
             )
-
-# def averagedDist(iSpecies, pos, length):
-#     """Returns the average of elements around pos"""
-#     otherSide = pos - length
-#     if otherSide < 0:
-#         s = gWorld[iSpecies, otherSide:, INDIVIDUAL].sum() + \
-#             gWorld[iSpecies, 0:pos+length+1, INDIVIDUAL].sum()
-#     else:
-#         s = gWorld[iSpecies, pos-length:pos+length+1, INDIVIDUAL].sum()
-#     mean      = s // (2*length+1)
-#     return mean
 
 def randomDist(nitems):
     """Returns a list of nitems numbers randomly distributed in gNumberOfCells"""
@@ -75,25 +70,18 @@ def randomDist(nitems):
     r = sort(randint(0, nitems+1, gNumberOfCells-1))
     return concatenate((r,[nitems])) - concatenate(([0],r))
 
-# For faster traversing of the world, vectorize the randomDist() function
-# https://hackernoon.com/speeding-up-your-code-2-vectorizing-the-loops-with-numpy-e380e939bed3
-vRandomDist = vectorize(randomDist, signature='()->(m)')
-
 def doInitialSpreading():
     """In fact this is unneccesary as first step in the generation process
                 will do it (again)"""
-    if gConf["Distribution"].endswith("%"):
-        gWorld[:, :, 0] = vRandomDist([gConf["species"][i]["NumberOfItems"] for i in range(gNumberOfSpecies)])
-    else:
-        # distribute all equally
-        for iSpecies in range(gNumberOfSpecies):
-            n = gConf["species"][iSpecies]["NumberOfItems"]
-            meanPerCell = n // gNumberOfCells
-            remainder   = n %  gNumberOfCells
-            gWorld[iSpecies, :, 0] = [meanPerCell for _ in range(gNumberOfCells)]
-            # the excess of items are equally given out to the first cells
-            for iCell in range(remainder):
-                gWorld[iSpecies, iCell, 0] += 1
+    # distribute all equally
+    for iSpecies in range(gNumberOfSpecies):
+        n = gConf["species"][iSpecies]["NumberOfItems"]
+        meanPerCell = n // gNumberOfCells
+        remainder   = n %  gNumberOfCells
+        gWorld[iSpecies, :, 0] = [meanPerCell for _ in range(gNumberOfCells)]
+        # the excess of items are equally given out to the first cells
+        for iCell in range(remainder):
+            gWorld[iSpecies, iCell, 0] += 1
 
 def doDistribute():
     """Distribute each each species in cells
@@ -135,9 +123,8 @@ def doDistribute():
             wildDist = around(wildDist * (1-sigma) + sigma * average).astype(int)
             # compensate rounding simply adding the difference
             # to the first cell
-            wildDist[0] -= wildDist.sum() - nitems
+            wildDist[0] += nitems - wildDist.sum()
             gWorld[iSpecies, :, INDIVIDUAL] = wildDist
-
 
 def doGrouping():
     """Form the groups following the group partner"""
@@ -390,13 +377,6 @@ def doUngroup():
             printv("Ungrouping iOrigGroup:", iOrigGroup)
             iGroup = iGetGroupStartingIn(iOrigGroup)
             phenFlex = gConf["species"][iGroup]["PhenotypicFlexibility"]
-            #JAVIER: la desagrupación es por la FlexPheno del patner principal,
-            #debería ser por la FlexPhen del grupo A|B
-            # Juan: Está puesto que la phenPlex es la del iGroup
-            # Date cuenta que gOrigGroupedList es la lista de los que tienen | en el id
-            # así que se toma la phenFlex de esos
-            #Javier: Por ejemplo, la PhenotypicFlexibility de A es 0.8, y la PhenotypicFlexibility
-            # de A|B es 0.1, la phenFlex de la linea 533 debe de ser 0.1
 
             # number of iGroup items in that iCell
             ni = gWorld[iGroup,iCell,INDIVIDUAL] # form index is 0 always
@@ -409,11 +389,6 @@ def doUngroup():
                 gWorld[iPartner,iCell,INDIVIDUAL] += ni_unGroup
 
                 gWorld[iOrigGroup,iCell,INDIVIDUAL] -= ni_unGroup
-                # printv("phenFlex de [%d] %s (%s): %.2f. To ungroup: %d -> %d -> %d [%d, %d]" %
-                #        (iOrigGroup, gConf["species"][iOrigGroup]["id"],
-                #        partnersList, phenFlex, ni, ni_unGroup,
-                #        gWorld[iOrigGroup,iCell,INDIVIDUAL], gWorld[0,iCell,INDIVIDUAL],
-                #        gStatsPost[iOrigGroup, INDIVIDUAL]))
 
 def doMultilevelSelection(q):
     # perc = gConf["MultilevelDeath1Percent"]
@@ -437,7 +412,7 @@ def calcEgoism():
     if not gArgs["egoism"]:
         return
     if not gEgoism:
-        gEgoism = zeros((gNumberOfSpecies, gNumberOfForms), dtype=float)
+        gEgoism = zeros((gNumberOfSpecies, NUMBER_OF_FORMS), dtype=float)
     else:
         gEgoism.fill(0)
 
@@ -465,14 +440,14 @@ def calcEgoism():
     printv("scaled egoism: ", gEgoism)
     # printv("rank:", gEgoism.argsort(axis=1).argsort(axis=0))
     #
-    # printv("rank:", reshape(gEgoism.flatten().unique().argsort().argsort(), (gNumberOfSpecies, gNumberOfForms) ))
-    # printv("rank:", reshape(gEgoism.flatten().unique().argsort().argsort(), (gNumberOfSpecies, gNumberOfForms) ))
+    # printv("rank:", reshape(gEgoism.flatten().unique().argsort().argsort(), (gNumberOfSpecies, NUMBER_OF_FORMS) ))
+    # printv("rank:", reshape(gEgoism.flatten().unique().argsort().argsort(), (gNumberOfSpecies, NUMBER_OF_FORMS) ))
     # TODO: NOS INTERESA LA JERARQUÍA, rank, MÁS QUE EL VALOR ESCALADO DEL EGOÍSMO
     # https://stackoverflow.com/questions/5284646/rank-items-in-an-array-using-python-numpy
 
-# ###############################################################################
-#                                     TOOLS
-# ###############################################################################
+# ############################################################################# #
+#                                     TOOLS                                     #
+# ############################################################################# #
 
 def iFrom_id(id):
     """Returns index of species from its id, or -1"""
@@ -689,8 +664,9 @@ def checkConf(conf):
             problems += "Some essential item(s) of species %s is not defined\n\t Check the next items for all species are all there:\n\t%s\n" % (theId, str(list(itemsspecies)))
 
     if problems:
-        problems = "ERROR. The configuration file '%s' has inconsistencies:\n\n%s" % (gInitConfFile, problems)
-    return problems
+        print("ERROR. The configuration file '%s' has inconsistencies:\n\n%s" % (gInitConfFile, problems))
+        sys.exit(1)
+
 
 def printv(*args, **kwargs):
     if gArgs["verbose"]:
@@ -699,7 +675,9 @@ def printv(*args, **kwargs):
         else:
             pprint(args)
 
-# ARGS AND CONF PROCESSING
+# ######################## #
+# ARGS AND CONF PROCESSING #
+# ######################## #
 
 def getCommandLineArgs():
     """Parses and returns command line arguments"""
@@ -914,12 +892,17 @@ def replaceArgsInConf(conf, args):
     return conf
 
 
-# ###############################################################################
-#                                    MAIN
-# ###############################################################################
+# ############################################################################## #
+#                                    MAIN                                        #
+# ############################################################################## #
 
-# GLOBALS
+# ####### #
+# GLOBALS #
+# ####### #
 
+
+# GET CONF FROM .json INIT FILE AND THEN FROM ARGS
+#
 gArgs = getCommandLineArgs()
 gInitConfFile = gArgs["initFile"]  # base file name
 gInitConfCompName = os.path.join("data", gInitConfFile + ".json")
@@ -929,35 +912,30 @@ gConf = replaceArgsInConf(readInitConfFile(gInitConfCompName), gArgs)
 
 gNumberOfSpecies = len(gConf["species"])
 
-s = checkConf(gConf)
-if s:
-    print(s)
-    sys.exit(1)
+checkConf(gConf)
 
 printv(gConf)
 
+# SET UP CONVENIENT GLOBALS
+#
 gNumberOfCells   = gConf["NumberOfCells"]
-
 
 gEgoism          = []
 gExcelSaved      = []
 gContExt         = "_cont"
 gListOfAssociationActors = [] # list of species starting association
 gListOfAssociationActors = collectAssociationActors() # list of species starting association
-# if gConf["Distribution"].endswith("%"):
-#     gDistribution   = float(gConf["Distribution"][:-1])
-# else:
-#     gDistribution   = int(gConf["Distribution"][:-1])
 
 
 gWithPartnerList = getListOfOrigGroups()
 printv("gWithPartnerList:", gWithPartnerList)
 
 
-#
-# LETS DO IT
-#
+# ########## #
+# LETS DO IT #
+# ########## #
 
+# To avoid total random, we admit setting a specific seed
 if gArgs["setRandomSeed"] != -1:
     seed(int(gArgs["setRandomSeed"]))
 
@@ -966,31 +944,20 @@ gWorld, gStatsAnt, gStatsPost = newWorld()
 if "egoism" in gArgs:
     calcEgoism()
 
-doInitialSpreading() # pprint(gWorld)
-
-
+doInitialSpreading()
 
 if gArgs["saveExcel"]:
     workbook, worksheet = initExcel()
 
-set_printoptions(formatter={'int': '{: 7d}'.format})
 for genNumber in range(1, gArgs["numGen"]+1):
-
-    doDistribute()             # ; pprint(gWorld)
-    #print("%3d: %s Tot Spread:   %d" % (genNumber, gWorld[:,:,0].sum(axis=1),  gWorld[:,:,0].sum(axis=1).sum()))
-    doGrouping()                # ; pprint(gWorld)
+    doDistribute()
+    doGrouping()
     print("%3d: %s Tot Grouping: %d" % (genNumber, gWorld[:,:,0].sum(axis=1),  gWorld[:,:,0].sum(axis=1).sum()))
-    doAssociation()             # ; pprint(gWorld)
-    #print("%3d: %s Tot Associac: %d" % (genNumber, gWorld[:,:,0].sum(axis=1),  gWorld[:,:,0].sum(axis=1).sum()))
-
-    doConsumeAndOffspring()     # ; pprint(gWorld)
-    #print("%3d: %s Tot Consume:  %d" % (genNumber, gWorld[:,:,0].sum(axis=1),  gWorld[:,:,0].sum(axis=1).sum()))
+    doAssociation()
+    doConsumeAndOffspring()
     doUngroup()
-    #print("%3d: %s Tot Ungroup:  %d" % (genNumber, gWorld[:,:,0].sum(axis=1),  gWorld[:,:,0].sum(axis=1).sum()))
     if gArgs["saveExcel"]:
         saveExcel(worksheet, genNumber)
-    #print("%3d: %s Tot: %d" % (genNumber, gWorld[:,:,0].sum(axis=1),  gWorld[:,:,0].sum(axis=1).sum()))
-
 
 saveConf()
 
