@@ -4,7 +4,7 @@
 # Carlos Villagrasa, Javier Falgueras
 # juanfc 2019-02-16
 
-__version__ = 0.059 # 2019-05-29
+__version__ = 0.060 # 2019-05-29
 
 import os
 import sys
@@ -96,18 +96,20 @@ def doInitialSpreading():
                 gWorld[iSpecies, iCell, 0] += 1
 
 def doDistribute():
-    """Spread each each species in each cell"""
-    # We suppose here we have only INDIVIDUALs (form index 0)
-    global gDistribution
-    totalOfEachSpecies = gWorld[:,:,INDIVIDUAL].sum(axis=1)
+    """Distribute each each species in cells
+    We suppose here we have only INDIVIDUALs (form index 0)
+    There are two ways of distribution:
+        - NEIGHBOURS_DISTRIBUTION
+        - RANDOM_GLOBAL_AVG
+    Each species (iSpecies) can have either of them
+    """
 
     for iSpecies in range(gNumberOfSpecies):
         distType, distVal = getDist(iSpecies)
 
-        tempDist = zeros((gNumberOfCells), dtype=int)
         #             NEIGHBOURS_DISTRIBUTION
         if distType == NEIGHBOURS_DISTRIBUTION:
-
+            tempDist = zeros((gNumberOfCells), dtype=int)
             distLen = int(gNumberOfCells*distVal/100/2)
             for iCell in range(gNumberOfCells):
                 nitems = gWorld[iSpecies, iCell, INDIVIDUAL]
@@ -120,18 +122,21 @@ def doDistribute():
                     if p >= gNumberOfCells:
                         p %= gNumberOfCells
                     tempDist[p] += 1
-            gWorld[iSpecies,:,INDIVIDUAL] = tempDist
+            gWorld[iSpecies, :,INDIVIDUAL] = tempDist
 
 
         else:       # RANDOM_GLOBAL_AVG: x_a (1-\sigma) + xm \sigma
             sigma = distVal/100
-            nitems = gWorld[:,:,INDIVIDUAL].sum(axis=1)
+            nitems = gWorld[iSpecies,:,INDIVIDUAL].sum()
             average = nitems / gNumberOfCells
-            average  = repeat(average, gNumberOfCells).reshape((gNumberOfSpecies,gNumberOfCells))
-            wildDist = vRandomDist(nitems)
+            average  = repeat(average, gNumberOfCells)
+            wildDist = randomDist(nitems)
+            # by Javi :)
             wildDist = around(wildDist * (1-sigma) + sigma * average).astype(int)
-            wildDist[:,0] -= wildDist.sum(axis=1) - nitems
-            gWorld[:, :, INDIVIDUAL] = wildDist
+            # compensate rounding simply adding the difference
+            # to the first cell
+            wildDist[0] -= wildDist.sum() - nitems
+            gWorld[iSpecies, :, INDIVIDUAL] = wildDist
 
 
 def doGrouping():
