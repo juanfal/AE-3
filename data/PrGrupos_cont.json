@@ -1,6 +1,6 @@
 {
-    "LambdaForEgoism": 0.0,
     "Distribution": "100r",
+    "LambdaForEgoism": 0.0,
     "MultilevelDeath1Percent": 0.0,
     "NumberOfCells": 1,
     "NumberOfRsrcsInEachCell": 100000,
@@ -8,6 +8,7 @@
         {
             "AssociatedSpecies": "",
             "DirectOffspring": 0,
+            "Distribution": "0r",
             "GroupPartner": "B",
             "IndirectOffspring": 0,
             "NumberOfItems": 100,
@@ -28,6 +29,7 @@
         {
             "AssociatedSpecies": "",
             "DirectOffspring": 20,
+            "Distribution": "33n",
             "GroupPartner": "",
             "IndirectOffspring": 0,
             "NumberOfItems": 0,

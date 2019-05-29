@@ -4,7 +4,7 @@
 # Carlos Villagrasa, Javier Falgueras
 # juanfc 2019-02-16
 
-__version__ = 0.061 # 2019-05-29
+__version__ = 0.062 # 2019-05-29
 
 import os
 import sys
@@ -71,9 +71,8 @@ def randomDist(nitems):
     return concatenate((r,[nitems])) - concatenate(([0],r))
 
 def doInitialSpreading():
-    """In fact this is unneccesary as first step in the generation process
-                will do it (again)"""
-    # distribute all equally
+    """In fact this is unnecessary as first step in the generation process
+    will do it (again) distribute all equally"""
     for iSpecies in range(gNumberOfSpecies):
         n = gConf["species"][iSpecies]["NumberOfItems"]
         meanPerCell = n // gNumberOfCells
@@ -528,17 +527,17 @@ def ranking(l, value):
     return 1+where(rank==value)[0][0]
 
 def initExcel():
-    global gExcelCellHeader, gExcelCellID, gThedatetime
+    global gExcelCellHeader, gExcelCellID, gThedatetime, gExcelWorkbook, gExcelWorksheet
     gThedatetime = datetime.now().strftime("%Y%m%d-%H%M%S")
     excelOut = os.path.join("results", gInitConfFile + '_' + gThedatetime + ".xlsx")
 
-    workbook = xlsxwriter.Workbook(excelOut)
-    worksheet = workbook.add_worksheet()
-    gExcelCellHeader = workbook.add_format({
+    gExcelWorkbook = xlsxwriter.Workbook(excelOut)
+    gExcelWorksheet = gExcelWorkbook.add_worksheet()
+    gExcelCellHeader = gExcelWorkbook.add_format({
                                            'align':'center', 'bg_color': '#CCCCFF', 'bold': True})
-    gExcelCellID = workbook.add_format({'align':'center', 'bg_color': '#33FF99', 'bold': True})
+    gExcelCellID = gExcelWorkbook.add_format({'align':'center', 'bg_color': '#33FF99', 'bold': True})
 
-    workbook.set_properties({
+    gExcelWorkbook.set_properties({
         'title':    'Evolutionary Automata',
         'subject':  gInitConfFile + '_' + gThedatetime,
         'author':   'Javier Falgueras, Juan Falgueras, Santiago Elena',
@@ -547,36 +546,45 @@ def initExcel():
         'category': 'Research Thesis',
         'keywords': 'Evolution Automatata',
         'comments': " ".join(sys.argv)})
-    return workbook, worksheet
 
-def saveExcel(sh, numGen):
+def saveExcel(numGen):
     """Saving in Excel"""
     # id, NumberOfItems, DirectOffspring, IndirectOffspring,
     # AssociatedSpecies, StandardDeviation, INDIVIDUAL, ACTOR, RECIPIENT,
     # RECIPROCAL
+    if 'gExcelCellHeader' not in globals():
+        initExcel()
     txtOutName = os.path.join("results", gInitConfFile + '_' + gThedatetime + ".txt")
     txtOut = open(txtOutName, "a")
-    globalsW = 3
+
+    globalsHeader =  ["NCel", "RsCel", "Dst"]
+    iSpecHeader =  ["ID", "dst", "D", "I", ">", "σ", "Gr", "Ph", "IND", "2", "ACT", "2", "RNT", "2", "RCL", "2"]
+    globalsHeaderLen = len(globalsHeader)
+    iSpecHeaderLen = len(iSpecHeader)
+
     if numGen == 1:
-        globalsHeader =  ["NCel", "RsCel", "Dist"]
-        sh.write_row(0,0, globalsHeader, gExcelCellHeader)
-    sh.write_row(numGen,0, [gConf["NumberOfCells"], gConf["NumberOfRsrcsInEachCell"], gConf["Distribution"]])
+        gExcelWorksheet.write_row(0,0, globalsHeader, gExcelCellHeader)
+    gExcelWorksheet.write_row(numGen,0, [gConf["NumberOfCells"], gConf["NumberOfRsrcsInEachCell"], gConf["Distribution"]])
     print(gConf["NumberOfCells"], "\t", gConf["NumberOfRsrcsInEachCell"],"\t", gConf["Distribution"], "\t", file=txtOut, end="")
 
 
-    totNumCol = 15
     if numGen == 1:
-        header =  ["ID", "D", "I", ">", "σ", "Gr", "Ph", "IND", "2", "ACT", "2", "RNT", "2", "RCL", "2"]
         for iSpecies in range(gNumberOfSpecies):
-            sh.write_row(0,globalsW+iSpecies*totNumCol, header, gExcelCellHeader)
+            gExcelWorksheet.write_row(0,globalsHeaderLen+iSpecies*iSpecHeaderLen, iSpecHeader, gExcelCellHeader)
 
 
     for iSpecies in range(gNumberOfSpecies):
-        sh.write(numGen, globalsW+iSpecies*totNumCol,
+        gExcelWorksheet.write(numGen, globalsHeaderLen+iSpecies*iSpecHeaderLen,
                  gConf["species"][iSpecies]["id"], gExcelCellID)
         print(gConf["species"][iSpecies]["id"] + "\t", file=txtOut, end="")
 
+        if "Distribution" in gConf["species"][iSpecies]:
+            speciesDist = gConf["species"][iSpecies]["Distribution"]
+        else:
+            speciesDist = ""
+
         toWrite =[
+             speciesDist,
              gConf["species"][iSpecies]["DirectOffspring"],
              gConf["species"][iSpecies]["IndirectOffspring"],
              gConf["species"][iSpecies]["AssociatedSpecies"],
@@ -592,15 +600,15 @@ def saveExcel(sh, numGen):
              gStatsAnt[ iSpecies,RECIPROCAL],
              gStatsPost[iSpecies,RECIPROCAL]
             ]
-        sh.write_row(numGen, globalsW+iSpecies*totNumCol+1, toWrite)
+        gExcelWorksheet.write_row(numGen, globalsHeaderLen+iSpecies*iSpecHeaderLen+1, toWrite)
         print("\t".join(map(str,toWrite)), file=txtOut, end="")
         if iSpecies < gNumberOfSpecies-1:
             print("\t", file=txtOut, end="")
 
         if numGen == 1:
-            ori = iSpecies*totNumCol + 1 + globalsW
-            end = ori + totNumCol - 2
-            worksheet.set_column(ori, end, None, None, {'level': 1, 'hidden': True})
+            ori = iSpecies*iSpecHeaderLen + 1 + globalsHeaderLen
+            end = ori + iSpecHeaderLen - 2
+            gExcelWorksheet.set_column(ori, end, None, None, {'level': 1, 'hidden': True})
 
     print(file=txtOut)
 
@@ -636,11 +644,19 @@ def checkConf(conf):
     if not items.issubset(conf.keys()):
         problems += "Some essential item(s) is not defined\n\t Check the next items are all there:\n\t%s\n" % str(list(items))
 
+    # Check values for Distribution, if there
+    print(conf["Distribution"][-1])
+    if "Distribution" in conf and conf["Distribution"][-1] not in "rn":
+        problems += "Distribution global value must end either in r or n"
+
     previousIds = set([])
     longListSpecies = len(conf["species"])
     if type(conf["species"]) != list or longListSpecies == 0:
         problems += "Species must be a list with species inside\n"
     for i in range(longListSpecies):
+        if "Distribution" in conf["species"][i] and conf["species"][i]["Distribution"][-1] not in "rn":
+            problems += "Distribution for species %d must end either in r or n" % (i,)
+
         theId = conf["species"][i]["id"]
         partnerId = conf["species"][i]["GroupPartner"]
         if theId in previousIds:
@@ -742,7 +758,7 @@ def getCommandLineArgs():
     theArgParser.add_argument(
         "--saveExcel", help=textwrap.dedent("""\
         Save stats in 'Excel' file and in a txt file.
-        See Excel header for meaning of txt columns"""),
+        See Excel iSpecHeader for meaning of txt columns"""),
         action='store_true')
 
     theArgParser.add_argument(
@@ -767,7 +783,7 @@ def getCommandLineArgs():
     theArgParser.add_argument(
         "--Distribution", type=str,
         metavar="'str'",
-        default="100r",
+        default=argparse.SUPPRESS,
         help=textwrap.dedent("""\
         It allows specify the desired type of distribution between:
           a) RANDOM_GLOBAL_AVG           from 0r to 100r (with suffix r)
@@ -877,8 +893,13 @@ def replaceArgsInConf(conf, args):
                 indxsRead = True
                 k, val=arg.split('=')
                 for n in ns:
-                    t = type(conf["species"][n][k])
-                    conf["species"][n][k] = t(val)
+                    if k in conf["species"][n]:
+                        # if it was an existing key, adapt
+                        t = type(conf["species"][n][k])
+                        conf["species"][n][k] = t(val)
+                    else:
+                        # if not, create
+                        conf["species"][n][k] = val
 
     # substitute init file conf specific parameters
     # provided through the args in the command line
@@ -946,9 +967,6 @@ if "egoism" in gArgs:
 
 doInitialSpreading()
 
-if gArgs["saveExcel"]:
-    workbook, worksheet = initExcel()
-
 for genNumber in range(1, gArgs["numGen"]+1):
     doDistribute()
     doGrouping()
@@ -957,10 +975,10 @@ for genNumber in range(1, gArgs["numGen"]+1):
     doConsumeAndOffspring()
     doUngroup()
     if gArgs["saveExcel"]:
-        saveExcel(worksheet, genNumber)
+        saveExcel(genNumber)
 
 saveConf()
 
 if gArgs["saveExcel"]:
-    workbook.close()
+    gExcelWorkbook.close()
 

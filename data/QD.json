@@ -3,7 +3,7 @@
     "NumberOfRsrcsInEachCell": 500,
     "MultilevelDeath1Percent": 0.00,
     "LambdaForEgoism": 0.0,
-    "Distribution": "5",
+    "Distribution": "5r",
     "species": [
         {
         "id": "ACM",

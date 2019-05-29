@@ -1,5 +1,5 @@
 {
-    "Distribution": "1",
+    "Distribution": "100r",
     "LambdaForEgoism": 0.0,
     "MultilevelDeath1Percent": 0.0,
     "NumberOfCells": 100,
@@ -8,6 +8,7 @@
         {
             "AssociatedSpecies": "",
             "DirectOffspring": 4,
+            "Distribution": "20n",
             "GroupPartner": "",
             "IndirectOffspring": 0,
             "NumberOfItems": 100,

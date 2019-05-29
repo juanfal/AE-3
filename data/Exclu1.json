@@ -3,13 +3,13 @@
     "NumberOfRsrcsInEachCell": 1000,
     "MultilevelDeath1Percent": 0.00,
     "LambdaForEgoism": 0.0,
-    "Distribution": "2",
+    "Distribution": "2r",
     "species": [
         {
         "id": "Saccharomyces cerevisiae",
         "NumberOfItems": 100,
         "DirectOffspring": 4,
-
+        "Distribution": "20n",
         "GroupPartner":   "",
         "PhenotypicFlexibility": 0.0,
 

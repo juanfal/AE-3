@@ -3,12 +3,13 @@
     "NumberOfRsrcsInEachCell": 100,
     "MultilevelDeath1Percent": 0.05,
     "LambdaForEgoism": 0.0,
-    "Distribution": "100r",
+    "Distribution": "33r",
     "species": [
         {
         "id": "A",
         "NumberOfItems": 100,
         "DirectOffspring": 5,
+        "Distribution": "69",
 
         "GroupPartner":   "A",
         "PhenotypicFlexibility": 0.5,
