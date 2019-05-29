@@ -4,7 +4,7 @@
 # Carlos Villagrasa, Javier Falgueras
 # juanfc 2019-02-16
 
-__version__ = 0.062 # 2019-05-29
+__version__ = 0.064 # 2019-05-30
 
 import os
 import sys
@@ -42,6 +42,9 @@ NUMBER_OF_FORMS = 4
 NEIGHBOURS_DISTRIBUTION = 0 # randomly distribute among neighbours around
 RANDOM_GLOBAL_AVG       = 1 # random change around global average
 
+# extension for (re)new conf output files
+CONT_FILE_NAME_SUFIX    = "_cont"
+
 # ############################################################################# #
 #                                MAIN SUBPROGRAMS                               #
 # ############################################################################# #
@@ -70,17 +73,23 @@ def randomDist(nitems):
     r = sort(randint(0, nitems+1, gNumberOfCells-1))
     return concatenate((r,[nitems])) - concatenate(([0],r))
 
-def doInitialSpreading():
+def doInitialDistribution():
     """In fact this is unnecessary as first step in the generation process
     will do it (again) distribute all equally"""
-    for iSpecies in range(gNumberOfSpecies):
-        n = gConf["species"][iSpecies]["NumberOfItems"]
-        meanPerCell = n // gNumberOfCells
-        remainder   = n %  gNumberOfCells
-        gWorld[iSpecies, :, 0] = [meanPerCell for _ in range(gNumberOfCells)]
-        # the excess of items are equally given out to the first cells
-        for iCell in range(remainder):
-            gWorld[iSpecies, iCell, 0] += 1
+    # TODO:
+    # read initFile.world if exists
+    # else:
+    if os.path.isfile(gWorldCompFileName):
+        gWorld[:,:,0] = [list(map(int, line.split())) for line in open(gWorldCompFileName)]
+    else:
+        for iSpecies in range(gNumberOfSpecies):
+            n = gConf["species"][iSpecies]["NumberOfItems"]
+            meanPerCell = n // gNumberOfCells
+            remainder   = n %  gNumberOfCells
+            gWorld[iSpecies, :, 0] = [meanPerCell for _ in range(gNumberOfCells)]
+            # the excess of items are equally given out to the first cells
+            for iCell in range(remainder):
+                gWorld[iSpecies, iCell, 0] += 1
 
 def doDistribute():
     """Distribute each each species in cells
@@ -102,7 +111,7 @@ def doDistribute():
                 nitems = gWorld[iSpecies, iCell, INDIVIDUAL]
                 # TODO: if the number of items nitems
                 # is large, we could consider directly writing the
-                # average on each cell around
+                # average on each cell
                 for _ in range(nitems):
                     dist = randint(-distLen, distLen+1)
                     p = iCell+dist
@@ -116,13 +125,22 @@ def doDistribute():
             sigma = distVal/100
             nitems = gWorld[iSpecies,:,INDIVIDUAL].sum()
             average = nitems / gNumberOfCells
-            average  = repeat(average, gNumberOfCells)
             wildDist = randomDist(nitems)
             # by Javi :)
             wildDist = around(wildDist * (1-sigma) + sigma * average).astype(int)
             # compensate rounding simply adding the difference
             # to the first cell
-            wildDist[0] += nitems - wildDist.sum()
+            dif = nitems - wildDist.sum()
+            i = 0
+            while dif != 0:
+                if wildDist[i] + dif >= 0:
+                    wildDist[i] += dif
+                    dif = 0
+                else:
+                    dif += wildDist[i]
+                    wildDist[i] = 0
+                i += 1
+
             gWorld[iSpecies, :, INDIVIDUAL] = wildDist
 
 def doGrouping():
@@ -614,17 +632,25 @@ def saveExcel(numGen):
 
 def saveConf():
     """Save conf in a new _cont.json file
-    if not there, or rewrite previous _cont.json file if was the initial conf loaded"""
+    if not there, or rewrite previous _cont.json file if was the initial conf loaded
+    Added: save corresponding final gWorld state"""
 
     # gThedatetime = datetime.now().strftime("%Y%m%d-%H%M%S.%f")
-    newConfFile = gInitConfFile
-    if not newConfFile.endswith(gContExt):
-        newConfFile += gContExt
-    newConfFile = os.path.join("data", newConfFile + ".json")
-    # print("(Re)writing", newConfFile)
-    with open(newConfFile, 'w') as outfile:
+
+
+    # save the conf, but ala!, the number of items is totally different
+    for iSpecies in range(gNumberOfSpecies):
+        gConf["species"][iSpecies]["NumberOfItems"] = int(gWorld[iSpecies,:,INDIVIDUAL].sum())
+    with open(gNewConfCompFileName, 'w') as outfile:
         json.dump(gConf, outfile, sort_keys = True, indent = 4,
                    ensure_ascii = False)
+    # save the matrix of cells state for possible re-reading
+    with open(gNewWorldCompFileName, 'w') as outfile:
+        for iSpecies in range(gNumberOfSpecies):
+            print("\t".join(map(str, gWorld[iSpecies, :, INDIVIDUAL])), file=outfile)
+
+    # TODO:
+    # write initFile_cont.world (_cont?)
 
 def checkConf(conf):
     """Verifies conf returning inconsistencies or an empty string"""
@@ -683,6 +709,10 @@ def checkConf(conf):
         print("ERROR. The configuration file '%s' has inconsistencies:\n\n%s" % (gInitConfFile, problems))
         sys.exit(1)
 
+def completeDataFileNames(fromfilename):
+    conf = os.path.join("data", fromfilename + ".json")
+    world = os.path.join("data", fromfilename + ".world")
+    return conf, world
 
 def printv(*args, **kwargs):
     if gArgs["verbose"]:
@@ -926,7 +956,14 @@ def replaceArgsInConf(conf, args):
 #
 gArgs = getCommandLineArgs()
 gInitConfFile = gArgs["initFile"]  # base file name
-gInitConfCompName = os.path.join("data", gInitConfFile + ".json")
+gInitConfCompName, gWorldCompFileName = completeDataFileNames(gInitConfFile)
+
+if gInitConfFile.endswith(CONT_FILE_NAME_SUFIX):
+    outFileNameBase = gInitConfFile
+else:
+    outFileNameBase = gInitConfFile + CONT_FILE_NAME_SUFIX
+
+gNewConfCompFileName, gNewWorldCompFileName = completeDataFileNames(outFileNameBase)
 printv(gArgs)
 
 gConf = replaceArgsInConf(readInitConfFile(gInitConfCompName), gArgs)
@@ -943,7 +980,6 @@ gNumberOfCells   = gConf["NumberOfCells"]
 
 gEgoism          = []
 gExcelSaved      = []
-gContExt         = "_cont"
 gListOfAssociationActors = [] # list of species starting association
 gListOfAssociationActors = collectAssociationActors() # list of species starting association
 
@@ -965,15 +1001,16 @@ gWorld, gStatsAnt, gStatsPost = newWorld()
 if "egoism" in gArgs:
     calcEgoism()
 
-doInitialSpreading()
+doInitialDistribution()
 
 for genNumber in range(1, gArgs["numGen"]+1):
-    doDistribute()
     doGrouping()
     print("%3d: %s Tot Grouping: %d" % (genNumber, gWorld[:,:,0].sum(axis=1),  gWorld[:,:,0].sum(axis=1).sum()))
     doAssociation()
     doConsumeAndOffspring()
     doUngroup()
+    doDistribute()
+
     if gArgs["saveExcel"]:
         saveExcel(genNumber)
 

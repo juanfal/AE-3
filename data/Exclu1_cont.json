@@ -8,10 +8,9 @@
         {
             "AssociatedSpecies": "",
             "DirectOffspring": 4,
-            "Distribution": "20n",
             "GroupPartner": "",
             "IndirectOffspring": 0,
-            "NumberOfItems": 100,
+            "NumberOfItems": 100000,
             "PhenotypicFlexibility": 0.0,
             "StandardDeviation": 0.0,
             "id": "Saccharomyces cerevisiae"
@@ -21,7 +20,7 @@
             "DirectOffspring": 3,
             "GroupPartner": "",
             "IndirectOffspring": 0,
-            "NumberOfItems": 100,
+            "NumberOfItems": 0,
             "PhenotypicFlexibility": 0.0,
             "StandardDeviation": 0.0,
             "id": "Schizosaccharomyces kefir"
