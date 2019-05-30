@@ -4,7 +4,7 @@
 # Carlos Villagrasa, Javier Falgueras
 # juanfc 2019-02-16
 
-__version__ = 0.064 # 2019-05-30
+__version__ = 0.065 # 2019-05-30
 
 import os
 import sys
@@ -74,14 +74,17 @@ def randomDist(nitems):
     return concatenate((r,[nitems])) - concatenate(([0],r))
 
 def doInitialDistribution():
-    """In fact this is unnecessary as first step in the generation process
-    will do it (again) distribute all equally"""
-    # TODO:
-    # read initFile.world if exists
-    # else:
+    """NOT anymore: In fact this is unnecessary as first step in the generation process
+    will do it (again) distribute all equally
+    doDistribute() left for the end of generations loop"""
+
+    # If a world file is there, take it!
     if os.path.isfile(gWorldCompFileName):
         gWorld[:,:,0] = [list(map(int, line.split())) for line in open(gWorldCompFileName)]
     else:
+        # Simplest, averaged distribution
+        # TODO:
+        #   Should we call doDistribute() at the end of this?
         for iSpecies in range(gNumberOfSpecies):
             n = gConf["species"][iSpecies]["NumberOfItems"]
             meanPerCell = n // gNumberOfCells
@@ -121,13 +124,13 @@ def doDistribute():
             gWorld[iSpecies, :,INDIVIDUAL] = tempDist
 
 
-        else:       # RANDOM_GLOBAL_AVG: x_a (1-\sigma) + xm \sigma
+        else:       # RANDOM_GLOBAL_AVG: x_a \sigma + xm (1-\sigma)
             sigma = distVal/100
             nitems = gWorld[iSpecies,:,INDIVIDUAL].sum()
             average = nitems / gNumberOfCells
             wildDist = randomDist(nitems)
             # by Javi :)
-            wildDist = around(wildDist * (1-sigma) + sigma * average).astype(int)
+            wildDist = around(wildDist * sigma + (1-sigma) * average).astype(int)
             # compensate rounding simply adding the difference
             # to the first cell
             dif = nitems - wildDist.sum()
@@ -711,7 +714,7 @@ def checkConf(conf):
 
 def completeDataFileNames(fromfilename):
     conf = os.path.join("data", fromfilename + ".json")
-    world = os.path.join("data", fromfilename + ".world")
+    world = os.path.join("data", fromfilename + ".world.txt")
     return conf, world
 
 def printv(*args, **kwargs):
