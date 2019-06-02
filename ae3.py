@@ -4,7 +4,7 @@
 # Carlos Villagrasa, Javier Falgueras
 # juanfc 2019-02-16
 
-__version__ = 0.068 # 2019-06-02
+__version__ = 0.069 # 2019-06-02
 
 import os
 import sys
@@ -1157,7 +1157,8 @@ for genNumber in range(1, gArgs["numGen"]+1):
     doAssociation()
     if gConf["consume"] == "independent":
         doConsumeAndOffspringIndependent()
-    doConsumeAndOffspring()
+    else:
+        doConsumeAndOffspring()
     doUngroup()
     doDistribute()
 

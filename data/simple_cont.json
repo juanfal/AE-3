@@ -15,7 +15,7 @@
             "DirectOffspring": 3,
             "GroupPartner": "",
             "IndirectOffspring": 0,
-            "NumberOfItems": 114,
+            "NumberOfItems": 12,
             "PhenotypicFlexibility": 0.0,
             "StandardDeviation": 0.0,
             "id": "A"
@@ -25,7 +25,7 @@
             "DirectOffspring": 3,
             "GroupPartner": "",
             "IndirectOffspring": 4,
-            "NumberOfItems": 0,
+            "NumberOfItems": 21,
             "PhenotypicFlexibility": 0.0,
             "StandardDeviation": 0.0,
             "id": "B"
@@ -35,7 +35,7 @@
             "DirectOffspring": 3,
             "GroupPartner": "",
             "IndirectOffspring": 0,
-            "NumberOfItems": 84,
+            "NumberOfItems": 29091,
             "PhenotypicFlexibility": 0.0,
             "StandardDeviation": 0.0,
             "id": "C"
@@ -45,7 +45,7 @@
             "DirectOffspring": 3,
             "GroupPartner": "",
             "IndirectOffspring": 0,
-            "NumberOfItems": 0,
+            "NumberOfItems": 5825,
             "PhenotypicFlexibility": 0.0,
             "StandardDeviation": 0.0,
             "id": "A|C"
@@ -55,7 +55,7 @@
             "DirectOffspring": 3,
             "GroupPartner": "",
             "IndirectOffspring": 0,
-            "NumberOfItems": 0,
+            "NumberOfItems": 6080,
             "PhenotypicFlexibility": 0.0,
             "StandardDeviation": 0.0,
             "id": "B|C"
