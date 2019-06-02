@@ -1,13 +1,13 @@
 {
-    "NumberOfCells": 100,
-    "NumberOfRsrcsInEachCell": 500,
+    "NumberOfCells": 1,
+    "NumberOfRsrcsInEachCell": 50,
     "MultilevelDeath1Percent": 0.00,
     "LambdaForEgoism": 0.0,
-    "Distribution": "5r",
+    "Distribution": "100n",
     "species": [
         {
         "id": "ACM",
-        "NumberOfItems": 500,
+        "NumberOfItems": 100,
         "DirectOffspring": 3,
 
         "GroupPartner":   "",
@@ -19,7 +19,7 @@
         },
         {
         "id": "Rec1",
-        "NumberOfItems": 250,
+        "NumberOfItems": 100,
         "DirectOffspring": 3,
 
         "GroupPartner":   "",
@@ -31,7 +31,7 @@
         },
         {
         "id": "Rec2",
-        "NumberOfItems": 250,
+        "NumberOfItems": 100,
         "DirectOffspring": 3,
 
         "GroupPartner":   "",
