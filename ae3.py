@@ -146,7 +146,7 @@ def doDistribute():
                 i += 1
 
             gWorld[iSpecies, :, INDIVIDUAL] = wildDist
-    gStdDevDistr = std(gWorld[:,:,INDIVIDUAL], axis=1)
+    gStdDevDistr = around(std(gWorld[:,:,INDIVIDUAL], axis=1), decimals=1)
 
 def doGrouping():
     """Form the groups following the group partner"""
@@ -711,7 +711,7 @@ def saveExcel(numGen):
     txtOut = open(txtOutName, "a")
 
     globalsHeader =  ["NCel", "RsCel", "Dst"]
-    iSpecHeader =  ["ID", "dst", "D", "I", ">", "σ", "Gr", "Ph", "SD", "IND", "2", "ACT", "2", "RNT", "2", "RCL", "2"]
+    iSpecHeader =  ["ID", "dst", "D", "I", ">", "σ", "Gr", "Ph", "Drσ", "IND", "2", "ACT", "2", "RNT", "2", "RCL", "2"]
     globalsHeaderLen = len(globalsHeader)
     iSpecHeaderLen = len(iSpecHeader)
 
