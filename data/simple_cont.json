@@ -6,59 +6,19 @@
     "NumberOfRsrcsInEachCell": 100,
     "consume": "independent",
     "initFile": "simple",
-    "numGen": 300,
+    "numGen": 100,
     "saveExcel": false,
     "setRandomSeed": -1,
     "species": [
         {
-            "AssociatedSpecies": "C",
+            "AssociatedSpecies": "",
             "DirectOffspring": 3,
             "GroupPartner": "",
             "IndirectOffspring": 0,
-            "NumberOfItems": 12,
+            "NumberOfItems": 198,
             "PhenotypicFlexibility": 0.0,
             "StandardDeviation": 0.0,
             "id": "A"
-        },
-        {
-            "AssociatedSpecies": "C",
-            "DirectOffspring": 3,
-            "GroupPartner": "",
-            "IndirectOffspring": 4,
-            "NumberOfItems": 21,
-            "PhenotypicFlexibility": 0.0,
-            "StandardDeviation": 0.0,
-            "id": "B"
-        },
-        {
-            "AssociatedSpecies": "",
-            "DirectOffspring": 3,
-            "GroupPartner": "",
-            "IndirectOffspring": 0,
-            "NumberOfItems": 29091,
-            "PhenotypicFlexibility": 0.0,
-            "StandardDeviation": 0.0,
-            "id": "C"
-        },
-        {
-            "AssociatedSpecies": "",
-            "DirectOffspring": 3,
-            "GroupPartner": "",
-            "IndirectOffspring": 0,
-            "NumberOfItems": 5825,
-            "PhenotypicFlexibility": 0.0,
-            "StandardDeviation": 0.0,
-            "id": "A|C"
-        },
-        {
-            "AssociatedSpecies": "",
-            "DirectOffspring": 3,
-            "GroupPartner": "",
-            "IndirectOffspring": 0,
-            "NumberOfItems": 6080,
-            "PhenotypicFlexibility": 0.0,
-            "StandardDeviation": 0.0,
-            "id": "B|C"
         }
     ],
     "varia": false,

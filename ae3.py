@@ -4,7 +4,7 @@
 # Carlos Villagrasa, Javier Falgueras
 # juanfc 2019-02-16
 
-__version__ = 0.069 # 2019-06-02
+__version__ = 0.071 # 2019-06-04
 
 import os
 import sys
@@ -103,6 +103,7 @@ def doDistribute():
     Each species (iSpecies) can have either of them
     """
 
+    global gStdDevDistr
     for iSpecies in range(gNumberOfSpecies):
         distType, distVal = getDist(iSpecies)
 
@@ -145,6 +146,7 @@ def doDistribute():
                 i += 1
 
             gWorld[iSpecies, :, INDIVIDUAL] = wildDist
+    gStdDevDistr = std(gWorld[:,:,INDIVIDUAL], axis=1)
 
 def doGrouping():
     """Form the groups following the group partner"""
@@ -401,12 +403,13 @@ def doConsumeAndOffspringIndependent():
     if gArgs["varia"]:
         newDirFit  = zeros((gNumberOfSpecies), dtype=[("sum", "int"), ("N", "int")])
     gStatsPost.fill(0)
+
     for iCell in range(gNumberOfCells):
         """Enqueue, consume resources and have offspring"""
 
         # ENQUEUEING
         nTotalInCell = gWorld[:,iCell,:].sum()   # size of the queue, larger than necessary
-        # some forms wont enqueue
+        # all forms enqueue
         queue = zeros((nTotalInCell), dtype=[("iSp", "int"), ("iForm", "int")])
         iQueueTop = 0
         for iSpecies in range(gNumberOfSpecies):
@@ -414,9 +417,12 @@ def doConsumeAndOffspringIndependent():
                 n = gWorld[iSpecies, iCell, iForm]
                 queue[iQueueTop:iQueueTop+n] = n * [(iSpecies, iForm)]
                 iQueueTop += n
+                gWorld[iSpecies, iCell, iForm] = 0
 
         # print(queue)
         shuffle(queue)
+
+
 
         # Lets go eating and have offspring:
         #   - Considers the gaussian phenotypic variability
@@ -428,15 +434,14 @@ def doConsumeAndOffspringIndependent():
             iForm = queue[i]["iForm"]
 
             dirFit   = gConf["species"][iSpecies]["DirectOffspring"]
-            indirFit = gConf["species"][iSpecies]["IndirectOffspring"]
-            stdDev   = gConf["species"][iSpecies]["StandardDeviation"]
 
             if gArgs["varia"]:
+                stdDev   = gConf["species"][iSpecies]["StandardDeviation"]
                 dirFit, indirFit = gauss(dirFit, indirFit, stdDev)
                 newDirFit[iSpecies]["sum"] += dirFit * dirFit
                 newDirFit[iSpecies]["N"] += dirFit
 
-            toEat = 0.0
+            toEat = 0
             if iForm == INDIVIDUAL or iForm == RECIPIENT:
                 toEat = dirFit
                 if rsrc >= toEat:
@@ -444,12 +449,13 @@ def doConsumeAndOffspringIndependent():
                     gStatsPost[iSpecies, iForm] += 1
             else:
                 # The others (ACTOR, and RECIPROCAL) have to give IndirectOffspring
-                iAssoc = iAssociatedTarget(iSpecies)
+                indirFit = gConf["species"][iSpecies]["IndirectOffspring"]
                 toEat = dirFit + abs(indirFit)
                 if rsrc >= toEat:
                     gWorld[iSpecies, iCell, INDIVIDUAL] += dirFit
+                    iAssoc = iAssociatedTarget(iSpecies)
                     gWorld[iAssoc, iCell, INDIVIDUAL] += indirFit
-                    gStatsPost[iSpecies,iForm] += 1
+                    gStatsPost[iSpecies, iForm] += 1
 
             rsrc -= toEat
             i += 1
@@ -705,7 +711,7 @@ def saveExcel(numGen):
     txtOut = open(txtOutName, "a")
 
     globalsHeader =  ["NCel", "RsCel", "Dst"]
-    iSpecHeader =  ["ID", "dst", "D", "I", ">", "σ", "Gr", "Ph", "IND", "2", "ACT", "2", "RNT", "2", "RCL", "2"]
+    iSpecHeader =  ["ID", "dst", "D", "I", ">", "σ", "Gr", "Ph", "SD", "IND", "2", "ACT", "2", "RNT", "2", "RCL", "2"]
     globalsHeaderLen = len(globalsHeader)
     iSpecHeaderLen = len(iSpecHeader)
 
@@ -738,6 +744,7 @@ def saveExcel(numGen):
              gConf["species"][iSpecies]["StandardDeviation"],
              gConf["species"][iSpecies]["GroupPartner"],
              gConf["species"][iSpecies]["PhenotypicFlexibility"],
+             gStdDevDistr[iSpecies],
              gStatsAnt[ iSpecies,INDIVIDUAL],
              gStatsPost[iSpecies,INDIVIDUAL],
              gStatsAnt[ iSpecies,ACTOR],

@@ -1,16 +1,21 @@
 {
-    "Distribution": "0r",
+    "Distribution": "10r",
     "LambdaForEgoism": 0.0,
     "MultilevelDeath1Percent": 0.0,
-    "NumberOfCells": 30,
+    "NumberOfCells": 100,
     "NumberOfRsrcsInEachCell": 1000,
+    "consume": "independent",
+    "initFile": "Exclu1_cont",
+    "numGen": 10,
+    "saveExcel": true,
+    "setRandomSeed": -1,
     "species": [
         {
             "AssociatedSpecies": "",
             "DirectOffspring": 4,
             "GroupPartner": "",
             "IndirectOffspring": 0,
-            "NumberOfItems": 30000,
+            "NumberOfItems": 100000,
             "PhenotypicFlexibility": 0.0,
             "StandardDeviation": 0.0,
             "id": "Saccharomyces cerevisiae"
@@ -25,5 +30,7 @@
             "StandardDeviation": 0.0,
             "id": "Schizosaccharomyces kefir"
         }
-    ]
+    ],
+    "varia": false,
+    "verbose": false
 }

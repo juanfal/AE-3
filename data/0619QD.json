@@ -1,6 +1,6 @@
 {
-    "NumberOfCells": 1,
-    "NumberOfRsrcsInEachCell": 50,
+    "NumberOfCells": 100,
+    "NumberOfRsrcsInEachCell": 1000,
     "MultilevelDeath1Percent": 0.00,
     "LambdaForEgoism": 0.0,
     "Distribution": "100n",

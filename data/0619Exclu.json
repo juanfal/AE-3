@@ -1,15 +1,15 @@
 {
-    "NumberOfCells": 100,
+    "NumberOfCells": 10,
     "NumberOfRsrcsInEachCell": 1000,
     "MultilevelDeath1Percent": 0.00,
     "LambdaForEgoism": 0.0,
-    "Distribution": "0r",
+    "Distribution": "100n",
     "species": [
         {
         "id": "A",
         "NumberOfItems": 100,
         "DirectOffspring": 3,
-        "Distribution": "50n",
+        "Distribution": "100n",
         "GroupPartner":   "",
         "PhenotypicFlexibility": 0.0,
         
@@ -21,7 +21,7 @@
         "id": "B",
         "NumberOfItems": 100,
         "DirectOffspring": 3,
-        "Distribution": "50r",
+        "Distribution": "100r",
         "GroupPartner":   "",
         "PhenotypicFlexibility": 0.0,
 
