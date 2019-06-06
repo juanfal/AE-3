@@ -4,7 +4,7 @@
 # Carlos Villagrasa, Javier Falgueras
 # juanfc 2019-02-16
 
-__version__ = 0.071 # 2019-06-04
+__version__ = 0.073 # 2019-06-06
 
 import os
 import sys
@@ -14,7 +14,7 @@ import textwrap
 from pprint import pprint
 
 from numpy import *
-from numpy.random import seed, randint, shuffle, sample, permutation, normal
+from numpy.random import seed, randint, shuffle, sample, permutation
 # format for printing numpy arrays
 set_printoptions(formatter={'int': '{: 7d}'.format})
 
@@ -311,7 +311,7 @@ def doConsumeAndOffspring():
                             gWorld[iSpecies, iCell, INDIVIDUAL] += dirFit
 
                             if gArgs["varia"]:
-                                dirFit, indirFit = gauss(dirFit, indirFit, stdDev)
+                                dirFit, indirFit = fitnessVariations(dirFit, indirFit, stdDev)
                                 newDirFit[iSpecies]["sum"] += dirFit * dirFit
                                 newDirFit[iSpecies]["N"] += dirFit
 
@@ -340,8 +340,8 @@ def doConsumeAndOffspring():
                             assocStdDev = gConf["species"][iAssoc]["StandardDeviation"]
 
                             if gArgs["varia"]:
-                                dirFit, indirFit = gauss(dirFit, indirFit, stdDev)
-                                assocDirFit, assocIndirFit = gauss(assocDirFit, assocIndirFit, assocStdDev)
+                                dirFit, indirFit = fitnessVariations(dirFit, indirFit, stdDev)
+                                assocDirFit, assocIndirFit = fitnessVariations(assocDirFit, assocIndirFit, assocStdDev)
 
                             # dir nuevo (dirFit+assocIndirFit) * dirFit
                             # n   dirFit+assocIndirFit
@@ -437,7 +437,7 @@ def doConsumeAndOffspringIndependent():
 
             if gArgs["varia"]:
                 stdDev   = gConf["species"][iSpecies]["StandardDeviation"]
-                dirFit, indirFit = gauss(dirFit, indirFit, stdDev)
+                dirFit, indirFit = fitnessVariations(dirFit, indirFit, stdDev)
                 newDirFit[iSpecies]["sum"] += dirFit * dirFit
                 newDirFit[iSpecies]["N"] += dirFit
 
@@ -660,16 +660,34 @@ def getDist(iSpecies):
         sys.exit(1)
     return distType, distVal
 
-def randomNormal(mean, stddev):
-    """Draw random samples from a normal (Gaussian) distribution, with
-    mean and standard deviation"""
-    return normal(mean, stddev)
+def fitnessVariations(direct, indirect, span):
+    tot = direct + abs(indirect)
+    directRange = list(range(tot, -1, -1)) + list(range(0, tot))
+    indireRange = list(range(0, tot + 1)) + list(range(-tot, 0, 1))
+    ranging = list(zip(directRange, indireRange))
+    currentI = ranging.index((direct, indirect))
+    lranging = len(ranging)
+    extraOver = 0
+    extraBelow = 0
+    # A
+    if 2*span >= lranging:
+        bottom = 0
+        topp = lranging
+    elif currentI + span >= lranging:
+        extraOver = currentI + span - (lranging - 1)
+        bottom = currentI - span - extraOver
+        topp = lranging
+    elif currentI - span < 0:
+        extraBelow = span - currentI
+        bottom = 0
+        topp = currentI + span + extraBelow
+    else:
+        bottom = currentI - span
+        topp = currentI + span + 1
 
-def gauss(direct, indirect, stddev):
-    inclusive = direct + indirect
-    gaussDirect = noNeg(randomNormal(direct, stddev))
-    gaussIndirect = inclusive - gaussDirect
-    return gaussDirect, gaussIndirect
+    newI = randint(bottom, topp)
+
+    return ranging[newI]
 
 def noNeg(n):
     if n < 0: n = 0
