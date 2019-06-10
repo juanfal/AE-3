@@ -12,7 +12,7 @@
             "IndirectOffspring": 0,
             "NumberOfItems": 1000,
             "PhenotypicFlexibility": 0.0,
-            "StandardDeviation": 0.0,
+            "FitnessVariationLimit": 0,
             "id": "N.sertifer"
         }
     ]

@@ -16,7 +16,7 @@
 
         "AssociatedSpecies":   "B",
         "IndirectOffspring": 2,
-        "StandardDeviation": 1
+        "FitnessVariationLimit": 1
         },
         {
         "id": "B",
@@ -28,7 +28,7 @@
 
         "AssociatedSpecies":   "B|A",
         "IndirectOffspring": 2,
-        "StandardDeviation": 1
+        "FitnessVariationLimit": 1
         },
         {
         "id": "B|A",
@@ -40,7 +40,7 @@
 
         "AssociatedSpecies":   "",
         "IndirectOffspring": 0,
-        "StandardDeviation": 1
+        "FitnessVariationLimit": 1
         },
         {
         "id": "A|A",
@@ -52,7 +52,7 @@
 
         "AssociatedSpecies":   "",
         "IndirectOffspring": 0,
-        "StandardDeviation": 1
+        "FitnessVariationLimit": 1
         },
         {
         "id": "A|A|B",
@@ -64,7 +64,7 @@
 
         "AssociatedSpecies":   "A|A|B",
         "IndirectOffspring": 2,
-        "StandardDeviation": 1
+        "FitnessVariationLimit": 1
         }
     ]
 }

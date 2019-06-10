@@ -15,7 +15,7 @@
 
         "AssociatedSpecies":   "",
         "IndirectOffspring": 0,
-        "StandardDeviation": 0.0
+        "FitnessVariationLimit": 0
         },
         {
         "id": "B",
@@ -27,7 +27,7 @@
 
         "AssociatedSpecies":   "",
         "IndirectOffspring": 0,
-        "StandardDeviation": 0.0
+        "FitnessVariationLimit": 0
         },
         {
         "id": "A|B",
@@ -39,7 +39,7 @@
 
         "AssociatedSpecies":   "",
         "IndirectOffspring": 0,
-        "StandardDeviation": 0.0
+        "FitnessVariationLimit": 0
         }
     ]
 }

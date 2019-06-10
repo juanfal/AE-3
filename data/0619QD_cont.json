@@ -1,13 +1,13 @@
 {
-    "Distribution": "5r",
+    "Distribution": "100n",
     "LambdaForEgoism": 0.0,
     "MultilevelDeath1Percent": 0.0,
     "NumberOfCells": 100,
     "NumberOfRsrcsInEachCell": 1000,
     "consume": "independent",
-    "initFile": "0619QD_cont",
-    "numGen": 100,
-    "saveExcel": false,
+    "initFile": "0619QD",
+    "numGen": 300,
+    "saveExcel": true,
     "setRandomSeed": -1,
     "species": [
         {
@@ -15,9 +15,9 @@
             "DirectOffspring": 3,
             "GroupPartner": "",
             "IndirectOffspring": 2,
-            "NumberOfItems": 99988,
+            "NumberOfItems": 99980,
             "PhenotypicFlexibility": 0.0,
-            "StandardDeviation": 0.0,
+            "FitnessVariationLimit": 0,
             "id": "ACM"
         },
         {
@@ -27,7 +27,7 @@
             "IndirectOffspring": 2,
             "NumberOfItems": 0,
             "PhenotypicFlexibility": 0.0,
-            "StandardDeviation": 0.0,
+            "FitnessVariationLimit": 0,
             "id": "Rec1"
         },
         {
@@ -37,10 +37,10 @@
             "IndirectOffspring": 2,
             "NumberOfItems": 0,
             "PhenotypicFlexibility": 0.0,
-            "StandardDeviation": 0.0,
+            "FitnessVariationLimit": 0,
             "id": "Rec2"
         }
     ],
     "varia": false,
-    "verbose": false
+    "verbose": true
 }

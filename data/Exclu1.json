@@ -9,25 +9,25 @@
         "id": "Saccharomyces cerevisiae",
         "NumberOfItems": 100,
         "DirectOffspring": 4,
-        
+
         "GroupPartner":   "",
         "PhenotypicFlexibility": 0.0,
 
         "AssociatedSpecies":   "",
         "IndirectOffspring": 0,
-        "StandardDeviation": 0.0
+        "FitnessVariationLimit": 0
         },
         {
         "id": "Schizosaccharomyces kefir",
         "NumberOfItems": 100,
         "DirectOffspring": 3,
-        
+
         "GroupPartner":   "",
         "PhenotypicFlexibility": 0.0,
 
         "AssociatedSpecies":   "",
         "IndirectOffspring": 0,
-        "StandardDeviation": 0.0
+        "FitnessVariationLimit": 0
         }
     ]
 }

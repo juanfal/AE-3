@@ -15,7 +15,7 @@
 
         "AssociatedSpecies":   "ACM",
         "IndirectOffspring": 2,
-        "StandardDeviation": 0.0
+        "FitnessVariationLimit": 0
         },
         {
         "id": "Rec1",
@@ -27,7 +27,7 @@
 
         "AssociatedSpecies":   "Rec2",
         "IndirectOffspring": 2,
-        "StandardDeviation": 0.0
+        "FitnessVariationLimit": 0
         },
         {
         "id": "Rec2",
@@ -39,7 +39,7 @@
 
         "AssociatedSpecies":   "Rec1",
         "IndirectOffspring": 2,
-        "StandardDeviation": 0.0
+        "FitnessVariationLimit": 0
         }
     ]
 }

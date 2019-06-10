@@ -14,7 +14,7 @@
 
         "AssociatedSpecies":   "A",
         "IndirectOffspring": 2,
-        "StandardDeviation": 1
+        "FitnessVariationLimit": 1
         },
         {"id": "B",
         "NumberOfItems": 10000,
@@ -25,7 +25,7 @@
 
         "AssociatedSpecies":   "C",
         "IndirectOffspring": 2,
-        "StandardDeviation": 1
+        "FitnessVariationLimit": 1
         },
         {"id": "C",
         "NumberOfItems": 10000,
@@ -36,7 +36,7 @@
 
         "AssociatedSpecies":   "D",
         "IndirectOffspring": 2,
-        "StandardDeviation": 1
+        "FitnessVariationLimit": 1
         },
         {"id": "D",
         "NumberOfItems": 10000,
@@ -47,7 +47,7 @@
 
         "AssociatedSpecies":   "B",
         "IndirectOffspring": 2,
-        "StandardDeviation": 1
+        "FitnessVariationLimit": 1
         },
         {"id": "E",
         "NumberOfItems": 10000,
@@ -58,7 +58,7 @@
 
         "AssociatedSpecies":   "H",
         "IndirectOffspring": 2,
-        "StandardDeviation": 1
+        "FitnessVariationLimit": 1
         },
         {"id": "F",
         "NumberOfItems": 10000,
@@ -69,7 +69,7 @@
 
         "AssociatedSpecies":   "G",
         "IndirectOffspring": 2,
-        "StandardDeviation": 1
+        "FitnessVariationLimit": 1
         },
         {"id": "G",
         "NumberOfItems": 10000,
@@ -80,7 +80,7 @@
 
         "AssociatedSpecies":   "",
         "IndirectOffspring": 2,
-        "StandardDeviation": 1
+        "FitnessVariationLimit": 1
         },
         {"id": "H",
         "NumberOfItems": 10000,
@@ -91,7 +91,7 @@
 
         "AssociatedSpecies":   "K",
         "IndirectOffspring": 2,
-        "StandardDeviation": 1
+        "FitnessVariationLimit": 1
         },
         {"id": "K",
         "NumberOfItems": 10000,
@@ -102,7 +102,7 @@
 
         "AssociatedSpecies":   "H",
         "IndirectOffspring": 2,
-        "StandardDeviation": 1
+        "FitnessVariationLimit": 1
         }
     ]
 }

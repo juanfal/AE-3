@@ -12,7 +12,7 @@
             "IndirectOffspring": 2,
             "NumberOfItems": 10,
             "PhenotypicFlexibility": 0.0,
-            "StandardDeviation": 0.01,
+            "FitnessVariationLimit": 0,
             "id": "A"
         },
         {
@@ -22,7 +22,7 @@
             "IndirectOffspring": 2,
             "NumberOfItems": 10,
             "PhenotypicFlexibility": 0.0,
-            "StandardDeviation": 0.02,
+            "FitnessVariationLimit": 0,
             "id": "A|A"
         }
     ]

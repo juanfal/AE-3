@@ -13,7 +13,7 @@
             "IndirectOffspring": 2,
             "NumberOfItems": 10,
             "PhenotypicFlexibility": 0.5,
-            "StandardDeviation": 1,
+            "FitnessVariationLimit": 1,
             "id": "A"
         },
         {
@@ -23,7 +23,7 @@
             "IndirectOffspring": 2,
             "NumberOfItems": 10,
             "PhenotypicFlexibility": 0.8,
-            "StandardDeviation": 1,
+            "FitnessVariationLimit": 1,
             "id": "B"
         },
         {
@@ -33,7 +33,7 @@
             "IndirectOffspring": 0,
             "NumberOfItems": 10,
             "PhenotypicFlexibility": 0.5,
-            "StandardDeviation": 1,
+            "FitnessVariationLimit": 1,
             "id": "B|A"
         },
         {
@@ -43,7 +43,7 @@
             "IndirectOffspring": 0,
             "NumberOfItems": 10,
             "PhenotypicFlexibility": 0.8,
-            "StandardDeviation": 1,
+            "FitnessVariationLimit": 1,
             "id": "A|A"
         },
         {
@@ -53,7 +53,7 @@
             "IndirectOffspring": 2,
             "NumberOfItems": 10,
             "PhenotypicFlexibility": 0.9,
-            "StandardDeviation": 1,
+            "FitnessVariationLimit": 1,
             "id": "A|A|B"
         }
     ]

@@ -4,7 +4,7 @@
 # Carlos Villagrasa, Javier Falgueras
 # juanfc 2019-02-16
 
-__version__ = 0.073 # 2019-06-06
+__version__ = 0.074 # 2019-06-10
 
 import os
 import sys
@@ -20,11 +20,6 @@ set_printoptions(formatter={'int': '{: 7d}'.format})
 
 import xlsxwriter
 from datetime import datetime
-
-
-# Directories 'data' and 'results' are supposed being there
-# finalForms goes to results/
-if not os.path.isdir("results"): os.mkdir("results")
 
 
 # ######### #
@@ -232,8 +227,8 @@ def doConsumeAndOffspring():
     """
     Set up a queue with every form of every species, for each cell
     since recipients receive from actors, both consume at the same time
-    A><A    they eat as couple.  Gauss phenot. var. does "NOT" affect.
-    A><B    they eat as couple.  Gauss phenot. var. does affect
+    A><A    they eat as couple.  Phenot. variations do "NOT" affect.
+    A><B    they eat as couple.  Phenot. variations do affect
     We have to queue
         INDIVIDUAL  always
         RECIPIENT   never
@@ -242,7 +237,7 @@ def doConsumeAndOffspring():
                     A><B (inters) : all A, but take out all B
 
     """
-    # if gaussian phenotypic variability is considered, we can
+    # if phenotypic variability is considered, we can
     # wait until all the cells are evaluated and then, take the averages
     # for each species and alive item to reset direct/indirect fitness
     if gArgs["varia"]:
@@ -269,7 +264,7 @@ def doConsumeAndOffspring():
 
 
         # Lets go eating and have offspring:
-        #   - Considers the gaussian phenotypic variability
+        #   - Considers the phenotypic variability
         #   - Computes an sets offspring as individuals from the other forms
         rsrc = gConf["NumberOfRsrcsInEachCell"]
         i = 0
@@ -279,7 +274,7 @@ def doConsumeAndOffspring():
 
             dirFit   = gConf["species"][iSpecies]["DirectOffspring"]
             indirFit = gConf["species"][iSpecies]["IndirectOffspring"]
-            stdDev   = gConf["species"][iSpecies]["StandardDeviation"]
+            fitVarLimit   = gConf["species"][iSpecies]["FitnessVariationLimit"]
             toEat = 0.0
             if iForm == INDIVIDUAL:
                 toEat = dirFit
@@ -311,7 +306,7 @@ def doConsumeAndOffspring():
                             gWorld[iSpecies, iCell, INDIVIDUAL] += dirFit
 
                             if gArgs["varia"]:
-                                dirFit, indirFit = fitnessVariations(dirFit, indirFit, stdDev)
+                                dirFit, indirFit = fitnessVariations(dirFit, indirFit, fitVarLimit)
                                 newDirFit[iSpecies]["sum"] += dirFit * dirFit
                                 newDirFit[iSpecies]["N"] += dirFit
 
@@ -337,11 +332,11 @@ def doConsumeAndOffspring():
                               assocDirFit + abs(assocIndirFit)
                         if rsrc >= toEat:
 
-                            assocStdDev = gConf["species"][iAssoc]["StandardDeviation"]
+                            fitVarLimit = gConf["species"][iAssoc]["FitnessVariationLimit"]
 
                             if gArgs["varia"]:
-                                dirFit, indirFit = fitnessVariations(dirFit, indirFit, stdDev)
-                                assocDirFit, assocIndirFit = fitnessVariations(assocDirFit, assocIndirFit, assocStdDev)
+                                dirFit, indirFit = fitnessVariations(dirFit, indirFit, fitVarLimit)
+                                assocDirFit, assocIndirFit = fitnessVariations(assocDirFit, assocIndirFit, fitVarLimit)
 
                             # dir nuevo (dirFit+assocIndirFit) * dirFit
                             # n   dirFit+assocIndirFit
@@ -397,7 +392,7 @@ def doConsumeAndOffspringIndependent():
         Each one eats for themselves and gives the offspring, if any, to their
             associate
     """
-    # if gaussian phenotypic variability is considered, we can
+    # if phenotypic variability is considered, we can
     # wait until all the cells are evaluated and then, take the averages
     # for each species and alive item to reset direct/indirect fitness
     if gArgs["varia"]:
@@ -425,7 +420,7 @@ def doConsumeAndOffspringIndependent():
 
 
         # Lets go eating and have offspring:
-        #   - Considers the gaussian phenotypic variability
+        #   - Considers the phenotypic variability
         #   - Computes an sets offspring as individuals from the other forms
         rsrc = gConf["NumberOfRsrcsInEachCell"]
         i = 0
@@ -436,8 +431,8 @@ def doConsumeAndOffspringIndependent():
             dirFit   = gConf["species"][iSpecies]["DirectOffspring"]
 
             if gArgs["varia"]:
-                stdDev   = gConf["species"][iSpecies]["StandardDeviation"]
-                dirFit, indirFit = fitnessVariations(dirFit, indirFit, stdDev)
+                fitVarLimit   = gConf["species"][iSpecies]["FitnessVariationLimit"]
+                dirFit, indirFit = fitnessVariations(dirFit, indirFit, fitVarLimit)
                 newDirFit[iSpecies]["sum"] += dirFit * dirFit
                 newDirFit[iSpecies]["N"] += dirFit
 
@@ -660,34 +655,38 @@ def getDist(iSpecies):
         sys.exit(1)
     return distType, distVal
 
-def fitnessVariations(direct, indirect, span):
+def fitnessVariations(direct, indirect, fitVarLimit):
+    """Returns a pair of new rand int direc-indirect fitnesses inside the
+    fitVarLimit"""
     tot = direct + abs(indirect)
+
+    # the pairs ordered in the smoothest possible way
     directRange = list(range(tot, -1, -1)) + list(range(0, tot))
     indireRange = list(range(0, tot + 1)) + list(range(-tot, 0, 1))
-    ranging = list(zip(directRange, indireRange))
-    currentI = ranging.index((direct, indirect))
-    lranging = len(ranging)
-    extraOver = 0
-    extraBelow = 0
-    # A
-    if 2*span >= lranging:
+    pairsOfFitness = list(zip(directRange, indireRange))
+
+    currentI = pairsOfFitness.index((direct, indirect))
+    lpairsOfFitness = len(pairsOfFitness)
+
+    # 4 cases: fitVarLimit > Maxfitness, upper-overflow, lower-underflow, inside
+    if 2*fitVarLimit >= lpairsOfFitness:
         bottom = 0
-        topp = lranging
-    elif currentI + span >= lranging:
-        extraOver = currentI + span - (lranging - 1)
-        bottom = currentI - span - extraOver
-        topp = lranging
-    elif currentI - span < 0:
-        extraBelow = span - currentI
+        topp = lpairsOfFitness
+    elif currentI + fitVarLimit >= lpairsOfFitness:
+        extraOver = currentI + fitVarLimit - (lpairsOfFitness - 1)
+        bottom = currentI - fitVarLimit - extraOver
+        topp = lpairsOfFitness
+    elif currentI - fitVarLimit < 0:
+        extraBelow = fitVarLimit - currentI
         bottom = 0
-        topp = currentI + span + extraBelow
+        topp = currentI + fitVarLimit + extraBelow
     else:
-        bottom = currentI - span
-        topp = currentI + span + 1
+        bottom = currentI - fitVarLimit
+        topp = currentI + fitVarLimit + 1
 
     newI = randint(bottom, topp)
 
-    return ranging[newI]
+    return pairsOfFitness[newI]
 
 def noNeg(n):
     if n < 0: n = 0
@@ -721,7 +720,7 @@ def initExcel():
 def saveExcel(numGen):
     """Saving in Excel"""
     # id, NumberOfItems, DirectOffspring, IndirectOffspring,
-    # AssociatedSpecies, StandardDeviation, INDIVIDUAL, ACTOR, RECIPIENT,
+    # AssociatedSpecies, FitnessVariationLimit, INDIVIDUAL, ACTOR, RECIPIENT,
     # RECIPROCAL
     if 'gExcelCellHeader' not in globals():
         initExcel()
@@ -729,7 +728,7 @@ def saveExcel(numGen):
     txtOut = open(txtOutName, "a")
 
     globalsHeader =  ["NCel", "RsCel", "Dst"]
-    iSpecHeader =  ["ID", "dst", "D", "I", ">", "σ", "Gr", "Ph", "Drσ", "IND", "2", "ACT", "2", "RNT", "2", "RCL", "2"]
+    iSpecHeader =  ["ID", "dst", "D", "I", ">", "Fv", "Gr", "Ph", "Drσ", "IND", "2", "ACT", "2", "RNT", "2", "RCL", "2"]
     globalsHeaderLen = len(globalsHeader)
     iSpecHeaderLen = len(iSpecHeader)
 
@@ -759,7 +758,7 @@ def saveExcel(numGen):
              gConf["species"][iSpecies]["DirectOffspring"],
              gConf["species"][iSpecies]["IndirectOffspring"],
              gConf["species"][iSpecies]["AssociatedSpecies"],
-             gConf["species"][iSpecies]["StandardDeviation"],
+             gConf["species"][iSpecies]["FitnessVariationLimit"],
              gConf["species"][iSpecies]["GroupPartner"],
              gConf["species"][iSpecies]["PhenotypicFlexibility"],
              gStdDevDistr[iSpecies],
@@ -819,7 +818,7 @@ def checkConf(conf):
 
     itemsspecies = {"id", "NumberOfItems", "DirectOffspring",
         "GroupPartner", "PhenotypicFlexibility", "AssociatedSpecies",
-        "IndirectOffspring", "StandardDeviation"}
+        "IndirectOffspring", "FitnessVariationLimit"}
 
     if not items.issubset(conf.keys()):
         problems += "Some essential item(s) is not defined\n\t Check the next items are all there:\n\t%s\n" % str(list(items))
@@ -862,9 +861,9 @@ def checkConf(conf):
         print("ERROR. The configuration file '%s' has inconsistencies:\n\n%s" % (gInitConfFile, problems))
         sys.exit(1)
 
-def completeDataFileNames(fromfilename):
-    conf = os.path.join("data", fromfilename + ".json")
-    world = os.path.join("data", fromfilename + ".world.txt")
+def completeDataFileNames(fromfilename, inDirectory):
+    conf = os.path.join(inDirectory, fromfilename + ".json")
+    world = os.path.join(inDirectory, fromfilename + ".world.txt")
     return conf, world
 
 def printv(*args, **kwargs):
@@ -878,7 +877,7 @@ def printv(*args, **kwargs):
 # ARGS AND CONF PROCESSING #
 # ######################## #
 
-def getCommandLineArgs():
+def defineAndGetCommandLineArgs():
     """Parses and returns command line arguments"""
 
     theArgParser = argparse.ArgumentParser(description="* Evolutionary Automata *",
@@ -922,7 +921,7 @@ def getCommandLineArgs():
         """)
     )
 
-    # We want gaussian phenotypic variability
+    # We want phenotypic variability
     theArgParser.add_argument(
         "--varia", help=textwrap.dedent("""\
         Changes offspring number following a random normal distribution
@@ -942,7 +941,7 @@ def getCommandLineArgs():
           running will start with different seeds"""),
         )
 
-    # We want gaussian phenotypic variability
+    # We want phenotypic variability
     theArgParser.add_argument(
         "--verbose", help=textwrap.dedent("""\
         Gives as much detailed information as it can"""),
@@ -1125,19 +1124,32 @@ def replaceArgsInConf(conf, args):
 # ####### #
 
 
+# Directories 'data' and 'results' are supposed being there
+# finalForms goes to results/
+if not os.path.isdir("results"): os.mkdir("results")
+
+
 # GET CONF FROM .json INIT FILE AND THEN FROM ARGS
 #
-gArgs = getCommandLineArgs()
+gArgs = defineAndGetCommandLineArgs()
 gInitConfFile = gArgs["initFile"]  # base file name
-gInitConfCompName, gWorldCompFileName = completeDataFileNames(gInitConfFile)
+inDirectory = "data"
+# A -> A.json, A.world.txt
+gInitConfCompName, gWorldCompFileName = completeDataFileNames(gInitConfFile, inDirectory)
 
+# FILENAMES
+# 1. Init conf -> out conf cont_filename
 if gInitConfFile.endswith(CONT_FILE_NAME_SUFIX):
     outFileNameBase = gInitConfFile
 else:
     outFileNameBase = gInitConfFile + CONT_FILE_NAME_SUFIX
 
-gNewConfCompFileName, gNewWorldCompFileName = completeDataFileNames(outFileNameBase)
+# 2. …and newWorld and newConf cont out
+gNewConfCompFileName, gNewWorldCompFileName = completeDataFileNames(outFileNameBase, inDirectory)
 printv(gArgs)
+
+
+
 
 gConf = replaceArgsInConf(readInitConfFile(gInitConfCompName), gArgs)
 

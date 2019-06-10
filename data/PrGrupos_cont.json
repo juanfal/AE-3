@@ -13,7 +13,7 @@
             "IndirectOffspring": 0,
             "NumberOfItems": 100,
             "PhenotypicFlexibility": 1.0,
-            "StandardDeviation": 0.0,
+            "FitnessVariationLimit": 0,
             "id": "A"
         },
         {
@@ -23,7 +23,7 @@
             "IndirectOffspring": 0,
             "NumberOfItems": 10,
             "PhenotypicFlexibility": 0.0,
-            "StandardDeviation": 0.0,
+            "FitnessVariationLimit": 0,
             "id": "B"
         },
         {
@@ -34,7 +34,7 @@
             "IndirectOffspring": 0,
             "NumberOfItems": 0,
             "PhenotypicFlexibility": 0.5,
-            "StandardDeviation": 0.0,
+            "FitnessVariationLimit": 0,
             "id": "A|B"
         }
     ]

@@ -1,6 +1,6 @@
 {
     "NumberOfCells": 100,
-    "NumberOfRsrcsInEachCell": 100,
+    "NumberOfRsrcsInEachCell": 1000,
     "MultilevelDeath1Percent": 0.00,
     "LambdaForEgoism": 0.0,
     "Distribution": "100n",
@@ -12,22 +12,22 @@
         "Distribution": "0n",
         "GroupPartner":   "",
         "PhenotypicFlexibility": 0.0,
-        
+
         "AssociatedSpecies":   "",
         "IndirectOffspring": 0,
-        "StandardDeviation": 0.0
+        "FitnessVariationLimit": 0
         },
         {
         "id": "B",
         "NumberOfItems": 100,
         "DirectOffspring": 3,
-        "Distribution": "0r",
+        "Distribution": "100r",
         "GroupPartner":   "",
         "PhenotypicFlexibility": 0.0,
 
         "AssociatedSpecies":   "",
         "IndirectOffspring": 0,
-        "StandardDeviation": 0.0
+        "FitnessVariationLimit": 0
         }
     ]
 }

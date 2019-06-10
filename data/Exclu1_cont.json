@@ -13,21 +13,21 @@
         {
             "AssociatedSpecies": "",
             "DirectOffspring": 4,
+            "FitnessVariationLimit": 0,
             "GroupPartner": "",
             "IndirectOffspring": 0,
             "NumberOfItems": 100000,
             "PhenotypicFlexibility": 0.0,
-            "StandardDeviation": 0.0,
             "id": "Saccharomyces cerevisiae"
         },
         {
             "AssociatedSpecies": "",
             "DirectOffspring": 3,
+            "FitnessVariationLimit": 0,
             "GroupPartner": "",
             "IndirectOffspring": 0,
             "NumberOfItems": 0,
             "PhenotypicFlexibility": 0.0,
-            "StandardDeviation": 0.0,
             "id": "Schizosaccharomyces kefir"
         }
     ],

@@ -12,7 +12,7 @@
             "IndirectOffspring": 2,
             "NumberOfItems": 500,
             "PhenotypicFlexibility": 0.0,
-            "StandardDeviation": 0.0,
+            "FitnessVariationLimit": 0,
             "id": "ACM"
         }
     ]
