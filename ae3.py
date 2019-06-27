@@ -143,10 +143,10 @@ def doDistribute():
             gWorld[iSpecies, :, INDIVIDUAL] = wildDist
     gStdDevDistr = around(std(gWorld[:,:,INDIVIDUAL], axis=1), decimals=1)
 
-def doGrouping():
+def doGrouping_Original():
     """Form the groups following the group partner"""
     for iCell in range(gNumberOfCells):
-        stillPossibleGroupInCell = True
+        stillPossibleGroupInCell = True #(Javi) quitar??????
         n = 0
         while stillPossibleGroupInCell:
             # printv("Cell grouping %d" % n)
@@ -160,22 +160,25 @@ def doGrouping():
                 i_grouped = iGetGroupStartingIn(iSpecies)  # i already formed group that iSpecies starts
                 # number of iSpecies items in that iCell
                 ni = gWorld[iSpecies,iCell,INDIVIDUAL]
-                ni_alreadyGrouped = gWorld[i_grouped,iCell,INDIVIDUAL]
+                ni_alreadyGrouped = gWorld[i_grouped,iCell,INDIVIDUAL] #    (Javi)quitar
 
                 # item to group with
                 if i_partner != iSpecies:
                     ni_partner = gWorld[i_partner,iCell,INDIVIDUAL]
                 else:
                     # if itself, only half available
-                    ni_alreadyGrouped *= 2
+                    ni_alreadyGrouped *= 2 #  (Javi) quitar
                     ni_partner = ni//2
 
                 # Phenotypic complexity tells the % (0-1) from the total
                 # existing particular species, that should be grouped, so we
                 # compare the current amount of items (grouped + ungrouped)
-                # and check if there is room for more grouping
-                itemsAloneAndGrouped = ni_alreadyGrouped + ni
-                ni_toGroup = noNeg(int(itemsAloneAndGrouped * phenFlex) - ni_alreadyGrouped)
+                # and check if there is room for more grouping (Javi) El quorum sensing solo
+                # capta el quorum de tu especie, no de otras especies, como puedan ser las especies
+                # que estan agrupadas ya. Las que están agrupadas en grupos no se captan porque
+                # son una especie distinta ya.
+                itemsAloneAndGrouped = ni_alreadyGrouped + ni # (Javi)quitar
+                ni_toGroup = noNeg(int(itemsAloneAndGrouped * phenFlex) - ni_alreadyGrouped) #  (Javi)Poner esto: ni_toGroup = int(ni * phenFlex)
                 ni_feasible = min(ni_toGroup, ni_partner)
                 #printv("ni_toGroup: %d with %d, ni_feasible: %d" % (ni_toGroup, i_grouped, ni_feasible))
                 if ni_feasible > 0:
@@ -184,7 +187,43 @@ def doGrouping():
 
                     gWorld[i_grouped,iCell,INDIVIDUAL] += ni_feasible
 
-                    stillPossibleGroupInCell = True
+                    stillPossibleGroupInCell = True  #(Javi) quitar??????
+
+def doGrouping():
+    """Form the groups following the group partner"""
+    for iCell in range(gNumberOfCells):
+        n = 0
+        # printv("Cell grouping %d" % n)
+        n += 1
+        stillPossibleGroupInCell = False
+        permutedListOrigGroups = permutation(gWithPartnerList)
+        # printv("Grouping permutation list:", permutedListOrigGroups)
+        for iSpecies in permutedListOrigGroups:
+            phenFlex = gConf["species"][iSpecies]["PhenotypicFlexibility"]
+            i_partner = iGetPartner(iSpecies)          # i partner for the group
+            i_grouped = iGetGroupStartingIn(iSpecies)  # i already formed group that iSpecies starts
+            # number of iSpecies items in that iCell
+            ni = gWorld[iSpecies,iCell,INDIVIDUAL]
+
+            # item to group with
+            if i_partner != iSpecies:
+                ni_partner = gWorld[i_partner,iCell,INDIVIDUAL]
+            else:
+                # if itself, only half available
+                ni_partner = ni//2
+
+            # Phenotypic complexity tells the % (0-1) from the total
+            # existing particular species, that should be grouped, so we
+            # compare the current amount of items (ungrouped)
+            # and check if there is room for more grouping
+            ni_toGroup = int(ni * phenFlex)
+            ni_feasible = min(ni_toGroup, ni_partner)
+            #printv("ni_toGroup: %d with %d, ni_feasible: %d" % (ni_toGroup, i_grouped, ni_feasible))
+            if ni_feasible > 0:
+                gWorld[ iSpecies,iCell,INDIVIDUAL] -= ni_feasible
+                gWorld[i_partner,iCell,INDIVIDUAL] -= ni_feasible
+
+                gWorld[i_grouped,iCell,INDIVIDUAL] += ni_feasible
 
 def doAssociation():
     """
@@ -521,7 +560,7 @@ def doEnqueueing(iCell):
 def doUngroup():
     for iCell in range(gNumberOfCells):
         for iOrigGroup in gWithPartnerList:
-            printv("Ungrouping iOrigGroup:", iOrigGroup)
+            #printv("Ungrouping iOrigGroup:", iOrigGroup)
             iGroup = iGetGroupStartingIn(iOrigGroup)
             phenFlex = gConf["species"][iGroup]["PhenotypicFlexibility"]
 
@@ -535,7 +574,10 @@ def doUngroup():
                 iPartner = iGetPartner(iOrigGroup)
                 gWorld[iPartner,iCell,INDIVIDUAL] += ni_unGroup
 
-                gWorld[iOrigGroup,iCell,INDIVIDUAL] -= ni_unGroup
+                gWorld[iGroup,iCell,INDIVIDUAL] -= ni_unGroup # Juan quizás deberia de ser:
+                                                              # gWorld[iGroup,iCell,INDIVIDUAL] -= ni_unGroup
+                                                              # yep!
+
 
 def doMultilevelSelection(q):
     # perc = gConf["MultilevelDeath1Percent"]
@@ -783,7 +825,7 @@ def saveExcel(numGen):
 
     print(file=txtOut)
 
-def saveConf():
+def saveConf(genNumber):
     """Save conf in a new _cont.json file
     if not there, or rewrite previous _cont.json file if was the initial conf loaded
     Added: save corresponding final gWorld state"""
@@ -801,9 +843,6 @@ def saveConf():
     with open(gNewWorldCompFileName, 'w') as outfile:
         for iSpecies in range(gNumberOfSpecies):
             print("\t".join(map(str, gWorld[iSpecies, :, INDIVIDUAL])), file=outfile)
-
-    # TODO:
-    # write initFile_cont.world (_cont?)
 
 def checkConf(conf):
     """Verifies conf returning inconsistencies or an empty string"""
@@ -924,9 +963,10 @@ def defineAndGetCommandLineArgs():
     # We want phenotypic variability
     theArgParser.add_argument(
         "--varia", help=textwrap.dedent("""\
-        Changes offspring number following a random normal distribution
-          around previous offspring with the standard deviation provided for
-          each species.
+        It takes the FitnessVariationLimit for each species
+        and changes in each generation the Direct/Indirect fitnesses
+        inside that limits: currentValue+- FitnessVariationLimit
+        following a list of pairs.
         False if not provided"""),
         action='store_true')
 
@@ -1138,7 +1178,7 @@ inDirectory = "data"
 gInitConfCompName, gWorldCompFileName = completeDataFileNames(gInitConfFile, inDirectory)
 
 # FILENAMES
-# 1. Init conf -> out conf cont_filename
+# 1. A.json -> A_cont.json A_cont.json
 if gInitConfFile.endswith(CONT_FILE_NAME_SUFIX):
     outFileNameBase = gInitConfFile
 else:
@@ -1188,6 +1228,7 @@ if "egoism" in gArgs:
 
 doInitialDistribution()
 
+print("     %s" % " ".join([gConf["species"][i]["id"] for i in range(gNumberOfSpecies)]))
 for genNumber in range(1, gArgs["numGen"]+1):
     doGrouping()
     print("%3d: %s Tot Grouping: %d" % (genNumber, gWorld[:,:,0].sum(axis=1),  gWorld[:,:,0].sum(axis=1).sum()))
@@ -1202,7 +1243,7 @@ for genNumber in range(1, gArgs["numGen"]+1):
     if gArgs["saveExcel"]:
         saveExcel(genNumber)
 
-saveConf()
+    saveConf(genNumber)
 
 if gArgs["saveExcel"]:
     gExcelWorkbook.close()

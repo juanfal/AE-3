@@ -1,0 +1,1 @@
+plot "results/0619Comm_cont_20190626-192837.txt" title “Commesalism” using 11 with lines title "SP Sharksucker", "results/0619Comm_cont_20190626-192837.txt" using 25 with lines title "SP Shark", "results/0619Comm_cont_20190626-192837.txt" using 39 with lines title "SP Sharksucker|Shark" 

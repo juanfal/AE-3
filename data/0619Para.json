@@ -6,27 +6,27 @@
     "Distribution": "100n",
     "species": [
         {
-        "id": "A",
-        "NumberOfItems": 100,
-        "DirectOffspring": 3,
-        "Distribution": "100n",
+        "id": "Cuco",
+        "NumberOfItems": 50,
+        "DirectOffspring": 0,
+        "Distribution": "100r",
         "GroupPartner":   "",
         "PhenotypicFlexibility": 0.0,
 
-        "AssociatedSpecies":   "",
-        "IndirectOffspring": 0,
+        "AssociatedSpecies":   "Carricero",
+        "IndirectOffspring": -2,
         "FitnessVariationLimit": 0
         },
         {
-        "id": "B",
+        "id": "Carricero",
         "NumberOfItems": 100,
-        "DirectOffspring": 3,
-        "Distribution": "5r",
+        "DirectOffspring": 2,
+        "Distribution": "100r",
         "GroupPartner":   "",
         "PhenotypicFlexibility": 0.0,
 
-        "AssociatedSpecies":   "",
-        "IndirectOffspring": 0,
+        "AssociatedSpecies":   "Cuco",
+        "IndirectOffspring": 2,
         "FitnessVariationLimit": 0
         }
     ]

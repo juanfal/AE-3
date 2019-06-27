@@ -3,13 +3,25 @@
     "NumberOfRsrcsInEachCell": 1000,
     "MultilevelDeath1Percent": 0.00,
     "LambdaForEgoism": 0.0,
-    "Distribution": "100n",
+    "Distribution": "100r",
     "species": [
         {
-        "id": "A",
+        "id": "Sharksucker",
+        "NumberOfItems": 100,
+        "DirectOffspring": 2,
+
+        "GroupPartner":   "Shark",
+        "PhenotypicFlexibility": 0.9,
+
+        "AssociatedSpecies":   "",
+        "IndirectOffspring": 0,
+        "FitnessVariationLimit": 0
+        },
+        {
+        "id": "Shark",
         "NumberOfItems": 100,
         "DirectOffspring": 3,
-        "Distribution": "100n",
+
         "GroupPartner":   "",
         "PhenotypicFlexibility": 0.0,
 
@@ -18,10 +30,10 @@
         "FitnessVariationLimit": 0
         },
         {
-        "id": "B",
-        "NumberOfItems": 100,
+        "id": "Sharksucker|Shark",
+        "NumberOfItems": 0,
         "DirectOffspring": 3,
-        "Distribution": "5r",
+
         "GroupPartner":   "",
         "PhenotypicFlexibility": 0.0,
 

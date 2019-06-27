@@ -1,6 +1,6 @@
 {
     "NumberOfCells": 100,
-    "NumberOfRsrcsInEachCell": 1000,
+    "NumberOfRsrcsInEachCell": 4,
     "MultilevelDeath1Percent": 0.00,
     "LambdaForEgoism": 0.0,
     "Distribution": "100n",
@@ -8,7 +8,7 @@
         {
         "id": "A",
         "NumberOfItems": 100,
-        "DirectOffspring": 3,
+        "DirectOffspring": 2,
         "Distribution": "100n",
         "GroupPartner":   "",
         "PhenotypicFlexibility": 0.0,
@@ -20,8 +20,8 @@
         {
         "id": "B",
         "NumberOfItems": 100,
-        "DirectOffspring": 3,
-        "Distribution": "5r",
+        "DirectOffspring": 2,
+        "Distribution": "100n",
         "GroupPartner":   "",
         "PhenotypicFlexibility": 0.0,
 
