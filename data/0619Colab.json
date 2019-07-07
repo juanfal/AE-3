@@ -1,0 +1,45 @@
+{
+    "NumberOfCells": 5,
+    "NumberOfRsrcsInEachCell": 20000,
+    "MultilevelDeath1Percent": 0.00,
+    "LambdaForEgoism": 0.0,
+    "Distribution": "100r",
+    "species": [
+        {
+        "id": "Solitary bees",
+        "NumberOfItems": 100,
+        "DirectOffspring": 5,
+        "Distribution": "100r",
+        "GroupPartner":   "",
+        "PhenotypicFlexibility": 0.0,
+
+        "AssociatedSpecies":   "",
+        "IndirectOffspring": 0,
+        "FitnessVariationLimit": 0
+        },
+        {
+        "id": "Eusocial bess",
+        "NumberOfItems": 100,
+        "DirectOffspring": 0,
+        "Distribution": "100r",
+        "GroupPartner":   "",
+        "PhenotypicFlexibility": 0.0,
+
+        "AssociatedSpecies":   "Eusocial bess",
+        "IndirectOffspring": 5,
+        "FitnessVariationLimit": 0
+        },
+        {
+        "id": "Collaborating bees",
+        "NumberOfItems": 100,
+        "DirectOffspring": 3,
+        "Distribution": "100r",
+        "GroupPartner":   "",
+        "PhenotypicFlexibility": 0.0,
+
+        "AssociatedSpecies":   "Collaborating bees",
+        "IndirectOffspring": 2,
+        "FitnessVariationLimit": 0
+        }
+    ]
+}

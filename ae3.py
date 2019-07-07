@@ -4,10 +4,11 @@
 # Carlos Villagrasa, Javier Falgueras
 # juanfc 2019-02-16
 
-__version__ = 0.074 # 2019-06-10
+__version__ = 0.077 # 2019-07-07
 
 import os
 import sys
+from pathlib import Path
 import json
 import argparse
 import textwrap
@@ -142,52 +143,6 @@ def doDistribute():
 
             gWorld[iSpecies, :, INDIVIDUAL] = wildDist
     gStdDevDistr = around(std(gWorld[:,:,INDIVIDUAL], axis=1), decimals=1)
-
-def doGrouping_Original():
-    """Form the groups following the group partner"""
-    for iCell in range(gNumberOfCells):
-        stillPossibleGroupInCell = True #(Javi) quitar??????
-        n = 0
-        while stillPossibleGroupInCell:
-            # printv("Cell grouping %d" % n)
-            n += 1
-            stillPossibleGroupInCell = False
-            permutedListOrigGroups = permutation(gWithPartnerList)
-            # printv("Grouping permutation list:", permutedListOrigGroups)
-            for iSpecies in permutedListOrigGroups:
-                phenFlex = gConf["species"][iSpecies]["PhenotypicFlexibility"]
-                i_partner = iGetPartner(iSpecies)          # i partner for the group
-                i_grouped = iGetGroupStartingIn(iSpecies)  # i already formed group that iSpecies starts
-                # number of iSpecies items in that iCell
-                ni = gWorld[iSpecies,iCell,INDIVIDUAL]
-                ni_alreadyGrouped = gWorld[i_grouped,iCell,INDIVIDUAL] #    (Javi)quitar
-
-                # item to group with
-                if i_partner != iSpecies:
-                    ni_partner = gWorld[i_partner,iCell,INDIVIDUAL]
-                else:
-                    # if itself, only half available
-                    ni_alreadyGrouped *= 2 #  (Javi) quitar
-                    ni_partner = ni//2
-
-                # Phenotypic complexity tells the % (0-1) from the total
-                # existing particular species, that should be grouped, so we
-                # compare the current amount of items (grouped + ungrouped)
-                # and check if there is room for more grouping (Javi) El quorum sensing solo
-                # capta el quorum de tu especie, no de otras especies, como puedan ser las especies
-                # que estan agrupadas ya. Las que están agrupadas en grupos no se captan porque
-                # son una especie distinta ya.
-                itemsAloneAndGrouped = ni_alreadyGrouped + ni # (Javi)quitar
-                ni_toGroup = noNeg(int(itemsAloneAndGrouped * phenFlex) - ni_alreadyGrouped) #  (Javi)Poner esto: ni_toGroup = int(ni * phenFlex)
-                ni_feasible = min(ni_toGroup, ni_partner)
-                #printv("ni_toGroup: %d with %d, ni_feasible: %d" % (ni_toGroup, i_grouped, ni_feasible))
-                if ni_feasible > 0:
-                    gWorld[ iSpecies,iCell,INDIVIDUAL] -= ni_feasible
-                    gWorld[i_partner,iCell,INDIVIDUAL] -= ni_feasible
-
-                    gWorld[i_grouped,iCell,INDIVIDUAL] += ni_feasible
-
-                    stillPossibleGroupInCell = True  #(Javi) quitar??????
 
 def doGrouping():
     """Form the groups following the group partner"""
@@ -739,9 +694,8 @@ def ranking(l, value):
     return 1+where(rank==value)[0][0]
 
 def initExcel():
-    global gExcelCellHeader, gExcelCellID, gThedatetime, gExcelWorkbook, gExcelWorksheet
-    gThedatetime = datetime.now().strftime("%Y%m%d-%H%M%S")
-    excelOut = os.path.join("results", gInitConfFile + '_' + gThedatetime + ".xlsx")
+    global gExcelCellHeader, gExcelCellID, gExcelWorkbook, gExcelWorksheet
+    excelOut = os.path.join(gOutDir, gOutFNameBase + ".xlsx")
 
     gExcelWorkbook = xlsxwriter.Workbook(excelOut)
     gExcelWorksheet = gExcelWorkbook.add_worksheet()
@@ -766,7 +720,7 @@ def saveExcel(numGen):
     # RECIPROCAL
     if 'gExcelCellHeader' not in globals():
         initExcel()
-    txtOutName = os.path.join("results", gInitConfFile + '_' + gThedatetime + ".txt")
+    txtOutName = os.path.join(gOutDir, gOutFNameBase + ".txt")
     txtOut = open(txtOutName, "a")
 
     globalsHeader =  ["NCel", "RsCel", "Dst"]
@@ -998,9 +952,38 @@ def defineAndGetCommandLineArgs():
     theArgParser.add_argument(
         "--saveExcel", help=textwrap.dedent("""\
         Save stats in 'Excel' file and in a txt file.
-        See Excel iSpecHeader for meaning of txt columns"""),
+        See Excel iSpecHeader for meaning of txt columns
+        It is set anyway to True
+            if any --outFName or outDir is set"""),
         action='store_true')
 
+    # Directory for the results.
+    # If no /start relative to ./results
+    theArgParser.add_argument(
+        "--outDir", type=str,
+        metavar="'str'",
+        help=textwrap.dedent("""\
+        Specifes another than the default output directory
+        where to save the .txt and .xlsx files with global outputs.
+        If the path of the output dir starts in /
+            is considered an ABSOLUTE path.
+        else
+            is considered a path relative to ./results/
+        It sets --saveExcel to True""")
+    )
+
+    # Filename for the results.
+    # If none provided, the default original
+    # conf+date is taken
+    theArgParser.add_argument(
+        "--outFName", type=str,
+        metavar="'str'",
+        help=textwrap.dedent("""\
+        Specifies another than the default output filename
+        (initFilename+date)
+        where to save the .txt and .xlsx files with global outputs.
+        It sets --saveExcel to True""")
+    )
     theArgParser.add_argument(
         "--NumberOfCells", type=int,
         default=argparse.SUPPRESS, metavar="int",
@@ -1164,29 +1147,24 @@ def replaceArgsInConf(conf, args):
 # ####### #
 
 
-# Directories 'data' and 'results' are supposed being there
-# finalForms goes to results/
-if not os.path.isdir("results"): os.mkdir("results")
 
 
+# INPUT
 # GET CONF FROM .json INIT FILE AND THEN FROM ARGS
-#
+# init conf files (json and world)
 gArgs = defineAndGetCommandLineArgs()
 gInitConfFile = gArgs["initFile"]  # base file name
 inDirectory = "data"
 # A -> A.json, A.world.txt
 gInitConfCompName, gWorldCompFileName = completeDataFileNames(gInitConfFile, inDirectory)
-
-# FILENAMES
 # 1. A.json -> A_cont.json A_cont.json
 if gInitConfFile.endswith(CONT_FILE_NAME_SUFIX):
-    outFileNameBase = gInitConfFile
+    newInitFileNameBase = gInitConfFile
 else:
-    outFileNameBase = gInitConfFile + CONT_FILE_NAME_SUFIX
+    newInitFileNameBase = gInitConfFile + CONT_FILE_NAME_SUFIX
 
 # 2. …and newWorld and newConf cont out
-gNewConfCompFileName, gNewWorldCompFileName = completeDataFileNames(outFileNameBase, inDirectory)
-printv(gArgs)
+gNewConfCompFileName, gNewWorldCompFileName = completeDataFileNames(newInitFileNameBase, inDirectory)
 
 
 
@@ -1204,13 +1182,38 @@ printv(gConf)
 gNumberOfCells   = gConf["NumberOfCells"]
 
 gEgoism          = []
-gExcelSaved      = []
+gToSaveExcel     = gArgs["saveExcel"]
 gListOfAssociationActors = [] # list of species starting association
 gListOfAssociationActors = collectAssociationActors() # list of species starting association
 
 
 gWithPartnerList = getListOfOrigGroups()
 printv("gWithPartnerList:", gWithPartnerList)
+
+
+# OUTPUT DIRS AND FILENAMES
+#
+gOutDir = "results"
+if gArgs["outDir"]:
+    gToSaveExcel = True
+    if gArgs["outDir"].startswith("/"):
+        gOutDir = gArgs["outDir"]
+    else:
+        gOutDir = os.path.join(gOutDir, gArgs["outDir"])
+
+Path(gOutDir).mkdir(parents=True, exist_ok=True)
+
+gThedatetime = datetime.now().strftime("%Y%m%d-%H%M%S")
+gOutFNameBase = gInitConfFile + '_' + gThedatetime
+if gArgs["outFName"]:
+    gToSaveExcel = True
+    gOutFNameBase = gArgs["outFName"]
+
+printv(gArgs)
+
+
+
+
 
 
 # ########## #
@@ -1240,11 +1243,11 @@ for genNumber in range(1, gArgs["numGen"]+1):
     doUngroup()
     doDistribute()
 
-    if gArgs["saveExcel"]:
+    if gToSaveExcel:
         saveExcel(genNumber)
 
     saveConf(genNumber)
 
-if gArgs["saveExcel"]:
+if gToSaveExcel:
     gExcelWorkbook.close()
 

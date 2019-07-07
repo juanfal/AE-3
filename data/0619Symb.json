@@ -1,41 +1,41 @@
 {
     "NumberOfCells": 100,
-    "NumberOfRsrcsInEachCell": 10000,
+    "NumberOfRsrcsInEachCell": 1000,
     "MultilevelDeath1Percent": 0.00,
     "LambdaForEgoism": 0.0,
-    "Distribution": "100r",
+    "Distribution": "100n",
     "species": [
         {
-        "id": "Sharksucker",
+        "id": "Environmental bacteria",
         "NumberOfItems": 100,
         "DirectOffspring": 3,
+        
+        "GroupPartner":   "",
+        "PhenotypicFlexibility": 0.0,
 
-        "GroupPartner":   "Shark",
-        "PhenotypicFlexibility": 0.9,
-
-        "AssociatedSpecies":   "",
-        "IndirectOffspring": 0,
+        "AssociatedSpecies":   "Stinkbug",
+        "IndirectOffspring": 3,
         "FitnessVariationLimit": 0
         },
         {
-        "id": "Shark",
+        "id": "Stinkbug",
         "NumberOfItems": 100,
-        "DirectOffspring": 70,
-
-        "GroupPartner":   "",
-        "PhenotypicFlexibility": 0.0,
+        "DirectOffspring": 0,
+        
+        "GroupPartner":   "Environmental bacteria",
+        "PhenotypicFlexibility": 0.5,
 
         "AssociatedSpecies":   "",
         "IndirectOffspring": 0,
         "FitnessVariationLimit": 0
         },
         {
-        "id": "Sharksucker|Shark",
+        "id": "Stinkbug|Environmental bacteria",
         "NumberOfItems": 0,
-        "DirectOffspring": 70,
-
+        "DirectOffspring": 3,
+        
         "GroupPartner":   "",
-        "PhenotypicFlexibility": 0.0,
+        "PhenotypicFlexibility": 1.00,
 
         "AssociatedSpecies":   "",
         "IndirectOffspring": 0,
