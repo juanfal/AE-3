@@ -7,18 +7,18 @@
     "consume": "independent",
     "initFile": "0619Amen2",
     "numGen": 10,
-    "outDir": "kkkkkkkk",
-    "outFName": "0004",
+    "outDir": null,
+    "outFName": "0010",
     "saveExcel": true,
     "setRandomSeed": -1,
     "species": [
         {
             "AssociatedSpecies": "",
-            "DirectOffspring": 3,
+            "DirectOffspring": 2,
             "FitnessVariationLimit": 0,
             "GroupPartner": "Sensitive",
             "IndirectOffspring": 0,
-            "NumberOfItems": 9990,
+            "NumberOfItems": 228,
             "PhenotypicFlexibility": 0.1,
             "id": "Killer"
         },
@@ -28,7 +28,7 @@
             "FitnessVariationLimit": 0,
             "GroupPartner": "",
             "IndirectOffspring": 0,
-            "NumberOfItems": 780,
+            "NumberOfItems": 9783,
             "PhenotypicFlexibility": 0.0,
             "id": "Sensitive"
         },
@@ -37,7 +37,7 @@
             "DirectOffspring": 3,
             "FitnessVariationLimit": 0,
             "GroupPartner": "",
-            "IndirectOffspring": -5,
+            "IndirectOffspring": 2,
             "NumberOfItems": 0,
             "PhenotypicFlexibility": 0.0,
             "id": "Killer|Sensitive"

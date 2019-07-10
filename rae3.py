@@ -43,7 +43,8 @@ def expandArg(anArg):
     if "[" not in anArg:
         r = ["", [anArg]]
     else:
-        r = anArg[:-1].split("[")
+        r = anArg.strip()[:-1].split("[")
+        print(r)
         r = [r[0], buildList(r[1])]
 
     return r
@@ -64,21 +65,39 @@ def build(base, ranges, sep):
 def fileNumbering(n):
     return "%04d" % n
 
-if "--outDir" not in sys.argv[1]:
-    print("You must express an output directory in the first parameter:")
-    print("          --outDir=nameOfTheDirectory")
-    print("if it it starts in / it'd be an absolute path")
-    print("in other case, it will be created inside 'results' directory")
-    exit(1)
 
-_, outDir = sys.argv[1].split("=")
-if not outDir.startswith("/"):
-    outDir = os.path.join("results", outDir)
+if "-h" == sys.argv[1]:
+    print("""Example:
+          rae3.py --outDir=kkkkkkkk 0619Amen2 --species="-1,IndirectOffspring=[-8:-4;2],0,DirectOffspring=[1;2]"
 
-Path(outDir).mkdir(parents=True, exist_ok=True)
+          You must express an output directory in the first parameter:
+                    --outDir=nameOfTheDirectory
+          if it it starts in / it'd be an absolute path
+          in other case, it will be created inside 'results' directory
 
+          Inside --species=" .. "
+          lists of values have to be separated by ;
+    """)
+    exit(0)
+
+
+
+
+outDir = ""
+testMode = False
 ranges = []
 for arg in sys.argv[1:]:
+
+    if "-t" == arg:
+        testMode = True
+        continue
+
+    if arg.startswith("--outDir="):
+        _, outDir = arg.split("=")
+        if not outDir.startswith("/"):
+            outDir = os.path.join("results", outDir)
+        continue
+
     if not arg.startswith("--species"):
         ranges.append(expandArg(arg))
     else:
@@ -86,16 +105,29 @@ for arg in sys.argv[1:]:
 
 commandList = build("ae3.py ", ranges, " ")
 
+
+if not outDir:
+    print("You must express an output directory in parameters:")
+    print("          --outDir=nameOfTheDirectory")
+    print("if it it starts in / it'd be an absolute path")
+    print("in other case, it will be created inside 'results' directory")
+    exit(1)
+
+Path(outDir).mkdir(parents=True, exist_ok=True)
+
+
+
 n = 1
 print(outDir+"/"+"_list.txt")
-listing = open(outDir+"/"+"_list.txt", "a")
+listing = open(outDir+"/_list.txt", "a")
 for command in commandList:
     fname = fileNumbering(n)
     command += " --saveExcel"
     command += " --outFName=" + fname
     print(command, file=listing)
     print(command)
-    os.system(command)
+    if not testMode:
+        os.system(command)
     n += 1
 
 
