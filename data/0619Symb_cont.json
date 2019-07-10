@@ -7,6 +7,8 @@
     "consume": "independent",
     "initFile": "0619Symb",
     "numGen": 500,
+    "outDir": null,
+    "outFName": null,
     "saveExcel": true,
     "setRandomSeed": -1,
     "species": [
@@ -16,7 +18,7 @@
             "FitnessVariationLimit": 0,
             "GroupPartner": "",
             "IndirectOffspring": 3,
-            "NumberOfItems": 55530,
+            "NumberOfItems": 62406,
             "PhenotypicFlexibility": 0.0,
             "id": "Environmental bacteria"
         },
@@ -26,8 +28,8 @@
             "FitnessVariationLimit": 0,
             "GroupPartner": "Environmental bacteria",
             "IndirectOffspring": 0,
-            "NumberOfItems": 0,
-            "PhenotypicFlexibility": 0.5,
+            "NumberOfItems": 186,
+            "PhenotypicFlexibility": 0.1,
             "id": "Stinkbug"
         },
         {
@@ -36,7 +38,7 @@
             "FitnessVariationLimit": 0,
             "GroupPartner": "",
             "IndirectOffspring": 0,
-            "NumberOfItems": 44370,
+            "NumberOfItems": 37308,
             "PhenotypicFlexibility": 1.0,
             "id": "Stinkbug|Environmental bacteria"
         }

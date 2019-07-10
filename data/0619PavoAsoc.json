@@ -1,27 +1,27 @@
 {
     "NumberOfCells": 100,
-    "NumberOfRsrcsInEachCell": 10000,
+    "NumberOfRsrcsInEachCell": 1000,
     "MultilevelDeath1Percent": 0.00,
     "LambdaForEgoism": 0.0,
     "Distribution": "100n",
     "species": [
         {
-        "id": "Sharksucker",
+        "id": "Pavo coaligado",
         "NumberOfItems": 100,
-        "DirectOffspring": 3,
-
-        "GroupPartner":   "Shark",
-        "PhenotypicFlexibility": 0.9,
+        "DirectOffspring": 2,
+        
+        "GroupPartner":   "Pavo coaligado",
+        "PhenotypicFlexibility": 1.0,
 
         "AssociatedSpecies":   "",
         "IndirectOffspring": 0,
         "FitnessVariationLimit": 0
         },
         {
-        "id": "Shark",
+        "id": "Pavo coaligado|Pavo coaligado",
         "NumberOfItems": 100,
-        "DirectOffspring": 70,
-
+        "DirectOffspring": 9,
+        
         "GroupPartner":   "",
         "PhenotypicFlexibility": 0.0,
 
@@ -30,12 +30,12 @@
         "FitnessVariationLimit": 0
         },
         {
-        "id": "Sharksucker|Shark",
-        "NumberOfItems": 0,
-        "DirectOffspring": 70,
-
+        "id": "Pavo solitario",
+        "NumberOfItems": 100,
+        "DirectOffspring": 2,
+        
         "GroupPartner":   "",
-        "PhenotypicFlexibility": 0.0,
+        "PhenotypicFlexibility": 0.00,
 
         "AssociatedSpecies":   "",
         "IndirectOffspring": 0,

@@ -529,9 +529,7 @@ def doUngroup():
                 iPartner = iGetPartner(iOrigGroup)
                 gWorld[iPartner,iCell,INDIVIDUAL] += ni_unGroup
 
-                gWorld[iGroup,iCell,INDIVIDUAL] -= ni_unGroup # Juan quizás deberia de ser:
-                                                              # gWorld[iGroup,iCell,INDIVIDUAL] -= ni_unGroup
-                                                              # yep!
+                gWorld[iGroup,iCell,INDIVIDUAL] -= ni_unGroup
 
 
 def doMultilevelSelection(q):
@@ -1083,7 +1081,7 @@ def replaceArgsInConf(conf, args):
             try:
                 int(anyNumberOrString)
                 return True
-            except ValueError :
+            except ValueError:
                 return False
 
         lenSpecies = len(conf["species"])
@@ -1154,9 +1152,9 @@ def replaceArgsInConf(conf, args):
 # init conf files (json and world)
 gArgs = defineAndGetCommandLineArgs()
 gInitConfFile = gArgs["initFile"]  # base file name
-inDirectory = "data"
+gInDir = "data"
 # A -> A.json, A.world.txt
-gInitConfCompName, gWorldCompFileName = completeDataFileNames(gInitConfFile, inDirectory)
+gInitConfCompName, gWorldCompFileName = completeDataFileNames(gInitConfFile, gInDir)
 # 1. A.json -> A_cont.json A_cont.json
 if gInitConfFile.endswith(CONT_FILE_NAME_SUFIX):
     newInitFileNameBase = gInitConfFile
@@ -1164,7 +1162,7 @@ else:
     newInitFileNameBase = gInitConfFile + CONT_FILE_NAME_SUFIX
 
 # 2. …and newWorld and newConf cont out
-gNewConfCompFileName, gNewWorldCompFileName = completeDataFileNames(newInitFileNameBase, inDirectory)
+gNewConfCompFileName, gNewWorldCompFileName = completeDataFileNames(newInitFileNameBase, gInDir)
 
 
 
@@ -1208,6 +1206,9 @@ gOutFNameBase = gInitConfFile + '_' + gThedatetime
 if gArgs["outFName"]:
     gToSaveExcel = True
     gOutFNameBase = gArgs["outFName"]
+
+
+
 
 printv(gArgs)
 

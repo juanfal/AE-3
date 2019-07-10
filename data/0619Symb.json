@@ -23,7 +23,7 @@
         "DirectOffspring": 0,
         
         "GroupPartner":   "Environmental bacteria",
-        "PhenotypicFlexibility": 0.5,
+        "PhenotypicFlexibility": 0.1,
 
         "AssociatedSpecies":   "",
         "IndirectOffspring": 0,
