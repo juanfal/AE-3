@@ -4,7 +4,7 @@
 # Carlos Villagrasa, Javier Falgueras
 # juanfc 2019-02-16
 
-__version__ = 0.077 # 2019-07-07
+__version__ = 0.081 # 2019-07-11
 
 import os
 import sys
@@ -961,13 +961,17 @@ def defineAndGetCommandLineArgs():
         "--outDir", type=str,
         metavar="'str'",
         help=textwrap.dedent("""\
-        Specifes another than the default output directory
+        Specifies another than the default output directory
         where to save the .txt and .xlsx files with global outputs.
         If the path of the output dir starts in /
             is considered an ABSOLUTE path.
         else
             is considered a path relative to ./results/
-        It sets --saveExcel to True""")
+        It sets --saveExcel to True
+        Example:
+           --outDir=assocTests
+           --outDir=/absoluteDir
+           --outDir=more/than/one/level""")
     )
 
     # Filename for the results.
@@ -980,8 +984,11 @@ def defineAndGetCommandLineArgs():
         Specifies another than the default output filename
         (initFilename+date)
         where to save the .txt and .xlsx files with global outputs.
-        It sets --saveExcel to True""")
+        It sets --saveExcel to True
+        Example:
+            --outFNname=assocTest20""")
     )
+
     theArgParser.add_argument(
         "--NumberOfCells", type=int,
         default=argparse.SUPPRESS, metavar="int",

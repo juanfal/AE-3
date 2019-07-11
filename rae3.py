@@ -12,12 +12,14 @@
 #       --species has been treated especially.  As an special parameter, sorry
 #       its ranges do not admit , yet
 #       rae3.py --algo=[1:3] --uno=[a] lacagaste --none=nada --species=1,a=[2:4],b=[2:6]
+
 # FOR LISTS INSIDE RANGES
 #
 #                               USE ;
 #
 #       rae3.py --algo=[1:3] --uno=[a] lacagaste --none=nada --species="1,2,a=[2:4;7],b=[2:6]"
-# WORKING:
+
+# WORKING!:
 #       rae3.py --outDir=kkkkkkkk 0619Amen2 --species="-1,IndirectOffspring=[-8:-4]"
 
 import sys
@@ -30,9 +32,12 @@ def buildList(pyExpr):
     r = []
     tmp = pyExpr.split(";")
     for item in tmp:
-        if ":" in item:
+        if item.count(':') == 1:
             first, last = map(int,item.split(':'))
-            r +=  map(str,list(range(first, last)))
+            r +=  list(map(str,list(range(first, last))))
+        elif item.count(':') == 2:
+            first, last, step = map(int,item.split(':'))
+            r +=  list(map(str,list(range(first, last, step))))
         else:
             r.append(item)
 
@@ -44,7 +49,7 @@ def expandArg(anArg):
         r = ["", [anArg]]
     else:
         r = anArg.strip()[:-1].split("[")
-        print(r)
+        # print(r)
         r = [r[0], buildList(r[1])]
 
     return r
@@ -67,16 +72,22 @@ def fileNumbering(n):
 
 
 if "-h" == sys.argv[1]:
-    print("""Example:
+    print("""Examples:
           rae3.py --outDir=kkkkkkkk 0619Amen2 --species="-1,IndirectOffspring=[-8:-4;2],0,DirectOffspring=[1;2]"
+          rae3.py --outDir=kkkkkkkk 0619Amen2 --NumberOfCells=[100:10000:100] --species="-1,IndirectOffspring=[-8:-4;2],0,DirectOffspring=[1;2]"
+          rae3.py --outDir=kkkkkkkk -t 0619Amen2 --NumberOfCells=[100:103] --species="-1,IndirectOffspring=[-8:-4;2],0,DirectOffspring=[1;2]"
+          rae3.py --outDir=kkkkkkkk -t 0619Amen2 --NumberOfCells="[100:110:3;8;10:14:2]" --species="-1,IndirectOffspring=[-8:-4:2;2],0,DirectOffspring=[1;2]"
+
 
           You must express an output directory in the first parameter:
                     --outDir=nameOfTheDirectory
           if it it starts in / it'd be an absolute path
           in other case, it will be created inside 'results' directory
 
-          Inside --species=" .. "
-          lists of values have to be separated by ;
+          IMPORTANT:
+              Observe in the last examples:
+              To express a list of different values or ranges, separate them with ;
+              but to prevent the Terminal shell from an undesired interpretation, surround it in ';' or ";"
     """)
     exit(0)
 
@@ -107,26 +118,28 @@ commandList = build("ae3.py ", ranges, " ")
 
 
 if not outDir:
-    print("You must express an output directory in parameters:")
+    print("You must give an output directory in parameters:")
     print("          --outDir=nameOfTheDirectory")
-    print("if it it starts in / it'd be an absolute path")
+    print("if the dir starts in / it'd be an absolute path")
     print("in other case, it will be created inside 'results' directory")
     exit(1)
 
-Path(outDir).mkdir(parents=True, exist_ok=True)
+if not testMode:
+    Path(outDir).mkdir(parents=True, exist_ok=True)
 
-
+outListFName = "/_list.txt"
 
 n = 1
-print(outDir+"/"+"_list.txt")
-listing = open(outDir+"/_list.txt", "a")
+print(outDir+outListFName)
+if not testMode:
+    listing = open(outDir+outListFName, "w")
 for command in commandList:
     fname = fileNumbering(n)
-    command += " --saveExcel"
+    command += " --outDir=" + outDir
     command += " --outFName=" + fname
-    print(command, file=listing)
     print(command)
     if not testMode:
+        print(command, file=listing)
         os.system(command)
     n += 1
 
