@@ -70,6 +70,16 @@ def build(base, ranges, sep):
 def fileNumbering(n):
     return "%04d" % n
 
+def plotall(n):
+    s = "gnuplot -persist -e 'plot "
+    for i in range(1,n):
+        fname = fileNumbering(i)
+        s += '"results/'+outDir+"/"+fname+'.txt"'+ ' using 11 with lines title "' + fname +'",'
+    s = s.rstrip(',') + "'"
+    print(s)
+    os.system(s)
+    # os.system("gnuplot -persist -e 'plot \"results/%s\" using 11 with lines title \"%s\"'" % (ffname, fname))
+
 
 if "-h" == sys.argv[1]:
     print("""Examples:
@@ -96,6 +106,7 @@ if "-h" == sys.argv[1]:
 
 outDir = ""
 testMode = False
+plotting = False
 ranges = []
 for arg in sys.argv[1:]:
 
@@ -103,10 +114,12 @@ for arg in sys.argv[1:]:
         testMode = True
         continue
 
+    if "-p" == arg:
+        plotting = True
+        continue
+
     if arg.startswith("--outDir="):
         _, outDir = arg.split("=")
-        if not outDir.startswith("/"):
-            outDir = os.path.join("results", outDir)
         continue
 
     if not arg.startswith("--species"):
@@ -142,6 +155,9 @@ for command in commandList:
         print(command, file=listing)
         os.system(command)
     n += 1
+
+if plotting:
+    plotall(n)
 
 
 # --numGen int

@@ -1,29 +1,29 @@
 {
-    "NumberOfCells": 1,
-    "NumberOfRsrcsInEachCell": 400,
+    "NumberOfCells": 100,
+    "NumberOfRsrcsInEachCell": 1000,
     "MultilevelDeath1Percent": 0.00,
     "LambdaForEgoism": 0.0,
-    "Distribution": "100r",
+    "Distribution": "100n",
     "species": [
         {
-        "id": "A",
+        "id": "Pavo reciproco",
         "NumberOfItems": 100,
-        "DirectOffspring": 15,
-        "Distribution": "100r",
+        "DirectOffspring": 0,
+        
         "GroupPartner":   "",
         "PhenotypicFlexibility": 0.0,
 
-        "AssociatedSpecies":   "B",
-        "IndirectOffspring": -6,
+        "AssociatedSpecies":   "Pavo reciproco",
+        "IndirectOffspring": 4,
         "FitnessVariationLimit": 0
         },
         {
-        "id": "a",
+        "id": "Pavo solitario",
         "NumberOfItems": 100,
-        "DirectOffspring": 21,
-        "Distribution": "100r",
+        "DirectOffspring": 2,
+        
         "GroupPartner":   "",
-        "PhenotypicFlexibility": 0.0,
+        "PhenotypicFlexibility": 0.00,
 
         "AssociatedSpecies":   "",
         "IndirectOffspring": 0,

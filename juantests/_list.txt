@@ -1,0 +1,7 @@
+ae3.py 0619Amen2 --species=-1,IndirectOffspring=-8 --outDir=juantests --outFName=0001
+ae3.py 0619Amen2 --species=-1,IndirectOffspring=-7 --outDir=juantests --outFName=0002
+ae3.py 0619Amen2 --species=-1,IndirectOffspring=-6 --outDir=juantests --outFName=0003
+ae3.py 0619Amen2 --species=-1,IndirectOffspring=-5 --outDir=juantests --outFName=0004
+ae3.py 0619Amen2 --species=-1,IndirectOffspring=-4 --outDir=juantests --outFName=0005
+ae3.py 0619Amen2 --species=-1,IndirectOffspring=-3 --outDir=juantests --outFName=0006
+ae3.py 0619Amen2 --species=-1,IndirectOffspring=-2 --outDir=juantests --outFName=0007
