@@ -1,0 +1,4 @@
+ae3.py 0619PavoAsoc2 --NumberOfCells=10 --outDir=saltos --outFName=0001
+ae3.py 0619PavoAsoc2 --NumberOfCells=15 --outDir=saltos --outFName=0002
+ae3.py 0619PavoAsoc2 --NumberOfCells=20 --outDir=saltos --outFName=0003
+ae3.py 0619PavoAsoc2 --NumberOfCells=25 --outDir=saltos --outFName=0004

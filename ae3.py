@@ -375,7 +375,7 @@ def doConsumeAndOffspring():
             # CHANGE THE GLOBAL DirectOffspring gConf parameter
             if newDirFit[iSpecies]["N"]:
                 incFit = gConf["species"][iSpecies]["DirectOffspring"] + gConf["species"][iSpecies]["IndirectOffspring"]
-                dirFit = round(newDirFit[iSpecies]["sum"] / newDirFit[iSpecies]["N"])
+                dirFit = int(round(newDirFit[iSpecies]["sum"] / newDirFit[iSpecies]["N"]))
                 gConf["species"][iSpecies]["DirectOffspring"] = dirFit
                 gConf["species"][iSpecies]["IndirectOffspring"] = incFit - dirFit
 
@@ -423,6 +423,7 @@ def doConsumeAndOffspringIndependent():
             iForm = queue[i]["iForm"]
 
             dirFit   = gConf["species"][iSpecies]["DirectOffspring"]
+            indirFit = gConf["species"][iSpecies]["IndirectOffspring"]
 
             if gArgs["varia"]:
                 fitVarLimit   = gConf["species"][iSpecies]["FitnessVariationLimit"]
@@ -463,7 +464,8 @@ def doConsumeAndOffspringIndependent():
             # CHANGE THE GLOBAL DirectOffspring gConf parameter
             if newDirFit[iSpecies]["N"]:
                 incFit = gConf["species"][iSpecies]["DirectOffspring"] + gConf["species"][iSpecies]["IndirectOffspring"]
-                dirFit = round(newDirFit[iSpecies]["sum"] / newDirFit[iSpecies]["N"])
+                dirFit = int(round(newDirFit[iSpecies]["sum"] / newDirFit[iSpecies]["N"]))
+
                 gConf["species"][iSpecies]["DirectOffspring"] = dirFit
                 gConf["species"][iSpecies]["IndirectOffspring"] = incFit - dirFit
 

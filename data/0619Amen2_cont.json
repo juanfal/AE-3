@@ -2,13 +2,13 @@
     "Distribution": "100n",
     "LambdaForEgoism": 0.0,
     "MultilevelDeath1Percent": 0.0,
-    "NumberOfCells": 10,
+    "NumberOfCells": 25,
     "NumberOfRsrcsInEachCell": 1000,
     "consume": "independent",
     "initFile": "0619Amen2",
     "numGen": 10,
-    "outDir": "juantests",
-    "outFName": "0007",
+    "outDir": "saltos",
+    "outFName": "0004",
     "saveExcel": false,
     "setRandomSeed": -1,
     "species": [
@@ -18,7 +18,7 @@
             "FitnessVariationLimit": 0,
             "GroupPartner": "Sensitive",
             "IndirectOffspring": 0,
-            "NumberOfItems": 7137,
+            "NumberOfItems": 24948,
             "PhenotypicFlexibility": 0.1,
             "id": "Killer"
         },
@@ -28,7 +28,7 @@
             "FitnessVariationLimit": 0,
             "GroupPartner": "",
             "IndirectOffspring": 0,
-            "NumberOfItems": 2616,
+            "NumberOfItems": 2198,
             "PhenotypicFlexibility": 0.0,
             "id": "Sensitive"
         },
@@ -37,7 +37,7 @@
             "DirectOffspring": 3,
             "FitnessVariationLimit": 0,
             "GroupPartner": "",
-            "IndirectOffspring": -2,
+            "IndirectOffspring": -4,
             "NumberOfItems": 0,
             "PhenotypicFlexibility": 0.0,
             "id": "Killer|Sensitive"

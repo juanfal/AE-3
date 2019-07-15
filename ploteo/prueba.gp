@@ -3,4 +3,4 @@
 #
 # juanfc
 
-plot 'results/0001.txt' using 11 with lines title 'SP Sharksucker'
+plot 'results/0001.txt' using 11 with lines,12 with lines title 'SP Sharksucker'

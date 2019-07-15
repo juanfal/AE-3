@@ -1,5 +1,5 @@
 {
-    "Distribution": "100r",
+    "Distribution": "100n",
     "LambdaForEgoism": 0.0,
     "MultilevelDeath1Percent": 0.0,
     "NumberOfCells": 100,
@@ -14,15 +14,15 @@
     "species": [
         {
             "AssociatedSpecies": "Pavo",
-            "DirectOffspring": 0,
+            "DirectOffspring": 17,
             "FitnessVariationLimit": 4,
             "GroupPartner": "",
-            "IndirectOffspring": 4,
-            "NumberOfItems": 87304,
+            "IndirectOffspring": 23,
+            "NumberOfItems": 98035,
             "PhenotypicFlexibility": 0.0,
             "id": "Pavo"
         }
     ],
-    "varia": false,
+    "varia": true,
     "verbose": true
 }

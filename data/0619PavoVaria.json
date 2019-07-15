@@ -3,7 +3,7 @@
     "NumberOfRsrcsInEachCell": 1000,
     "MultilevelDeath1Percent": 0.00,
     "LambdaForEgoism": 0.0,
-    "Distribution": "100n",
+    "Distribution": "100r",
     "species": [
         {
         "id": "Pavo",
@@ -14,7 +14,7 @@
         "PhenotypicFlexibility": 0.0,
 
         "AssociatedSpecies":   "Pavo",
-        "IndirectOffspring": 4,
+        "IndirectOffspring": 40,
         "FitnessVariationLimit": 4
         }
     ]
