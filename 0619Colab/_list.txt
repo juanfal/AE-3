@@ -1,0 +1,4 @@
+ae3.py 0619Colab --Distribution=50r --outDir=0619Colab --outFName=0001
+ae3.py 0619Colab --Distribution=100r --outDir=0619Colab --outFName=0002
+ae3.py 0619Colab --Distribution=50n --outDir=0619Colab --outFName=0003
+ae3.py 0619Colab --Distribution=100n --outDir=0619Colab --outFName=0004

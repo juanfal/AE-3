@@ -11,6 +11,50 @@ from pathlib import Path
 import argparse
 
 BASEDIR = "results"
+HEAD = 3
+SHIFT = 17
+FIRSTCOL = 10
+
+
+
+def plotall(pfiles, species):
+    IDs = getIDs(pfiles)
+    s = "gnuplot -persist -e 'plot "
+    for file in pfiles:
+        s += stringSp(file, species, IDs)
+    s = s.rstrip(',') + "'"
+    print(s)
+    if not testMode:
+        os.system(s)
+
+
+def stringSp(file, species, IDs):
+    s = ""
+    for n in species:
+        tmp = HEAD + SHIFT * n + FIRSTCOL
+        if withoutTitle:
+            s += '"%s" using ($%d)+($%d)+($%d)+($%d) with lines notitle,' % (str(file), tmp, tmp+2, tmp+4, tmp+6)
+        else:
+            s += '"%s" using ($%d)+($%d)+($%d)+($%d) with lines  title "%s",' % (str(file), tmp, tmp+2, tmp+4, tmp+6, IDs[n])
+    s.rstrip(',')
+    return s
+
+
+def countNOfSpecies(listOfFiles):
+    with open(str(listOfFiles[0])) as f:
+        line = f.readline()
+    items = line.split('\t')
+    ncols = len(items)
+    return (ncols - HEAD)//SHIFT
+
+def getIDs(listOfFiles):
+    with open(str(listOfFiles[0])) as f:
+        line = f.readline()
+    items = line.split('\t')
+    nsp = actualNumberOfSpeciesInFiles
+    r = [items[HEAD+i*SHIFT] for i in range(actualNumberOfSpeciesInFiles)]
+    print(r)
+    return r
 
 def buildList(pyExpr):
     r = []
@@ -28,17 +72,11 @@ def buildList(pyExpr):
     return r
 
 def fileNumbering(n):
-    return "%04d" % n
+    return "%04d.txt" % int(n)
 
-def plotall(n):
-    s = "gnuplot -persist -e 'plot "
-    for i in range(1,n):
-        fname = fileNumbering(i)
-        s += '"results/'+inDir+"/"+fname+'.txt"'+ ' using 11 with lines title "' + fname +'",'
-    s = s.rstrip(',') + "'"
-    print(s)
-    os.system(s)
-    # os.system("gnuplot -persist -e 'plot \"results/%s\" using 11 with lines title \"%s\"'" % (ffname, fname))
+
+
+
 
 
 # #### #
@@ -68,6 +106,7 @@ if "-h" == sys.argv[1]:
 
 inDir = None
 testMode = False
+withoutTitle = False
 species = None
 files = None
 
@@ -77,17 +116,20 @@ while i in range(1, len(sys.argv)):
     if "-t" == sys.argv[i]:
         testMode = True
 
+    if "-notitle" == sys.argv[i]:
+        withoutTitle = True
+
     elif "-s" == sys.argv[i]:
         species = buildList(sys.argv[i+1])
 
     elif "-f" == sys.argv[i]:
         files = buildList(sys.argv[i+1])
 
-    else inDir = sys.argv[i]
+    else:
+        inDir = sys.argv[i]
 
     i += 1
 
-commandList = build("ae3.py ", ranges, " ")
 
 #
 # DIRECTORY LISTING OF FILES pfiles
@@ -113,12 +155,11 @@ if not inDir.is_dir():
 
 prevDir = Path()
 os.chdir(inDir)
-inDir = Path()
 
 if files:
-    pfiles = buildFileList(inDir, files)
+    pfiles = map(Path, map(fileNumbering, files))
 else:
-    pfiles = inDir.glob("*.txt")
+    pfiles = list(Path().glob("*.txt"))
 
 non_existing = list(filter(lambda x: not x.exists(), pfiles))
 if non_existing:
@@ -138,27 +179,4 @@ else:
     species = list(range(actualNumberOfSpeciesInFiles))
 
 plotall(pfiles, species)
-
-def plotall(pfiles, species):
-    s = "gnuplot -persist -e 'plot "
-    sspecies = # 11+13+15+17, +14
-    for file in pfiles:
-        fname = fileNumbering(i)
-        for nspecies in species:
-            s += str(file) + stringSp(nspecies) + " title " + str(file) + ","
-    s = s.rstrip(',') + "'"
-    print(s)
-    os.system(s)
-
-# plot 'results/0001.txt' using 11 with lines,12 with lines title 'SP Sharksucker'
-# plot "results/PR.txt" using ($11)+($12) with lines title "SP Una", "results/TR.txt" using ($11)+($12) with lines title "SP dos"
-# def plotall(n):
-    # s = "gnuplot -persist -e 'plot "
-    # for i in range(1,n):
-    #     fname = fileNumbering(i)
-    #     s += '"results/'+outDir+"/"+fname+'.txt"'+ ' using 11 with lines title "' + fname +'",'
-    # s = s.rstrip(',') + "'"
-    # print(s)
-    # os.system(s)
-    # # os.system("gnuplot -persist -e 'plot \"results/%s\" using 11 with lines title \"%s\"'" % (ffname, fname))
 

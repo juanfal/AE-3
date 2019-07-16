@@ -731,7 +731,7 @@ def saveExcel(numGen):
     if numGen == 1:
         gExcelWorksheet.write_row(0,0, globalsHeader, gExcelCellHeader)
     gExcelWorksheet.write_row(numGen,0, [gConf["NumberOfCells"], gConf["NumberOfRsrcsInEachCell"], gConf["Distribution"]])
-    print(gConf["NumberOfCells"], "\t", gConf["NumberOfRsrcsInEachCell"],"\t", gConf["Distribution"], "\t", file=txtOut, end="")
+    print(gConf["NumberOfCells"], "\t", gConf["NumberOfRsrcsInEachCell"],"\t", gConf["Distribution"], "\t", file=txtOut, end="", sep="")
 
 
     if numGen == 1:
@@ -742,7 +742,7 @@ def saveExcel(numGen):
     for iSpecies in range(gNumberOfSpecies):
         gExcelWorksheet.write(numGen, globalsHeaderLen+iSpecies*iSpecHeaderLen,
                  gConf["species"][iSpecies]["id"], gExcelCellID)
-        print(gConf["species"][iSpecies]["id"] + "\t", file=txtOut, end="")
+        print(gConf["species"][iSpecies]["id"] + "\t", file=txtOut, end="", sep="")
 
         if "Distribution" in gConf["species"][iSpecies]:
             speciesDist = gConf["species"][iSpecies]["Distribution"]
@@ -768,7 +768,7 @@ def saveExcel(numGen):
              gStatsPost[iSpecies,RECIPROCAL]
             ]
         gExcelWorksheet.write_row(numGen, globalsHeaderLen+iSpecies*iSpecHeaderLen+1, toWrite)
-        print("\t".join(map(str,toWrite)), file=txtOut, end="")
+        print("\t".join(map(str,toWrite)), file=txtOut, end="", sep="")
         if iSpecies < gNumberOfSpecies-1:
             print("\t", file=txtOut, end="")
 

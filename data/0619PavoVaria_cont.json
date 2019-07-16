@@ -1,24 +1,24 @@
 {
-    "Distribution": "100n",
+    "Distribution": "100r",
     "LambdaForEgoism": 0.0,
     "MultilevelDeath1Percent": 0.0,
-    "NumberOfCells": 100,
-    "NumberOfRsrcsInEachCell": 1000,
+    "NumberOfCells": 10,
+    "NumberOfRsrcsInEachCell": 100,
     "consume": "independent",
     "initFile": "0619PavoVaria",
-    "numGen": 50,
+    "numGen": 60,
     "outDir": null,
     "outFName": null,
-    "saveExcel": false,
+    "saveExcel": true,
     "setRandomSeed": -1,
     "species": [
         {
             "AssociatedSpecies": "Pavo",
-            "DirectOffspring": 17,
+            "DirectOffspring": 33,
             "FitnessVariationLimit": 4,
             "GroupPartner": "",
-            "IndirectOffspring": 23,
-            "NumberOfItems": 98035,
+            "IndirectOffspring": 7,
+            "NumberOfItems": 784,
             "PhenotypicFlexibility": 0.0,
             "id": "Pavo"
         }
