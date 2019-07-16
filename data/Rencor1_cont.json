@@ -1,12 +1,12 @@
 {
-    "Distribution": "100n",
+    "Distribution": "100r",
     "LambdaForEgoism": 0.0,
     "MultilevelDeath1Percent": 0.0,
     "NumberOfCells": 1,
     "NumberOfRsrcsInEachCell": 400,
     "consume": "independent",
     "initFile": "Rencor1",
-    "numGen": 50,
+    "numGen": 600,
     "outDir": null,
     "outFName": null,
     "saveExcel": false,
@@ -19,7 +19,7 @@
             "FitnessVariationLimit": 0,
             "GroupPartner": "",
             "IndirectOffspring": -6,
-            "NumberOfItems": 345,
+            "NumberOfItems": 315,
             "PhenotypicFlexibility": 0.0,
             "id": "A"
         },
@@ -30,7 +30,7 @@
             "FitnessVariationLimit": 0,
             "GroupPartner": "",
             "IndirectOffspring": 0,
-            "NumberOfItems": 30,
+            "NumberOfItems": 6,
             "PhenotypicFlexibility": 0.0,
             "id": "a"
         }

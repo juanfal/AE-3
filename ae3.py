@@ -4,7 +4,7 @@
 # Carlos Villagrasa, Javier Falgueras
 # juanfc 2019-02-16
 
-__version__ = 0.083 # 2019-07-16
+__version__ = 0.084 # 2019-07-17
 
 import os
 import sys
@@ -636,20 +636,46 @@ def getDist(iSpecies):
     n: NEIGHBOURS_DISTRIBUTION
     r: RANDOM_GLOBAL_AVG
     """
-    if "Distribution" in gConf["species"][iSpecies]:
-        dist = gConf["species"][iSpecies]["Distribution"]
-    else:
-        dist = gConf["Distribution"]
+    if "Distribution" in gConf["species"][iSpecies] or "Distribution" in gConf:
+        if "Distribution" in gConf["species"][iSpecies]:
+            dist = gConf["species"][iSpecies]["Distribution"]
+        else:
+            dist = gConf["Distribution"]
 
-    if dist.endswith("n"): # average neighbours distribution
-        distType = NEIGHBOURS_DISTRIBUTION
-    else:
-        distType = RANDOM_GLOBAL_AVG
+        if dist.endswith("n"): # average neighbours distribution
+            distType = NEIGHBOURS_DISTRIBUTION
+        else:
+            distType = RANDOM_GLOBAL_AVG
 
-    distVal = int(dist[:-1])
-    if distVal > 100 or distVal < 0:
-        print("Error in Distribution val (should be 0<=x<=100. Is:", distVal)
-        sys.exit(1)
+        distVal = int(dist[:-1])
+        if distVal > 100 or distVal < 0:
+            print("Error in Distribution val (should be 0<=x<=100. Is:", distVal)
+            sys.exit(1)
+
+    if "DistType" in gConf["species"][iSpecies] or "DistType" in gConf:
+        if "DistType" in gConf["species"][iSpecies]:
+            dist = gConf["species"][iSpecies]["DistType"]
+            distVal = int(gConf["species"][iSpecies]["DistVal"])
+        else:
+            dist = gConf["DistType"]
+            distVal = int(gConf["DistVal"])
+
+        if dist == "n": # average neighbours distribution
+            distType = NEIGHBOURS_DISTRIBUTION
+        else:
+            distType = RANDOM_GLOBAL_AVG
+
+        oldStyle = str(distVal)+dist
+        if "DistType" in gConf["species"][iSpecies]:
+            gConf["species"][iSpecies]["Distribution"] = oldStyle
+        else:
+            gConf["Distribution"] = oldStyle
+
+        if distVal > 100 or distVal < 0:
+            print("Error in Distribution val (should be 0<=x<=100. Is:", distVal)
+            sys.exit(1)
+
+
     return distType, distVal
 
 def fitnessVariations(direct, indirect, fitVarLimit):
@@ -827,6 +853,13 @@ def checkConf(conf):
     for i in range(longListSpecies):
         if "Distribution" in conf["species"][i] and conf["species"][i]["Distribution"][-1] not in "rn":
             problems += "Distribution for species %d must end either in r or n" % (i,)
+
+        if "DistType" in conf["species"][i] and conf["species"][i]["DistType"] not in "rn":
+            problems += "DistType for species %d must end either in r or n" % (i,)
+
+        if "DistVal" in conf["species"][i] and (100 < conf["species"][i]["DistVal"] or \
+                                                0   > conf["species"][i]["DistVal"]):
+            problems += "DistVal for species %d must between 0..100" % (i,)
 
         theId = conf["species"][i]["id"]
         partnerId = conf["species"][i]["GroupPartner"]
@@ -1040,6 +1073,37 @@ def defineAndGetCommandLineArgs():
           3 for example, means 3x2+1 cells
             are used for distribution: the central one plus the 3 at
             the left plus the 3 at the right""")
+    )
+
+
+    theArgParser.add_argument(
+        "--DistType", type=str,
+        metavar="'str'",
+        default=argparse.SUPPRESS,
+        help=textwrap.dedent("""\
+        It allows specify the desired type of distribution between:
+          a) RANDOM_GLOBAL_AVG        r
+                           to distribute all the elements among every cell
+                           0 r    means in each cell the same value averaged
+                           100 r: means a total random number in each cell
+                           Items are taken from cells forgetting their
+                           previous position and then distributed randomly
+          b) NEIGHBOURS_DISTRIBUTION  n
+                           to distribute each cell items among the
+                           n%%/2 cells around
+
+        --DistType=r
+        --DistType=n
+        If used, this parameter cancels --Distribution parameter""")
+    )
+
+    theArgParser.add_argument(
+        "--DistVal", type=int,
+        default=argparse.SUPPRESS, metavar="int",
+        help=textwrap.dedent("""\
+        It specifies the amount (integer) between 0-100
+        for the active kind of distribution (r or n)
+        If used, this parameter cancels --Distribution parameter""")
     )
 
 

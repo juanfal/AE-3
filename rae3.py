@@ -137,18 +137,21 @@ if not outDir:
     print("in other case, it will be created inside 'results' directory")
     exit(1)
 
+outDir = Path(outDir)
+if not outDir.root:
+    finalOutDir = Path("results") / outDir
 if not testMode:
-    Path(outDir).mkdir(parents=True, exist_ok=True)
+    finalOutDir.mkdir(parents=True, exist_ok=True)
 
-outListFName = "/_list.txt"
+outListFName = finalOutDir / "_list.txt"
 
 n = 1
-print(outDir+outListFName)
+print(outListFName)
 if not testMode:
-    listing = open(outDir+outListFName, "w")
+    listing = open(outListFName, "w")
 for command in commandList:
     fname = fileNumbering(n)
-    command += " --outDir=" + outDir
+    command += " --outDir=" + str(outDir)
     command += " --outFName=" + fname
     print(command)
     if not testMode:
