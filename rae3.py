@@ -70,17 +70,6 @@ def build(base, ranges, sep):
 def fileNumbering(n):
     return "%04d" % n
 
-def plotall(n):
-    s = "gnuplot -persist -e 'plot "
-    for i in range(1,n):
-        fname = fileNumbering(i)
-        s += '"results/'+outDir+"/"+fname+'.txt"'+ ' using 11 with lines title "' + fname +'",'
-    s = s.rstrip(',') + "'"
-    print(s)
-    os.system(s)
-    # os.system("gnuplot -persist -e 'plot \"results/%s\" using 11 with lines title \"%s\"'" % (ffname, fname))
-
-
 if "-h" == sys.argv[1]:
     print("""Examples:
           rae3.py --outDir=kkkkkkkk 0619Amen2 --species="-1,IndirectOffspring=[-8:-4;2],0,DirectOffspring=[1;2]"
@@ -106,16 +95,11 @@ if "-h" == sys.argv[1]:
 
 outDir = ""
 testMode = False
-plotting = False
 ranges = []
 for arg in sys.argv[1:]:
 
     if "-t" == arg:
         testMode = True
-        continue
-
-    if "-p" == arg:
-        plotting = True
         continue
 
     if arg.startswith("--outDir="):
@@ -158,9 +142,6 @@ for command in commandList:
         print(command, file=listing)
         os.system(command)
     n += 1
-
-if plotting:
-    plotall(n)
 
 
 # --numGen int

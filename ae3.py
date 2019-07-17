@@ -4,7 +4,7 @@
 # Carlos Villagrasa, Javier Falgueras
 # juanfc 2019-02-16
 
-__version__ = 0.084 # 2019-07-17
+__version__ = 0.085 # 2019-07-18
 
 import os
 import sys
@@ -99,7 +99,9 @@ def doDistribute():
     Each species (iSpecies) can have either of them
     """
 
-    global gStdDevDistr
+    global gStdDevDistr, gWorld
+    noNegger = vectorize(noNeg)
+    gWorld = noNegger(gWorld)
     for iSpecies in range(gNumberOfSpecies):
         distType, distVal = getDist(iSpecies)
 

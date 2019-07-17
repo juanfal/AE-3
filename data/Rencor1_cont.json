@@ -6,7 +6,7 @@
     "NumberOfRsrcsInEachCell": 400,
     "consume": "independent",
     "initFile": "Rencor1",
-    "numGen": 600,
+    "numGen": 10,
     "outDir": null,
     "outFName": null,
     "saveExcel": false,
@@ -19,7 +19,7 @@
             "FitnessVariationLimit": 0,
             "GroupPartner": "",
             "IndirectOffspring": -6,
-            "NumberOfItems": 315,
+            "NumberOfItems": 0,
             "PhenotypicFlexibility": 0.0,
             "id": "A"
         },
@@ -30,11 +30,11 @@
             "FitnessVariationLimit": 0,
             "GroupPartner": "",
             "IndirectOffspring": 0,
-            "NumberOfItems": 6,
+            "NumberOfItems": 399,
             "PhenotypicFlexibility": 0.0,
             "id": "a"
         }
     ],
     "varia": false,
-    "verbose": true
+    "verbose": false
 }
