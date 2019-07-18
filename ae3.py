@@ -4,7 +4,7 @@
 # Carlos Villagrasa, Javier Falgueras
 # juanfc 2019-02-16
 
-__version__ = 0.085 # 2019-07-18
+__version__ = 0.087 # 2019-07-18
 
 import os
 import sys
@@ -74,8 +74,11 @@ def doInitialDistribution():
     will do it (again) distribute all equally
     doDistribute() left for the end of generations loop"""
 
-    # If a world file is there, take it!
-    if os.path.isfile(gWorldCompFileName):
+    # If a world file is there, take it!, but only when the number of cells fits
+
+    if gNumberOfCells == checkAndCountPrevWorldNumberOfCells(gWorldCompFileName):
+        # adding the possibility of changing the number of cells
+        # First: compute the previous number of them
         gWorld[:,:,0] = [list(map(int, line.split())) for line in open(gWorldCompFileName)]
     else:
         # Simplest, averaged distribution
@@ -721,6 +724,14 @@ def ranking(l, value):
     rank = unique(l.flatten())
     return 1+where(rank==value)[0][0]
 
+def checkAndCountPrevWorldNumberOfCells(fName):
+    if not os.path.isfile(fName):
+        return 0
+    with open(fName) as f:
+        line = f.readline()
+    return len(line.split('\t'))
+
+
 def initExcel():
     global gExcelCellHeader, gExcelCellID, gExcelWorkbook, gExcelWorksheet
     excelOut = os.path.join(gOutDir, gOutFNameBase + ".xlsx")
@@ -846,25 +857,40 @@ def checkConf(conf):
 
     # Check values for Distribution, if there
     if "Distribution" in conf and conf["Distribution"][-1] not in "rn":
-        problems += "Distribution global value must end either in r or n"
+        problems += "Distribution global value must end either in r or n\n"
+
+    # Check values for DistType, if there
+    if "DistType" in conf and conf["DistType"] not in "rn":
+        problems += "DistType global value must be either r or n. You gave %s\n" % conf["DistType"]
+
+
+    if "DistVal" in conf and (100 < conf["DistVal"] or 0 > conf["DistVal"]):
+        problems += "DistVal global value given: %d. It must be between 0..100\n" % conf["DistVal"]
+
+    if ("DistType" in conf) and ("DistVal" not in conf) or ("DistType" not in conf) and ("DistVal" in conf):
+        problems += "Global. Both DistType/DisVal values must be provided when one of them is provided\n"
 
     previousIds = set([])
     longListSpecies = len(conf["species"])
     if type(conf["species"]) != list or longListSpecies == 0:
         problems += "Species must be a list with species inside\n"
     for i in range(longListSpecies):
-        if "Distribution" in conf["species"][i] and conf["species"][i]["Distribution"][-1] not in "rn":
-            problems += "Distribution for species %d must end either in r or n" % (i,)
+        confi = conf["species"][i]
+        if "Distribution" in confi and confi["Distribution"][-1] not in "rn":
+            problems += "Distribution for species %d must end either in r or n\n" % i
 
-        if "DistType" in conf["species"][i] and conf["species"][i]["DistType"] not in "rn":
-            problems += "DistType for species %d must end either in r or n" % (i,)
+        if "DistType" in confi and confi["DistType"] not in "rn":
+            problems += "DistType for species %d must end either in r or n\n" % i
 
-        if "DistVal" in conf["species"][i] and (100 < conf["species"][i]["DistVal"] or \
-                                                0   > conf["species"][i]["DistVal"]):
-            problems += "DistVal for species %d must between 0..100" % (i,)
+        if "DistVal" in confi and (100 < confi["DistVal"] or \
+                                                0   > confi["DistVal"]):
+            problems += "DistVal for species %d must between 0..100\n" % i
 
-        theId = conf["species"][i]["id"]
-        partnerId = conf["species"][i]["GroupPartner"]
+        if ("DistType" in confi) and ("DistVal" not in confi) or ("DistType" not in confi) and ("DistVal" in confi):
+            problems += "Species %d. Both DistType/DisVal values must be provided when one of them is provided\n" % i
+
+        theId = confi["id"]
+        partnerId = confi["GroupPartner"]
         if theId in previousIds:
             problems += "Id '%s' REPEATED\n" % theId
         else:
@@ -882,11 +908,11 @@ def checkConf(conf):
                     (aId, theId)
 
 
-        if not itemsspecies.issubset(conf["species"][i].keys()):
+        if not itemsspecies.issubset(confi.keys()):
             problems += "Some essential item(s) of species %s is not defined\n\t Check the next items for all species are all there:\n\t%s\n" % (theId, str(list(itemsspecies)))
 
     if problems:
-        print("ERROR. The configuration file '%s' has inconsistencies:\n\n%s" % (gInitConfFile, problems))
+        print("\nERROR(s)\nIn the configuration file '%s' or in the command line arguments added there are inconsistencies:\n\n%s\n\n" % (gInitConfFile, problems))
         sys.exit(1)
 
 def completeDataFileNames(fromfilename, inDirectory):
@@ -921,7 +947,12 @@ def defineAndGetCommandLineArgs():
         When provided it sets the file with the initial configuration.
         All the configuration files are inside the './data' directory.
         Do not add the .extension to the file name.
-        If not provided, it defaults to 'defaultInit'""")
+        If not provided, it defaults to 'defaultInit'
+        HINT:
+            You can use
+                egoism/test1
+            as init file and then, _cont files will be generated inside that data/egoism/
+            folder""")
     )
 
     # Number of generations to run
@@ -1204,8 +1235,9 @@ def replaceArgsInConf(conf, args):
             if param == "species":
                 parseSpeciesArgs(args["species"])
             else:
-                t = type(conf[param])
-                conf[param] = t(args[param])
+                if conf[param] != None:
+                    t = type(conf[param])
+                    conf[param] = t(args[param])
         else:
             conf[param] = args[param]
     return conf
@@ -1248,7 +1280,6 @@ gNumberOfSpecies = len(gConf["species"])
 
 checkConf(gConf)
 
-printv(gConf)
 
 # SET UP CONVENIENT GLOBALS
 #
@@ -1285,6 +1316,7 @@ if gArgs["outFName"]:
 
 
 
+printv(gConf)
 printv(gArgs)
 
 

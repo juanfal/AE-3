@@ -1,0 +1,42 @@
+{
+    "DistType": "r",
+    "DistVal": 50,
+    "Distribution": "50r",
+    "LambdaForEgoism": 0.0,
+    "MultilevelDeath1Percent": 0.0,
+    "NumberOfCells": 20,
+    "NumberOfRsrcsInEachCell": 400,
+    "consume": "independent",
+    "initFile": "test/Rencor_cont",
+    "numGen": 10,
+    "outDir": null,
+    "outFName": null,
+    "saveExcel": false,
+    "setRandomSeed": -1,
+    "species": [
+        {
+            "AssociatedSpecies": "B",
+            "DirectOffspring": 15,
+            "Distribution": "100r",
+            "FitnessVariationLimit": 0,
+            "GroupPartner": "",
+            "IndirectOffspring": -6,
+            "NumberOfItems": 0,
+            "PhenotypicFlexibility": 0.0,
+            "id": "A"
+        },
+        {
+            "AssociatedSpecies": "",
+            "DirectOffspring": 21,
+            "Distribution": "100r",
+            "FitnessVariationLimit": 0,
+            "GroupPartner": "",
+            "IndirectOffspring": 0,
+            "NumberOfItems": 7980,
+            "PhenotypicFlexibility": 0.0,
+            "id": "a"
+        }
+    ],
+    "varia": false,
+    "verbose": true
+}
