@@ -1,6 +1,6 @@
 {
-    "NumberOfCells": 10,
-    "NumberOfRsrcsInEachCell": 100,
+    "NumberOfCells": 5,
+    "NumberOfRsrcsInEachCell": 150,
     "MultilevelDeath1Percent": 0.00,
     "LambdaForEgoism": 0.0,
     "Distribution": "100r",
@@ -8,14 +8,14 @@
         {
         "id": "Pavo",
         "NumberOfItems": 100,
-        "DirectOffspring": 0,
+        "DirectOffspring": 10,
         
         "GroupPartner":   "",
         "PhenotypicFlexibility": 0.0,
 
         "AssociatedSpecies":   "Pavo",
         "IndirectOffspring": 40,
-        "FitnessVariationLimit": 4
+        "FitnessVariationLimit": 10
         }
     ]
 }

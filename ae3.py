@@ -4,7 +4,7 @@
 # Carlos Villagrasa, Javier Falgueras
 # juanfc 2019-02-16
 
-__version__ = 0.087 # 2019-07-18
+__version__ = 0.088 # 2019-07-19
 
 import os
 import sys
@@ -444,7 +444,6 @@ def doConsumeAndOffspringIndependent():
                     gStatsPost[iSpecies, iForm] += 1
             else:
                 # The others (ACTOR, and RECIPROCAL) have to give IndirectOffspring
-                indirFit = gConf["species"][iSpecies]["IndirectOffspring"]
                 toEat = dirFit + abs(indirFit)
                 if rsrc >= toEat:
                     gWorld[iSpecies, iCell, INDIVIDUAL] += dirFit
@@ -470,7 +469,6 @@ def doConsumeAndOffspringIndependent():
             if newDirFit[iSpecies]["N"]:
                 incFit = gConf["species"][iSpecies]["DirectOffspring"] + gConf["species"][iSpecies]["IndirectOffspring"]
                 dirFit = int(round(newDirFit[iSpecies]["sum"] / newDirFit[iSpecies]["N"]))
-
                 gConf["species"][iSpecies]["DirectOffspring"] = dirFit
                 gConf["species"][iSpecies]["IndirectOffspring"] = incFit - dirFit
 
@@ -686,6 +684,7 @@ def getDist(iSpecies):
 def fitnessVariations(direct, indirect, fitVarLimit):
     """Returns a pair of new rand int direc-indirect fitnesses inside the
     fitVarLimit"""
+
     tot = direct + abs(indirect)
 
     # the pairs ordered in the smoothest possible way
@@ -713,7 +712,6 @@ def fitnessVariations(direct, indirect, fitVarLimit):
         topp = currentI + fitVarLimit + 1
 
     newI = randint(bottom, topp)
-
     return pairsOfFitness[newI]
 
 def noNeg(n):

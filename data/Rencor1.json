@@ -1,5 +1,5 @@
 {
-    "NumberOfCells": 1,
+    "NumberOfCells": 100,
     "NumberOfRsrcsInEachCell": 400,
     "MultilevelDeath1Percent": 0.00,
     "LambdaForEgoism": 0.0,

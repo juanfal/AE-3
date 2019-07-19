@@ -2,7 +2,7 @@
     "Distribution": "100r",
     "LambdaForEgoism": 0.0,
     "MultilevelDeath1Percent": 0.0,
-    "NumberOfCells": 1,
+    "NumberOfCells": 100,
     "NumberOfRsrcsInEachCell": 400,
     "consume": "independent",
     "initFile": "Rencor1",
@@ -19,7 +19,7 @@
             "FitnessVariationLimit": 0,
             "GroupPartner": "",
             "IndirectOffspring": -6,
-            "NumberOfItems": 0,
+            "NumberOfItems": 14175,
             "PhenotypicFlexibility": 0.0,
             "id": "A"
         },
@@ -30,7 +30,7 @@
             "FitnessVariationLimit": 0,
             "GroupPartner": "",
             "IndirectOffspring": 0,
-            "NumberOfItems": 399,
+            "NumberOfItems": 19449,
             "PhenotypicFlexibility": 0.0,
             "id": "a"
         }
