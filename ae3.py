@@ -4,7 +4,7 @@
 # Carlos Villagrasa, Javier Falgueras
 # juanfc 2019-02-16
 
-__version__ = 0.088 # 2019-07-19
+__version__ = 0.089 # 2019-09-08
 
 import os
 import sys
@@ -20,6 +20,8 @@ from numpy.random import seed, randint, shuffle, sample, permutation
 set_printoptions(formatter={'int': '{: 7d}'.format})
 
 import xlsxwriter
+# sys.path.append('/usr/local/lib/python3.7/site-packages')
+# import xlrd
 from datetime import datetime
 
 
@@ -731,11 +733,31 @@ def checkAndCountPrevWorldNumberOfCells(fName):
 
 
 def initExcel():
-    global gExcelCellHeader, gExcelCellID, gExcelWorkbook, gExcelWorksheet
-    excelOut = os.path.join(gOutDir, gOutFNameBase + ".xlsx")
+    global gExcelCellHeader, gExcelCellID, gExcelWorkbook, gExcelWorksheet, gGlobalExcel
 
+    # # Check if there already is a collective Excel
+    # if gGlobalExcel:
+    #     gExcelWorkbook = xlsxwriter.Workbook(gGlobalExcel)
+    #     if os.path.isfile(gGlobalExcel):
+    #         prexcel = xlrd.open_workbook(gGlobalExcel)
+    #         sheets = prexcel.sheets()
+    #         # run through the sheets and store sheets in workbook
+    #         # this still doesn't write to the file yet
+    #         for sheet in sheets: # write data from old file
+    #             newSheet = gExcelWorkbook.add_worksheet(sheet.name)
+    #             for row in range(sheet.nrows):
+    #                 for col in range(sheet.ncols):
+    #                     newSheet.write(row, col, sheet.cell(row, col).value)
+
+    #     gExcelWorksheet = gExcelWorkbook.add_worksheet(gOutFNameBase)
+    # else:
+    #     excelOut = os.path.join(gOutDir, gOutFNameBase + ".xlsx")
+    #     gExcelWorkbook = xlsxwriter.Workbook(excelOut)
+    #     gExcelWorksheet = gExcelWorkbook.add_worksheet()
+    excelOut = os.path.join(gOutDir, gOutFNameBase + ".xlsx")
     gExcelWorkbook = xlsxwriter.Workbook(excelOut)
     gExcelWorksheet = gExcelWorkbook.add_worksheet()
+
     gExcelCellHeader = gExcelWorkbook.add_format({
                                            'align':'center', 'bg_color': '#CCCCFF', 'bold': True})
     gExcelCellID = gExcelWorkbook.add_format({'align':'center', 'bg_color': '#33FF99', 'bold': True})
@@ -1051,6 +1073,8 @@ def defineAndGetCommandLineArgs():
         (initFilename+date)
         where to save the .txt and .xlsx files with global outputs.
         It sets --saveExcel to True
+        It appends a new sheet after to the Excel file. The name
+        of the Excel file is the name of the output directory
         Example:
             --outFNname=assocTest20""")
     )
@@ -1285,6 +1309,7 @@ gNumberOfCells   = gConf["NumberOfCells"]
 
 gEgoism          = []
 gToSaveExcel     = gArgs["saveExcel"]
+gGlobalExcel = None
 gListOfAssociationActors = [] # list of species starting association
 gListOfAssociationActors = collectAssociationActors() # list of species starting association
 
@@ -1302,6 +1327,7 @@ if gArgs["outDir"]:
         gOutDir = gArgs["outDir"]
     else:
         gOutDir = os.path.join(gOutDir, gArgs["outDir"])
+    gGlobalExcel = os.path.join(gOutDir, "global.xlsx")
 
 Path(gOutDir).mkdir(parents=True, exist_ok=True)
 
@@ -1309,6 +1335,7 @@ gThedatetime = datetime.now().strftime("%Y%m%d-%H%M%S")
 gOutFNameBase = gInitConfFile + '_' + gThedatetime
 if gArgs["outFName"]:
     gToSaveExcel = True
+    gGlobalExcel = os.path.join(gOutDir, gOutDir + ".xlsx")
     gOutFNameBase = gArgs["outFName"]
 
 

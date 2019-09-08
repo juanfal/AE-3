@@ -1,0 +1,48 @@
+{
+    "Distribution": "100n",
+    "LambdaForEgoism": 0.0,
+    "MultilevelDeath1Percent": 0.0,
+    "NumberOfCells": 10,
+    "NumberOfRsrcsInEachCell": 100,
+    "consume": "independent",
+    "initFile": "varia",
+    "numGen": 60,
+    "outDir": null,
+    "outFName": null,
+    "saveExcel": true,
+    "setRandomSeed": -1,
+    "species": [
+        {
+            "AssociatedSpecies": "ACM",
+            "DirectOffspring": 10,
+            "FitnessVariationLimit": 0,
+            "GroupPartner": "",
+            "IndirectOffspring": -3,
+            "NumberOfItems": 0,
+            "PhenotypicFlexibility": 0.0,
+            "id": "ACM"
+        },
+        {
+            "AssociatedSpecies": "Rec2",
+            "DirectOffspring": 10,
+            "FitnessVariationLimit": 0,
+            "GroupPartner": "",
+            "IndirectOffspring": -3,
+            "NumberOfItems": 0,
+            "PhenotypicFlexibility": 0.0,
+            "id": "Rec1"
+        },
+        {
+            "AssociatedSpecies": "Rec1",
+            "DirectOffspring": 10,
+            "FitnessVariationLimit": 0,
+            "GroupPartner": "",
+            "IndirectOffspring": -3,
+            "NumberOfItems": 1000,
+            "PhenotypicFlexibility": 0.0,
+            "id": "Rec2"
+        }
+    ],
+    "varia": true,
+    "verbose": true
+}

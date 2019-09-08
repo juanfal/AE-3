@@ -1,0 +1,57 @@
+{
+    "NumberOfCells": 100,
+    "NumberOfRsrcsInEachCell": 100,
+    "MultilevelDeath1Percent": 0.00,
+    "LambdaForEgoism": 0.0,
+    "Distribution": "2n",
+    "species": [
+        {
+        "id": "Asg",
+        "NumberOfItems": 100,
+        "DirectOffspring": 2,
+        "Distribution": "2n",
+        "GroupPartner":   "PA",
+        "PhenotypicFlexibility": 0.0,
+
+        "AssociatedSpecies":   "",
+        "IndirectOffspring": 0,
+        "FitnessVariationLimit": 0
+        },
+        {
+        "id": "PA",
+        "NumberOfItems": 100,
+        "DirectOffspring": 2,
+        "Distribution": "2n",
+        "GroupPartner":   "",
+        "PhenotypicFlexibility": 0.0,
+
+        "AssociatedSpecies":   "",
+        "IndirectOffspring": 0,
+        "FitnessVariationLimit": 0
+        },
+        {
+        "id": "Asg|PA",
+        "NumberOfItems": 0,
+        "DirectOffspring": 2,
+        "Distribution": "2n",
+        "GroupPartner":   "",
+        "PhenotypicFlexibility": 0.0,
+
+        "AssociatedSpecies":   "SRB",
+        "IndirectOffspring": 1,
+        "FitnessVariationLimit": 0
+        },
+        {
+        "id": "SRB",
+        "NumberOfItems": 100,
+        "DirectOffspring": 2,
+        "Distribution": "2n",
+        "GroupPartner":   "",
+        "PhenotypicFlexibility": 0.0,
+
+        "AssociatedSpecies":   "Asg|PA",
+        "IndirectOffspring": 1,
+        "FitnessVariationLimit": 0
+        }
+    ]
+}

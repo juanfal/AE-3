@@ -27,17 +27,35 @@ import os
 from pathlib import Path
 import argparse
 
+def frange(x, y, jump):
+  while x < y:
+    yield x
+    x += jump
 
 def buildList(pyExpr):
     r = []
     tmp = pyExpr.split(";")
     for item in tmp:
         if item.count(':') == 1:
-            first, last = map(int,item.split(':'))
-            r +=  list(map(str,list(range(first, last))))
+            first, last = item.split(':')
+            if '.' in first or '.' in last:
+                first = float(first)
+                last = float(last)
+            else:
+                first = int(first)
+                last = int(last)
+            r +=  list(map(str,list(frange(first, last))))
         elif item.count(':') == 2:
-            first, last, step = map(int,item.split(':'))
-            r +=  list(map(str,list(range(first, last, step))))
+            first, last, step = item.split(':')
+            if '.' in first or '.' in last or '.' in step:
+                first = float(first)
+                last = float(last)
+                step = float(step)
+            else:
+                first = int(first)
+                last = int(last)
+                step = int(step)
+            r +=  list(map(str,list(frange(first, last, step))))
         else:
             r.append(item)
 
@@ -111,7 +129,7 @@ for arg in sys.argv[1:]:
     else:
         ranges.append(["", build("--species=", map(expandArg, arg[10:].split(",")), "," )])
 
-commandList = build("ae3.py ", ranges, " ")
+commandList = build("ae3.py --setRandomSeed=1 ", ranges, " ")
 
 
 if not outDir:

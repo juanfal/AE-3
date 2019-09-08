@@ -3,10 +3,10 @@
     "LambdaForEgoism": 0.0,
     "MultilevelDeath1Percent": 0.0,
     "NumberOfCells": 100,
-    "NumberOfRsrcsInEachCell": 400,
+    "NumberOfRsrcsInEachCell": 100,
     "consume": "independent",
-    "initFile": "Rencor1",
-    "numGen": 10,
+    "initFile": "barba",
+    "numGen": 300,
     "outDir": null,
     "outFName": null,
     "saveExcel": true,
@@ -14,27 +14,35 @@
     "species": [
         {
             "AssociatedSpecies": "B",
-            "DirectOffspring": 15,
-            "Distribution": "100r",
+            "DirectOffspring": 1,
             "FitnessVariationLimit": 0,
-            "GroupPartner": "",
-            "IndirectOffspring": -6,
-            "NumberOfItems": 14805,
-            "PhenotypicFlexibility": 0.0,
+            "GroupPartner": "A",
+            "IndirectOffspring": 1,
+            "NumberOfItems": 8828,
+            "PhenotypicFlexibility": 0.5,
             "id": "A"
         },
         {
             "AssociatedSpecies": "",
-            "DirectOffspring": 21,
-            "Distribution": "100r",
+            "DirectOffspring": 2,
             "FitnessVariationLimit": 0,
             "GroupPartner": "",
             "IndirectOffspring": 0,
-            "NumberOfItems": 19209,
+            "NumberOfItems": 4053,
             "PhenotypicFlexibility": 0.0,
-            "id": "a"
+            "id": "B"
+        },
+        {
+            "AssociatedSpecies": "",
+            "DirectOffspring": 2,
+            "FitnessVariationLimit": 0,
+            "GroupPartner": "",
+            "IndirectOffspring": 0,
+            "NumberOfItems": 0,
+            "PhenotypicFlexibility": 0.0,
+            "id": "A|A"
         }
     ],
     "varia": false,
-    "verbose": false
+    "verbose": true
 }

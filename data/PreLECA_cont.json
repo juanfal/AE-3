@@ -1,0 +1,62 @@
+{
+    "Distribution": "2n",
+    "LambdaForEgoism": 0.0,
+    "MultilevelDeath1Percent": 0.0,
+    "NumberOfCells": 100,
+    "NumberOfRsrcsInEachCell": 100,
+    "consume": "independent",
+    "initFile": "PreLECA",
+    "numGen": 600,
+    "outDir": "EUKARY",
+    "outFName": "0025",
+    "saveExcel": false,
+    "setRandomSeed": 1,
+    "species": [
+        {
+            "AssociatedSpecies": "",
+            "DirectOffspring": 2,
+            "Distribution": "2n",
+            "FitnessVariationLimit": 0,
+            "GroupPartner": "PA",
+            "IndirectOffspring": 0,
+            "NumberOfItems": 1130,
+            "PhenotypicFlexibility": 0.8,
+            "id": "Asg"
+        },
+        {
+            "AssociatedSpecies": "",
+            "DirectOffspring": 2,
+            "Distribution": "2n",
+            "FitnessVariationLimit": 0,
+            "GroupPartner": "",
+            "IndirectOffspring": 0,
+            "NumberOfItems": 1188,
+            "PhenotypicFlexibility": 0.0,
+            "id": "PA"
+        },
+        {
+            "AssociatedSpecies": "SRB",
+            "DirectOffspring": 2,
+            "Distribution": "2n",
+            "FitnessVariationLimit": 0,
+            "GroupPartner": "",
+            "IndirectOffspring": 1,
+            "NumberOfItems": 3697,
+            "PhenotypicFlexibility": 0.8,
+            "id": "Asg|PA"
+        },
+        {
+            "AssociatedSpecies": "Asg|PA",
+            "DirectOffspring": 2,
+            "Distribution": "2n",
+            "FitnessVariationLimit": 0,
+            "GroupPartner": "",
+            "IndirectOffspring": 1,
+            "NumberOfItems": 4810,
+            "PhenotypicFlexibility": 0.0,
+            "id": "SRB"
+        }
+    ],
+    "varia": false,
+    "verbose": false
+}

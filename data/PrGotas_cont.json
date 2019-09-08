@@ -1,0 +1,48 @@
+{
+    "Distribution": "100r",
+    "LambdaForEgoism": 0.0,
+    "MultilevelDeath1Percent": 0.0,
+    "NumberOfCells": 100,
+    "NumberOfRsrcsInEachCell": 1000,
+    "consume": "independent",
+    "initFile": "PrGotas",
+    "numGen": 100,
+    "outDir": "PrGotas1",
+    "outFName": "0006",
+    "saveExcel": false,
+    "setRandomSeed": -1,
+    "species": [
+        {
+            "AssociatedSpecies": "N",
+            "DirectOffspring": 1,
+            "FitnessVariationLimit": 0,
+            "GroupPartner": "N",
+            "IndirectOffspring": 1,
+            "NumberOfItems": 61792,
+            "PhenotypicFlexibility": 1.0,
+            "id": "A"
+        },
+        {
+            "AssociatedSpecies": "",
+            "DirectOffspring": 2,
+            "FitnessVariationLimit": 0,
+            "GroupPartner": "",
+            "IndirectOffspring": 0,
+            "NumberOfItems": 79098,
+            "PhenotypicFlexibility": 0.0,
+            "id": "N"
+        },
+        {
+            "AssociatedSpecies": "",
+            "DirectOffspring": 4,
+            "FitnessVariationLimit": 0,
+            "GroupPartner": "",
+            "IndirectOffspring": 0,
+            "NumberOfItems": 0,
+            "PhenotypicFlexibility": 0.0,
+            "id": "A|N"
+        }
+    ],
+    "varia": false,
+    "verbose": false
+}

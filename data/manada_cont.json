@@ -1,0 +1,62 @@
+{
+    "Distribution": "100n",
+    "LambdaForEgoism": 0.0,
+    "MultilevelDeath1Percent": 0.0,
+    "NumberOfCells": 100,
+    "NumberOfRsrcsInEachCell": 100000,
+    "consume": "independent",
+    "initFile": "manada",
+    "numGen": 10,
+    "outDir": "kkkkkkkk",
+    "outFName": "0002",
+    "saveExcel": false,
+    "setRandomSeed": -1,
+    "species": [
+        {
+            "AssociatedSpecies": "",
+            "DirectOffspring": 1,
+            "Distribution": "100r",
+            "FitnessVariationLimit": 0,
+            "GroupPartner": "",
+            "IndirectOffspring": 0,
+            "NumberOfItems": 26,
+            "PhenotypicFlexibility": 0.0,
+            "id": "Manada"
+        },
+        {
+            "AssociatedSpecies": "Manada",
+            "DirectOffspring": 5,
+            "Distribution": "100r",
+            "FitnessVariationLimit": 0,
+            "GroupPartner": "",
+            "IndirectOffspring": -500,
+            "NumberOfItems": 500,
+            "PhenotypicFlexibility": 0.0,
+            "id": "Pred1"
+        },
+        {
+            "AssociatedSpecies": "",
+            "DirectOffspring": 200,
+            "Distribution": "100n",
+            "FitnessVariationLimit": 0,
+            "GroupPartner": "",
+            "IndirectOffspring": 0,
+            "NumberOfItems": 19727,
+            "PhenotypicFlexibility": 0.0,
+            "id": "Solitario"
+        },
+        {
+            "AssociatedSpecies": "Solitario",
+            "DirectOffspring": 5,
+            "Distribution": "100r",
+            "FitnessVariationLimit": 0,
+            "GroupPartner": "",
+            "IndirectOffspring": -7,
+            "NumberOfItems": 500,
+            "PhenotypicFlexibility": 0.0,
+            "id": "Pred2"
+        }
+    ],
+    "varia": false,
+    "verbose": false
+}

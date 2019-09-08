@@ -1,0 +1,57 @@
+{
+    "NumberOfCells": 100,
+    "NumberOfRsrcsInEachCell": 500,
+    "MultilevelDeath1Percent": 0.00,
+    "LambdaForEgoism": 0.0,
+    "Distribution": "100r",
+    "species": [
+        {
+        "id": "ACM",
+        "NumberOfItems": 100,
+        "DirectOffspring": 3,
+
+        "GroupPartner":   "",
+        "PhenotypicFlexibility": 0.0,
+
+        "AssociatedSpecies":   "ACM",
+        "IndirectOffspring": 2,
+        "FitnessVariationLimit": 2
+        },
+        {
+        "id": "AIS",
+        "NumberOfItems": 100,
+        "DirectOffspring": 5,
+
+        "GroupPartner":   "",
+        "PhenotypicFlexibility": 0.0,
+
+        "AssociatedSpecies":   "",
+        "IndirectOffspring": 0,
+        "FitnessVariationLimit": 2
+        },
+        {
+        "id": "Rec1",
+        "NumberOfItems": 100,
+        "DirectOffspring": 3,
+
+        "GroupPartner":   "",
+        "PhenotypicFlexibility": 0.0,
+
+        "AssociatedSpecies":   "Rec2",
+        "IndirectOffspring": 2,
+        "FitnessVariationLimit": 2
+        },
+        {
+        "id": "Rec2",
+        "NumberOfItems": 100,
+        "DirectOffspring": 3,
+
+        "GroupPartner":   "",
+        "PhenotypicFlexibility": 0.0,
+
+        "AssociatedSpecies":   "Rec1",
+        "IndirectOffspring": 2,
+        "FitnessVariationLimit": 2
+        }
+    ]
+}

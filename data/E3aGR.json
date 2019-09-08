@@ -1,0 +1,45 @@
+{
+    "NumberOfCells": 100,
+    "NumberOfRsrcsInEachCell": 100,
+    "MultilevelDeath1Percent": 0.00,
+    "LambdaForEgoism": 0.0,
+    "Distribution": "2n",
+    "species": [
+        {
+        "id": "AAs",
+        "NumberOfItems": 100,
+        "DirectOffspring": 2,
+        "Distribution": "2n",
+        "GroupPartner":   "MG",
+        "PhenotypicFlexibility": 1.0,
+
+        "AssociatedSpecies":   "",
+        "IndirectOffspring": 0,
+        "FitnessVariationLimit": 0
+        },
+        {
+        "id": "MG",
+        "NumberOfItems": 100,
+        "DirectOffspring": 2,
+        "Distribution": "2n",
+        "GroupPartner":   "",
+        "PhenotypicFlexibility": 0.0,
+
+        "AssociatedSpecies":   "",
+        "IndirectOffspring": 0,
+        "FitnessVariationLimit": 0
+        },
+        {
+        "id": "AAs|MG",
+        "NumberOfItems": 0,
+        "DirectOffspring": 3,
+        "Distribution": "2n",
+        "GroupPartner":   "",
+        "PhenotypicFlexibility": 1.0,
+
+        "AssociatedSpecies":   "AAs",
+        "IndirectOffspring": 0,
+        "FitnessVariationLimit": 0
+        }
+    ]
+}

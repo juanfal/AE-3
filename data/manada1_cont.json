@@ -3,38 +3,38 @@
     "LambdaForEgoism": 0.0,
     "MultilevelDeath1Percent": 0.0,
     "NumberOfCells": 100,
-    "NumberOfRsrcsInEachCell": 400,
+    "NumberOfRsrcsInEachCell": 100000,
     "consume": "independent",
-    "initFile": "Rencor1",
-    "numGen": 10,
+    "initFile": "manada1",
+    "numGen": 300,
     "outDir": null,
     "outFName": null,
-    "saveExcel": true,
+    "saveExcel": false,
     "setRandomSeed": -1,
     "species": [
         {
-            "AssociatedSpecies": "B",
-            "DirectOffspring": 15,
-            "Distribution": "100r",
-            "FitnessVariationLimit": 0,
-            "GroupPartner": "",
-            "IndirectOffspring": -6,
-            "NumberOfItems": 14805,
-            "PhenotypicFlexibility": 0.0,
-            "id": "A"
-        },
-        {
             "AssociatedSpecies": "",
-            "DirectOffspring": 21,
+            "DirectOffspring": 43,
             "Distribution": "100r",
             "FitnessVariationLimit": 0,
             "GroupPartner": "",
             "IndirectOffspring": 0,
-            "NumberOfItems": 19209,
+            "NumberOfItems": 9901617,
             "PhenotypicFlexibility": 0.0,
-            "id": "a"
+            "id": "Manada"
+        },
+        {
+            "AssociatedSpecies": "Manada",
+            "DirectOffspring": 12,
+            "Distribution": "100r",
+            "FitnessVariationLimit": 0,
+            "GroupPartner": "",
+            "IndirectOffspring": -5000,
+            "NumberOfItems": 36,
+            "PhenotypicFlexibility": 0.0,
+            "id": "Pred1"
         }
     ],
     "varia": false,
-    "verbose": false
+    "verbose": true
 }

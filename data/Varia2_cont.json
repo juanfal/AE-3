@@ -1,0 +1,58 @@
+{
+    "Distribution": "100r",
+    "LambdaForEgoism": 0.0,
+    "MultilevelDeath1Percent": 0.0,
+    "NumberOfCells": 100,
+    "NumberOfRsrcsInEachCell": 500,
+    "consume": "independent",
+    "initFile": "Varia2",
+    "numGen": 60,
+    "outDir": "VariabFenot",
+    "outFName": "0081",
+    "saveExcel": false,
+    "setRandomSeed": -1,
+    "species": [
+        {
+            "AssociatedSpecies": "ACM",
+            "DirectOffspring": 3,
+            "FitnessVariationLimit": 2,
+            "GroupPartner": "",
+            "IndirectOffspring": 2,
+            "NumberOfItems": 17615,
+            "PhenotypicFlexibility": 0.0,
+            "id": "ACM"
+        },
+        {
+            "AssociatedSpecies": "",
+            "DirectOffspring": 5,
+            "FitnessVariationLimit": 2,
+            "GroupPartner": "",
+            "IndirectOffspring": 0,
+            "NumberOfItems": 17595,
+            "PhenotypicFlexibility": 0.0,
+            "id": "AIS"
+        },
+        {
+            "AssociatedSpecies": "Rec2",
+            "DirectOffspring": 3,
+            "FitnessVariationLimit": 2,
+            "GroupPartner": "",
+            "IndirectOffspring": 2,
+            "NumberOfItems": 7040,
+            "PhenotypicFlexibility": 0.0,
+            "id": "Rec1"
+        },
+        {
+            "AssociatedSpecies": "Rec1",
+            "DirectOffspring": 3,
+            "FitnessVariationLimit": 2,
+            "GroupPartner": "",
+            "IndirectOffspring": 2,
+            "NumberOfItems": 6853,
+            "PhenotypicFlexibility": 0.0,
+            "id": "Rec2"
+        }
+    ],
+    "varia": false,
+    "verbose": false
+}

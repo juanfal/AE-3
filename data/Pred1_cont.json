@@ -1,19 +1,28 @@
 {
-    "LambdaForEgoism": 0.0,
     "Distribution": "100r",
+    "LambdaForEgoism": 0.0,
     "MultilevelDeath1Percent": 0.0,
     "NumberOfCells": 10,
-    "NumberOfRsrcsInEachCell": 300,
+    "NumberOfRsrcsInEachCell": 100,
+    "consume": "independent",
+    "initFile": "Pred1",
+    "numGen": 10,
+    "outDir": "kkkkkkkk",
+    "outFName": "0004",
+    "saveExcel": false,
+    "setRandomSeed": -1,
     "species": [
         {
             "AssociatedSpecies": "",
-            "DirectOffspring": 6,
-            "GroupPartner": "",
-            "IndirectOffspring": 0,
-            "NumberOfItems": 1000,
-            "PhenotypicFlexibility": 0.0,
+            "DirectOffspring": 1,
             "FitnessVariationLimit": 0,
+            "GroupPartner": "",
+            "IndirectOffspring": -5,
+            "NumberOfItems": 329,
+            "PhenotypicFlexibility": 0.0,
             "id": "N.sertifer"
         }
-    ]
+    ],
+    "varia": false,
+    "verbose": false
 }

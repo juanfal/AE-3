@@ -1,40 +1,40 @@
 {
-    "Distribution": "100r",
+    "Distribution": "100n",
     "LambdaForEgoism": 0.0,
     "MultilevelDeath1Percent": 0.0,
-    "NumberOfCells": 100,
-    "NumberOfRsrcsInEachCell": 400,
+    "NumberOfCells": 1000,
+    "NumberOfRsrcsInEachCell": 1000,
     "consume": "independent",
-    "initFile": "Rencor1",
-    "numGen": 10,
+    "initFile": "manada",
+    "numGen": 300,
     "outDir": null,
     "outFName": null,
-    "saveExcel": true,
+    "saveExcel": false,
     "setRandomSeed": -1,
     "species": [
         {
-            "AssociatedSpecies": "B",
-            "DirectOffspring": 15,
-            "Distribution": "100r",
-            "FitnessVariationLimit": 0,
-            "GroupPartner": "",
-            "IndirectOffspring": -6,
-            "NumberOfItems": 14805,
-            "PhenotypicFlexibility": 0.0,
-            "id": "A"
-        },
-        {
             "AssociatedSpecies": "",
-            "DirectOffspring": 21,
+            "DirectOffspring": 4,
             "Distribution": "100r",
             "FitnessVariationLimit": 0,
             "GroupPartner": "",
             "IndirectOffspring": 0,
-            "NumberOfItems": 19209,
+            "NumberOfItems": 6756,
             "PhenotypicFlexibility": 0.0,
-            "id": "a"
+            "id": "Manada"
+        },
+        {
+            "AssociatedSpecies": "",
+            "DirectOffspring": 4,
+            "Distribution": "100n",
+            "FitnessVariationLimit": 0,
+            "GroupPartner": "",
+            "IndirectOffspring": 0,
+            "NumberOfItems": 993244,
+            "PhenotypicFlexibility": 0.0,
+            "id": "Solitario"
         }
     ],
     "varia": false,
-    "verbose": false
+    "verbose": true
 }
