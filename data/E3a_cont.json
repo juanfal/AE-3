@@ -4,13 +4,13 @@
     "MultilevelDeath1Percent": 0.0,
     "NumberOfCells": 100,
     "NumberOfRsrcsInEachCell": 1000,
-    "consume": "independent",
+    "consume": "patriarchal",
     "initFile": "E3a",
-    "numGen": 300,
+    "numGen": 10,
     "outDir": null,
     "outFName": null,
     "saveExcel": false,
-    "setRandomSeed": -1,
+    "setRandomSeed": 1,
     "species": [
         {
             "AssociatedSpecies": "MG",
@@ -19,7 +19,7 @@
             "FitnessVariationLimit": 1,
             "GroupPartner": "",
             "IndirectOffspring": 2,
-            "NumberOfItems": 49816,
+            "NumberOfItems": 7078,
             "PhenotypicFlexibility": 0.0,
             "id": "AAs"
         },
@@ -30,7 +30,7 @@
             "FitnessVariationLimit": 1,
             "GroupPartner": "",
             "IndirectOffspring": 2,
-            "NumberOfItems": 50184,
+            "NumberOfItems": 7078,
             "PhenotypicFlexibility": 0.0,
             "id": "MG"
         }

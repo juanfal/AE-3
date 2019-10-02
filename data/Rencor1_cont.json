@@ -4,7 +4,6 @@
     "MultilevelDeath1Percent": 0.0,
     "NumberOfCells": 100,
     "NumberOfRsrcsInEachCell": 400,
-    "consume": "independent",
     "initFile": "Rencor1",
     "numGen": 10,
     "outDir": null,

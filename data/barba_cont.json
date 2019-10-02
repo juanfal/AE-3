@@ -4,7 +4,6 @@
     "MultilevelDeath1Percent": 0.0,
     "NumberOfCells": 100,
     "NumberOfRsrcsInEachCell": 100,
-    "consume": "independent",
     "initFile": "barba",
     "numGen": 300,
     "outDir": null,

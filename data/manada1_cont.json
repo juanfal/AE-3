@@ -4,7 +4,6 @@
     "MultilevelDeath1Percent": 0.0,
     "NumberOfCells": 100,
     "NumberOfRsrcsInEachCell": 100000,
-    "consume": "independent",
     "initFile": "manada1",
     "numGen": 300,
     "outDir": null,

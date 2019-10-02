@@ -4,7 +4,6 @@
     "MultilevelDeath1Percent": 0.0,
     "NumberOfCells": 1,
     "NumberOfRsrcsInEachCell": 400,
-    "consume": "independent",
     "numGen": 10,
     "outDir": null,
     "outFName": null,

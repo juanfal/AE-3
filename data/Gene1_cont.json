@@ -4,7 +4,6 @@
     "MultilevelDeath1Percent": 0.0,
     "NumberOfCells": 1000,
     "NumberOfRsrcsInEachCell": 40,
-    "consume": "independent",
     "initFile": "Gene1",
     "numGen": 200,
     "saveExcel": false,

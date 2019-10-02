@@ -4,7 +4,6 @@
     "MultilevelDeath1Percent": 0.0,
     "NumberOfCells": 100,
     "NumberOfRsrcsInEachCell": 500,
-    "consume": "independent",
     "initFile": "Varia2",
     "numGen": 60,
     "outDir": "VariabFenot",

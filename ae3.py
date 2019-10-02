@@ -4,7 +4,7 @@
 # Carlos Villagrasa, Javier Falgueras
 # juanfc 2019-02-16
 
-__version__ = 0.089 # 2019-09-08
+__version__ = 0.090 # 2019-10-02
 
 import os
 import sys
@@ -227,168 +227,6 @@ def doAssociation():
 def doConsumeAndOffspring():
     """
     Set up a queue with every form of every species, for each cell
-    since recipients receive from actors, both consume at the same time
-    A><A    they eat as couple.  Phenot. variations do "NOT" affect.
-    A><B    they eat as couple.  Phenot. variations do affect
-    We have to queue
-        INDIVIDUAL  always
-        RECIPIENT   never
-        ACTOR       always
-        RECIPROCAL  A><A (intras) : half of them, and take out the other half
-                    A><B (inters) : all A, but take out all B
-
-    """
-    # if phenotypic variability is considered, we can
-    # wait until all the cells are evaluated and then, take the averages
-    # for each species and alive item to reset direct/indirect fitness
-    if gArgs["varia"]:
-        newDirFit  = zeros((gNumberOfSpecies), dtype=[("sum", "int"), ("N", "int")])
-    gStatsPost.fill(0)
-    for iCell in range(gNumberOfCells):
-        """Enqueue, consume resources and have offspring"""
-
-        # ENQUEUEING
-        queue = doEnqueueing(iCell)
-        # queue = doMultilevelSelection(queue)
-
-        # When an ACTOR is found, it can be the first or the shadow
-        # of a previous one, put there to balance the amount of
-        # representatives in queue, one for the very ACTOR and the shadow
-        # for its RECIPIENT.  The RECIPIENT eats only when its ACTOR does but
-        # no RECIPIENTs are in the queue
-        isThereForItsRecipient = full((gNumberOfSpecies), False)
-
-        # When a RECIPIENT is seen, it eats for itself and
-        # for its associated, so, the associated does not eat
-        # next time is seen in the queue
-        cntAssocAlreadyConsidered = zeros((gNumberOfSpecies), dtype=int)
-
-
-        # Lets go eating and have offspring:
-        #   - Considers the phenotypic variability
-        #   - Computes an sets offspring as individuals from the other forms
-        rsrc = gConf["NumberOfRsrcsInEachCell"]
-        i = 0
-        while rsrc > 0 and i < queue.size:
-            iSpecies = queue[i]["iSp"]
-            iForm = queue[i]["iForm"]
-
-            dirFit   = gConf["species"][iSpecies]["DirectOffspring"]
-            indirFit = gConf["species"][iSpecies]["IndirectOffspring"]
-            fitVarLimit   = gConf["species"][iSpecies]["FitnessVariationLimit"]
-            toEat = 0.0
-            if iForm == INDIVIDUAL:
-                toEat = dirFit
-                if rsrc >= toEat:
-                    gStatsPost[iSpecies, INDIVIDUAL] += 1
-
-                    gWorld[iSpecies, iCell, INDIVIDUAL] += dirFit
-                    if gArgs["varia"]:
-                        newDirFit[iSpecies]["sum"] += dirFit * dirFit
-                        newDirFit[iSpecies]["N"] += dirFit
-
-            else:
-                # Only RECIPIENTs have no associated to give offspring
-                # The others have
-                # INDIVIDUAL, ACTOR, and RECIPROCAL
-                # But RECIPIENTs are not there except when
-                # gConf["consume"] is "independent"
-                iAssoc = iAssociatedTarget(iSpecies) # can be -1 for RECIPIENTs
-                assocDirFit = gConf["species"][iAssoc]["DirectOffspring"]
-                if iForm == ACTOR:
-                    if isThereForItsRecipient[iSpecies]:
-                        isThereForItsRecipient[iSpecies] = False
-                    else:
-                        toEat = dirFit + abs(indirFit) + assocDirFit
-
-                        if rsrc >= toEat:
-
-                            gStatsPost[iSpecies,ACTOR] += 1
-                            gWorld[iSpecies, iCell, INDIVIDUAL] += dirFit
-
-                            if gArgs["varia"]:
-                                dirFit, indirFit = fitnessVariations(dirFit, indirFit, fitVarLimit)
-                                newDirFit[iSpecies]["sum"] += dirFit * dirFit
-                                newDirFit[iSpecies]["N"] += dirFit
-
-                            assocOffspring = noNeg(indirFit + assocDirFit)
-
-                            gStatsPost[iAssoc,RECIPIENT] += 1
-                            gWorld[iAssoc, iCell, INDIVIDUAL] += assocOffspring
-
-                            if gArgs["varia"]:
-                                newDirFit[iAssoc]["sum"] += assocOffspring * assocDirFit
-                                newDirFit[iAssoc]["N"] += assocOffspring
-
-                            isThereForItsRecipient[iSpecies] = True
-
-
-                else: # RECIPROCAL
-                    if cntAssocAlreadyConsidered[iSpecies] > 0:
-                        cntAssocAlreadyConsidered[iSpecies] -= 1
-                    else:
-
-                        assocIndirFit = gConf["species"][iAssoc]["IndirectOffspring"]
-                        toEat = dirFit    + abs(indirFit) + \
-                              assocDirFit + abs(assocIndirFit)
-                        if rsrc >= toEat:
-
-                            fitVarLimit = gConf["species"][iAssoc]["FitnessVariationLimit"]
-
-                            if gArgs["varia"]:
-                                dirFit, indirFit = fitnessVariations(dirFit, indirFit, fitVarLimit)
-                                assocDirFit, assocIndirFit = fitnessVariations(assocDirFit, assocIndirFit, fitVarLimit)
-
-                            # dir nuevo (dirFit+assocIndirFit) * dirFit
-                            # n   dirFit+assocIndirFit
-                            offspring = noNeg(dirFit + assocIndirFit)
-
-                            gStatsPost[iSpecies,RECIPROCAL] += 1
-                            gWorld[iSpecies, iCell, INDIVIDUAL] += offspring
-
-                            if gArgs["varia"]:
-                                newDirFit[iSpecies]["sum"] += offspring * dirFit
-                                newDirFit[iSpecies]["N"] += offspring
-
-                            # dir nuevo (assocDirFit+indirFit) * assocDirFit
-                            # n   assocDirFit+indirFit
-                            offspring = noNeg(assocDirFit + indirFit)
-
-                            gStatsPost[iAssoc,RECIPROCAL] += 1
-                            gWorld[iAssoc, iCell, INDIVIDUAL] += offspring
-
-                            if gArgs["varia"]:
-                                newDirFit[iAssoc]["sum"] += offspring * assocDirFit
-                                newDirFit[iAssoc]["N"] += offspring
-
-                            # the iAssoc has already eaten, so next one
-                            # in queue has to be ignored
-                            cntAssocAlreadyConsidered[iAssoc] += 1
-
-            rsrc -= toEat
-            i += 1
-
-        # if isThereForItsRecipient.sum() != 0 or cntAssocAlreadyConsidered.sum() != 0:
-        #     print("ERROR IN ASSOCIATES QUEUE", end=": ")
-        #     if isThereForItsRecipient.sum() != 0:
-        #         print(isThereForItsRecipient)
-        #     if cntAssocAlreadyConsidered.sum() != 0:
-        #         print(cntAssocAlreadyConsidered)
-
-            # sys.exit(1)
-
-    if gArgs["varia"]:
-        for iSpecies in range(gNumberOfSpecies):
-            # CHANGE THE GLOBAL DirectOffspring gConf parameter
-            if newDirFit[iSpecies]["N"]:
-                incFit = gConf["species"][iSpecies]["DirectOffspring"] + gConf["species"][iSpecies]["IndirectOffspring"]
-                dirFit = int(round(newDirFit[iSpecies]["sum"] / newDirFit[iSpecies]["N"]))
-                gConf["species"][iSpecies]["DirectOffspring"] = dirFit
-                gConf["species"][iSpecies]["IndirectOffspring"] = incFit - dirFit
-
-def doConsumeAndOffspringIndependent():
-    """
-    Set up a queue with every form of every species, for each cell
     Independent consume:
         Each one eats for themselves and gives the offspring, if any, to their
             associate
@@ -488,9 +326,8 @@ def doEnqueueing(iCell):
         if n > 0:
             # 2019-06-01
             # an actor gives IndirectOffspring to its RECIPIENT, so it
-            # eats for it and for its RECIPIENT. When it eats, its recipient
-            # eats so we must.
-            # We suppose the recipient does not it by itself, but
+            # eats for it and for its RECIPIENT. When it eats, its recipient eats
+            # We suppose the recipient does not eat by itself, but
             # through the Actor.
             # But to simplify, we are adding 2 x  ACTOR so it
             # doubles the probability of eating as if the RECIPIENT was
@@ -753,7 +590,7 @@ def initExcel():
     # else:
     #     excelOut = os.path.join(gOutDir, gOutFNameBase + ".xlsx")
     #     gExcelWorkbook = xlsxwriter.Workbook(excelOut)
-    #     gExcelWorksheet = gExcelWorkbook.add_worksheet()
+    #     gExcelWorksheet = gExcelWorkbook.add_worksheet(gOutFNameBase)
     excelOut = os.path.join(gOutDir, gOutFNameBase + ".xlsx")
     gExcelWorkbook = xlsxwriter.Workbook(excelOut)
     gExcelWorksheet = gExcelWorkbook.add_worksheet()
@@ -981,24 +818,6 @@ def defineAndGetCommandLineArgs():
         default=10,
         metavar="int",
         help="Sets the number of generations to run, default: 10")
-
-    # Number of generations to run
-    theArgParser.add_argument(
-        "--consume", type=str,
-        default="independent",
-        metavar="'str'",
-        help=textwrap.dedent("""\
-        Sets the technique of association at consume time, default: 'independent'
-        Alternatives:
-        - 'patriarchal' : only the first goes to eat but each time it eats
-                            it feeds its associate (less prob. for associations)
-        - 'bounded'     : everybody goes to eat, but when having an associate
-                            it feeds the associate (more prob. for associations)
-        - 'independent' : everybody goes to eat, but not feeding associates
-                            is more egalitarian giving offspring to associates only
-                            in what is the IndirectOffspring
-        """)
-    )
 
     # We want phenotypic variability
     theArgParser.add_argument(
@@ -1369,10 +1188,7 @@ for genNumber in range(1, gArgs["numGen"]+1):
     doGrouping()
     print("%3d: %s Tot Grouping: %d" % (genNumber, gWorld[:,:,0].sum(axis=1),  gWorld[:,:,0].sum(axis=1).sum()))
     doAssociation()
-    if gConf["consume"] == "independent":
-        doConsumeAndOffspringIndependent()
-    else:
-        doConsumeAndOffspring()
+    doConsumeAndOffspring()
     doUngroup()
     doDistribute()
 

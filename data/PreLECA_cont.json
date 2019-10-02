@@ -4,11 +4,10 @@
     "MultilevelDeath1Percent": 0.0,
     "NumberOfCells": 100,
     "NumberOfRsrcsInEachCell": 100,
-    "consume": "independent",
     "initFile": "PreLECA",
     "numGen": 600,
     "outDir": "EUKARY",
-    "outFName": "0025",
+    "outFName": "0036",
     "saveExcel": false,
     "setRandomSeed": 1,
     "species": [
@@ -19,8 +18,8 @@
             "FitnessVariationLimit": 0,
             "GroupPartner": "PA",
             "IndirectOffspring": 0,
-            "NumberOfItems": 1130,
-            "PhenotypicFlexibility": 0.8,
+            "NumberOfItems": 0,
+            "PhenotypicFlexibility": 1.0,
             "id": "Asg"
         },
         {
@@ -30,7 +29,7 @@
             "FitnessVariationLimit": 0,
             "GroupPartner": "",
             "IndirectOffspring": 0,
-            "NumberOfItems": 1188,
+            "NumberOfItems": 0,
             "PhenotypicFlexibility": 0.0,
             "id": "PA"
         },
@@ -41,8 +40,8 @@
             "FitnessVariationLimit": 0,
             "GroupPartner": "",
             "IndirectOffspring": 1,
-            "NumberOfItems": 3697,
-            "PhenotypicFlexibility": 0.8,
+            "NumberOfItems": 4953,
+            "PhenotypicFlexibility": 1.0,
             "id": "Asg|PA"
         },
         {
@@ -52,7 +51,7 @@
             "FitnessVariationLimit": 0,
             "GroupPartner": "",
             "IndirectOffspring": 1,
-            "NumberOfItems": 4810,
+            "NumberOfItems": 4940,
             "PhenotypicFlexibility": 0.0,
             "id": "SRB"
         }

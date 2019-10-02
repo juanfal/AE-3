@@ -169,7 +169,6 @@ for command in commandList:
 # i - initFile
 # r - --setRandomSeed int
 
-# c - --consume 'str'
 # v - --varia
 # n - --NumberOfCells int
 # s - --NumberOfRsrcsInEachCell float

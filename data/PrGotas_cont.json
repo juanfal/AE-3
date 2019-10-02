@@ -4,7 +4,6 @@
     "MultilevelDeath1Percent": 0.0,
     "NumberOfCells": 100,
     "NumberOfRsrcsInEachCell": 1000,
-    "consume": "independent",
     "initFile": "PrGotas",
     "numGen": 100,
     "outDir": "PrGotas1",

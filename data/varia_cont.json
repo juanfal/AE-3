@@ -4,7 +4,6 @@
     "MultilevelDeath1Percent": 0.0,
     "NumberOfCells": 10,
     "NumberOfRsrcsInEachCell": 100,
-    "consume": "independent",
     "initFile": "varia",
     "numGen": 60,
     "outDir": null,
