@@ -10,7 +10,7 @@
         "NumberOfItems": 100,
         "DirectOffspring": 43,
         "Distribution": "100r",
-        "GroupPartner":   "",
+        "GroupPartner": [],
         "PhenotypicFlexibility": 0.0,
 
         "AssociatedSpecies":   "",
@@ -22,7 +22,7 @@
         "NumberOfItems": 10,
         "DirectOffspring": 12,
         "Distribution": "100r",
-        "GroupPartner":   "",
+        "GroupPartner": [],
         "PhenotypicFlexibility": 0.0,
 
         "AssociatedSpecies":   "Manada",

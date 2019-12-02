@@ -10,7 +10,7 @@
         "NumberOfItems": 2,
         "DirectOffspring": 3,
 
-        "GroupPartner":   "",
+        "GroupPartner": [],
         "PhenotypicFlexibility": 0.00,
 
         "AssociatedSpecies":   "",

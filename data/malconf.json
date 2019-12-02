@@ -8,7 +8,7 @@
         "NumberOfItems": 100,
         "DirectOffspring": 2,
 
-        "GroupPartner":   "B",
+        "GroupPartner": ["B"],
         "PhenotypicFlexibility": 1.00,
 
         "AssociatedSpecies":   "",
@@ -20,7 +20,7 @@
         "NumberOfItems": 100,
         "DirectOffspring": 2,
 
-        "GroupPartner":   "B",
+        "GroupPartner": ["B"],
         "PhenotypicFlexibility": 1.00,
 
         "AssociatedSpecies":   "",
@@ -31,7 +31,7 @@
         "id": "A|B",
         "NumberOfItems": 0,
 
-        "GroupPartner":   "C",
+        "GroupPartner": ["C"],
         "PhenotypicFlexibility": 0.5,
 
         "AssociatedSpecies":   "",
@@ -43,7 +43,7 @@
         "NumberOfItems": 0,
         "DirectOffspring": 20,
 
-        "GroupPartner":   "",
+        "GroupPartner": [],
         "PhenotypicFlexibility": 0.05,
 
         "AssociatedSpecies":   "",

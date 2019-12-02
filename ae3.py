@@ -4,7 +4,7 @@
 # Carlos Villagrasa, Javier Falgueras
 # juanfc 2019-02-16
 
-__version__ = 0.090 # 2019-10-02
+__version__ = 0.091 # 2019-12-02
 
 import os
 import sys
@@ -151,7 +151,43 @@ def doDistribute():
             gWorld[iSpecies, :, INDIVIDUAL] = wildDist
     gStdDevDistr = around(std(gWorld[:,:,INDIVIDUAL], axis=1), decimals=1)
 
-def doGrouping():
+# def doGrouping():
+#     """Form the groups following the group partner"""
+#     for iCell in range(gNumberOfCells):
+#         n = 0
+#         # printv("Cell grouping %d" % n)
+#         n += 1
+#         stillPossibleGroupInCell = False
+#         permutedListOrigGroups = permutation(gWithPartnerList)
+#         # printv("Grouping permutation list:", permutedListOrigGroups)
+#         for iSpecies in permutedListOrigGroups:
+#             phenFlex = gConf["species"][iSpecies]["PhenotypicFlexibility"]
+#             i_partner = iGetPartner(iSpecies)          # i partner for the group
+#             i_grouped = iGetGroupStartingIn(iSpecies)  # i already formed group that iSpecies starts
+#             # number of iSpecies items in that iCell
+#             ni = gWorld[iSpecies,iCell,INDIVIDUAL]
+
+#             # item to group with
+#             if i_partner != iSpecies:
+#                 ni_partner = gWorld[i_partner,iCell,INDIVIDUAL]
+#             else:
+#                 # if itself, only half available
+#                 ni_partner = ni//2
+
+#             # Phenotypic complexity tells the % (0-1) from the total
+#             # existing particular species, that should be grouped, so we
+#             # compare the current amount of items (ungrouped)
+#             # and check if there is room for more grouping
+#             ni_toGroup = int(ni * phenFlex)
+#             ni_feasible = min(ni_toGroup, ni_partner)
+#             #printv("ni_toGroup: %d with %d, ni_feasible: %d" % (ni_toGroup, i_grouped, ni_feasible))
+#             if ni_feasible > 0:
+#                 gWorld[ iSpecies,iCell,INDIVIDUAL] -= ni_feasible
+#                 gWorld[i_partner,iCell,INDIVIDUAL] -= ni_feasible
+
+#                 gWorld[i_grouped,iCell,INDIVIDUAL] += ni_feasible
+
+def doGroupingBeta():
     """Form the groups following the group partner"""
     for iCell in range(gNumberOfCells):
         n = 0
@@ -162,30 +198,42 @@ def doGrouping():
         # printv("Grouping permutation list:", permutedListOrigGroups)
         for iSpecies in permutedListOrigGroups:
             phenFlex = gConf["species"][iSpecies]["PhenotypicFlexibility"]
-            i_partner = iGetPartner(iSpecies)          # i partner for the group
-            i_grouped = iGetGroupStartingIn(iSpecies)  # i already formed group that iSpecies starts
+            i_partnerList = iGetPartnerBeta(iSpecies)      # list of i partners for the groups
+            i_groupedList = iGetGroupStartingInBeta(iSpecies)  # i already formed group that iSpecies starts
             # number of iSpecies items in that iCell
             ni = gWorld[iSpecies,iCell,INDIVIDUAL]
 
             # item to group with
-            if i_partner != iSpecies:
-                ni_partner = gWorld[i_partner,iCell,INDIVIDUAL]
-            else:
-                # if itself, only half available
-                ni_partner = ni//2
+            ni_partner = []
+            for i_partner in i_partnerList:
+                if i_partner != iSpecies:
+                    ni_partner.append(gWorld[i_partner,iCell,INDIVIDUAL])
+                else:
+                    # if itself, only half available
+                    ni_partner.append(ni//2)
+            ni_partner = array(ni_partner)
 
             # Phenotypic complexity tells the % (0-1) from the total
             # existing particular species, that should be grouped, so we
             # compare the current amount of items (ungrouped)
             # and check if there is room for more grouping
             ni_toGroup = int(ni * phenFlex)
-            ni_feasible = min(ni_toGroup, ni_partner)
+            ni_total_partners = ni_partner.sum()
+            if ni_total_partners < ni_toGroup:
+                ni_toGroupList = trunc(ni_partner/ni_total_partners * ni_toGroup).astype(int)
+            else:
+                ni_toGroupList = ni_partner
+
+            ni_feasible = ni_toGroupList.sum()
+
             #printv("ni_toGroup: %d with %d, ni_feasible: %d" % (ni_toGroup, i_grouped, ni_feasible))
             if ni_feasible > 0:
-                gWorld[ iSpecies,iCell,INDIVIDUAL] -= ni_feasible
-                gWorld[i_partner,iCell,INDIVIDUAL] -= ni_feasible
+                for i in range(len(i_partnerList)):
+                    n = ni_toGroupList[i]
+                    gWorld[ iSpecies,iCell,INDIVIDUAL] -= n
+                    gWorld[i_partnerList[i],iCell,INDIVIDUAL] -= n
 
-                gWorld[i_grouped,iCell,INDIVIDUAL] += ni_feasible
+                    gWorld[i_groupedList,iCell,INDIVIDUAL] += n
 
 def doAssociation():
     """
@@ -356,24 +404,42 @@ def doEnqueueing(iCell):
     # print(queue)
     return queue
 
-def doUngroup():
+# def doUngroup():
+#     for iCell in range(gNumberOfCells):
+#         for iOrigGroup in gWithPartnerList:
+#             #printv("Ungrouping iOrigGroup:", iOrigGroup)
+#             iGroup = iGetGroupStartingIn(iOrigGroup)
+#             phenFlex = gConf["species"][iGroup]["PhenotypicFlexibility"]
+
+#             # number of iGroup items in that iCell
+#             ni = gWorld[iGroup,iCell,INDIVIDUAL] # form index is 0 always
+
+#             ni_unGroup = int(round(ni * (1.0 - phenFlex)))
+
+#             if ni_unGroup > 0:
+#                 gWorld[iOrigGroup,iCell,INDIVIDUAL] += ni_unGroup
+#                 iPartner = iGetPartner(iOrigGroup)
+#                 gWorld[iPartner,iCell,INDIVIDUAL] += ni_unGroup
+
+#                 gWorld[iGroup,iCell,INDIVIDUAL] -= ni_unGroup
+
+def doUngroupBeta():
     for iCell in range(gNumberOfCells):
-        for iOrigGroup in gWithPartnerList:
-            #printv("Ungrouping iOrigGroup:", iOrigGroup)
-            iGroup = iGetGroupStartingIn(iOrigGroup)
-            phenFlex = gConf["species"][iGroup]["PhenotypicFlexibility"]
+        for iOrig in gWithPartnerList:
+            iGroupList = iGetGroupStartingInBeta(iOrig)
+            for iGroup in iGroupList:
+                phenFlex = gConf["species"][iGroup]["PhenotypicFlexibility"]
 
-            # number of iGroup items in that iCell
-            ni = gWorld[iGroup,iCell,INDIVIDUAL] # form index is 0 always
+                # number of iGroup items in that iCell
+                ni = gWorld[iGroup,iCell,INDIVIDUAL] # form index is 0 always
 
-            ni_unGroup = int(round(ni * (1.0 - phenFlex)))
+                ni_unGroup = int(round(ni * (1.0 - phenFlex)))
 
-            if ni_unGroup > 0:
-                gWorld[iOrigGroup,iCell,INDIVIDUAL] += ni_unGroup
-                iPartner = iGetPartner(iOrigGroup)
-                gWorld[iPartner,iCell,INDIVIDUAL] += ni_unGroup
-
-                gWorld[iGroup,iCell,INDIVIDUAL] -= ni_unGroup
+                if ni_unGroup > 0:
+                    iPartner = iGetPartnerFromOrigAndGroup(iOrig, iGroup)
+                    gWorld[iOrig,   iCell,INDIVIDUAL] += ni_unGroup
+                    gWorld[iPartner,iCell,INDIVIDUAL] += ni_unGroup
+                    gWorld[iGroup,  iCell,INDIVIDUAL] -= ni_unGroup
 
 
 def doMultilevelSelection(q):
@@ -388,48 +454,48 @@ def doMultilevelSelection(q):
 
     return q
 
-def calcEgoism():
-    """Computes the global variable gEgoism.
-    It doesn't need to know what items are there for the estimation is based
-    only on the corresponding direct fitnesses and association indirect
-    fitnesses of each species/form
-    """
-    global gEgoism # because at start it is not a global structure/object
-    if not gArgs["egoism"]:
-        return
-    if not gEgoism:
-        gEgoism = zeros((gNumberOfSpecies, NUMBER_OF_FORMS), dtype=float)
-    else:
-        gEgoism.fill(0)
+# def calcEgoism():
+#     """Computes the global variable gEgoism.
+#     It doesn't need to know what items are there for the estimation is based
+#     only on the corresponding direct fitnesses and association indirect
+#     fitnesses of each species/form
+#     """
+#     global gEgoism # because at start it is not a global structure/object
+#     if not gArgs["egoism"]:
+#         return
+#     if not gEgoism:
+#         gEgoism = zeros((gNumberOfSpecies, NUMBER_OF_FORMS), dtype=float)
+#     else:
+#         gEgoism.fill(0)
 
-    for iSpecies in range(gNumberOfSpecies):
-        dfit = gConf["species"][iSpecies]["DirectOffspring"]
-        gEgoism[iSpecies, INDIVIDUAL] = dfit
+#     for iSpecies in range(gNumberOfSpecies):
+#         dfit = gConf["species"][iSpecies]["DirectOffspring"]
+#         gEgoism[iSpecies, INDIVIDUAL] = dfit
 
-        if gConf["species"][iSpecies]["AssociatedSpecies"]:
-            ifit = gConf["species"][iSpecies]["IndirectOffspring"]
-            iAssoc = iAssociatedTarget(iSpecies)
-            assoc_ifit = gConf["species"][iAssoc]["IndirectOffspring"]
+#         if gConf["species"][iSpecies]["AssociatedSpecies"]:
+#             ifit = gConf["species"][iSpecies]["IndirectOffspring"]
+#             iAssoc = iAssociatedTarget(iSpecies)
+#             assoc_ifit = gConf["species"][iAssoc]["IndirectOffspring"]
 
-            # rancour makes associated ind. fit. change sign
-            gEgoism[iSpecies,      ACTOR] = dfit - abs(ifit)
-            gEgoism[iSpecies,  RECIPIENT] = dfit + assoc_ifit
-            gEgoism[iSpecies, RECIPROCAL] = dfit - abs(ifit) + assoc_ifit
+#             # rancour makes associated ind. fit. change sign
+#             gEgoism[iSpecies,      ACTOR] = dfit - abs(ifit)
+#             gEgoism[iSpecies,  RECIPIENT] = dfit + assoc_ifit
+#             gEgoism[iSpecies, RECIPROCAL] = dfit - abs(ifit) + assoc_ifit
 
 
-    # Do scaling 0.0 - 1.0
-    minEgo = amin(gEgoism) ; printv("minEgo: ", minEgo)
-    maxEgo = amax(gEgoism) ; printv("maxEgo: ", maxEgo)
-    if maxEgo > 0:
-        gEgoism -= minEgo
-        gEgoism /= maxEgo-minEgo
-    printv("scaled egoism: ", gEgoism)
-    # printv("rank:", gEgoism.argsort(axis=1).argsort(axis=0))
-    #
-    # printv("rank:", reshape(gEgoism.flatten().unique().argsort().argsort(), (gNumberOfSpecies, NUMBER_OF_FORMS) ))
-    # printv("rank:", reshape(gEgoism.flatten().unique().argsort().argsort(), (gNumberOfSpecies, NUMBER_OF_FORMS) ))
-    # TODO: NOS INTERESA LA JERARQUÍA, rank, MÁS QUE EL VALOR ESCALADO DEL EGOÍSMO
-    # https://stackoverflow.com/questions/5284646/rank-items-in-an-array-using-python-numpy
+#     # Do scaling 0.0 - 1.0
+#     minEgo = amin(gEgoism) ; printv("minEgo: ", minEgo)
+#     maxEgo = amax(gEgoism) ; printv("maxEgo: ", maxEgo)
+#     if maxEgo > 0:
+#         gEgoism -= minEgo
+#         gEgoism /= maxEgo-minEgo
+#     printv("scaled egoism: ", gEgoism)
+#     # printv("rank:", gEgoism.argsort(axis=1).argsort(axis=0))
+#     #
+#     # printv("rank:", reshape(gEgoism.flatten().unique().argsort().argsort(), (gNumberOfSpecies, NUMBER_OF_FORMS) ))
+#     # printv("rank:", reshape(gEgoism.flatten().unique().argsort().argsort(), (gNumberOfSpecies, NUMBER_OF_FORMS) ))
+#     # TODO: NOS INTERESA LA JERARQUÍA, rank, MÁS QUE EL VALOR ESCALADO DEL EGOÍSMO
+#     # https://stackoverflow.com/questions/5284646/rank-items-in-an-array-using-python-numpy
 
 # ############################################################################# #
 #                                     TOOLS                                     #
@@ -442,26 +508,37 @@ def iFrom_id(id):
         i -= 1
     return i
 
-def iGetPartner(iSpecies):
-    "returns index of the partner grouping"
-    toFindId = gConf["species"][iSpecies]["GroupPartner"]
-    return iFrom_id(toFindId)
+# def iGetPartner(iSpecies):
+#     "returns index of the partner grouping"
+#     toFindId = gConf["species"][iSpecies]["GroupPartner"]
+#     return iFrom_id(toFindId)
 
-def iGetGroupStartingIn(iSpecies):
-    toFindId = gConf["species"][iSpecies]["id"] + '|' + gConf["species"][iSpecies]["GroupPartner"]
-    return iFrom_id(toFindId)
+def iGetPartnerBeta(iSpecies):
+    "returns a list of indexes of the partners for grouping"
+    toFindIdList = gConf["species"][iSpecies]["GroupPartner"]
+    return [iFrom_id(toFindId) for toFindId in toFindIdList]
+
+# def iGetGroupStartingIn(iSpecies):
+#     toFindId = gConf["species"][iSpecies]["id"] + '|' + gConf["species"][iSpecies]["GroupPartner"]
+#     return iFrom_id(toFindId)
+
+def iGetGroupStartingInBeta(iSpecies):
+    idOrig = gConf["species"][iSpecies]["id"]
+    toFindIList = [idOrig + '|' + idPartner for idPartner in gConf["species"][iSpecies]["GroupPartner"]]
+    return [iFrom_id(toFindId) for toFindId in toFindIList]
+
+def iGetPartnerFromOrigAndGroup(iOrig, iGroup):
+    idOrig = gConf["species"][iOrig]["id"]
+    idGroup = gConf["species"][iGroup]["id"]
+    return iFrom_id(idGroup[len(idOrig)+1:])
 
 def getListOfOrigGroups():
-    theList = []
-    for iSpecies in range(gNumberOfSpecies):
-        partner = gConf["species"][iSpecies]["GroupPartner"]
-        if partner != "":
-            theList += [iSpecies]
+    theList = [i for i in range(gNumberOfSpecies) if gConf["species"][i]["GroupPartner"]!=""]
 
     # Puts complex groups first
     theList.sort(key = lambda i:
             gConf["species"][i]["id"].count('|') +
-            gConf["species"][i]["GroupPartner"].count('|'), reverse=True)
+            str(gConf["species"][i]["GroupPartner"]).count('|'), reverse=True)
     return theList
 
 def collectAssociationActors():
@@ -651,7 +728,7 @@ def saveExcel(numGen):
              gConf["species"][iSpecies]["IndirectOffspring"],
              gConf["species"][iSpecies]["AssociatedSpecies"],
              gConf["species"][iSpecies]["FitnessVariationLimit"],
-             gConf["species"][iSpecies]["GroupPartner"],
+             ",".join(gConf["species"][iSpecies]["GroupPartner"]),
              gConf["species"][iSpecies]["PhenotypicFlexibility"],
              gStdDevDistr[iSpecies],
              gStatsAnt[ iSpecies,INDIVIDUAL],
@@ -752,13 +829,13 @@ def checkConf(conf):
             problems += "Id '%s' REPEATED\n" % theId
         else:
             previousIds.add(theId)
-        if partnerId != "":
-            if iGetPartner(i) == -1:
-                problems += "Species %d, id: '%s' has not the partner species '%s' in the conf\n" % \
-                    (i, theId, partnerId)
-            if iGetGroupStartingIn(i) == -1:
-                problems += "Group id: '%s' is not configured\n" % \
-                    (theId + '|' + partnerId)
+        # if partnerId != "":
+        #     if iGetPartner(i) == -1:
+        #         problems += "Species %d, id: '%s' has not the partner species '%s' in the conf\n" % \
+        #             (i, theId, partnerId)
+        #     if iGetGroupStartingIn(i) == -1:
+        #         problems += "Group id: '%s' is not configured\n" % \
+        #             (theId + '|' + partnerId)
         for aId in theId.split('|'):
             if iFrom_id(aId) == -1:
                 problems += "Component id: '%s' from group '%s' is not configured\n" % \
@@ -990,24 +1067,24 @@ def defineAndGetCommandLineArgs():
     No spaces
 
     Put first the 0-index of the species:
-        --species="0,DirectOffspring=8,1,IndirectOffspring=1"
+        --species="0;DirectOffspring=8;1;IndirectOffspring=1"
     Changes the DirectOffspring of the first species and the
     IndirectOffspring of the second.
 
     A series of indexes separated by spaces is valid:
-        --species="0,3,1,DirectOffspring=8"
+        --species="0;3;1;DirectOffspring=8"
     changes DirectOffspring of species 0, 3 and 1
 
     A Python standard range (no 'steps' here) is valid:
-        --species="0,8:10,DirectOffspring=8"
+        --species="0;8:10;DirectOffspring=8"
     as with Python 8:10 means 8,9 (10 is not included)
 
     When an index is negative, is suppose from the end:
-        --species="0,3,1,8:-2,DirectOffspring=8"
+        --species="0;3;1;8:-2;DirectOffspring=8"
     where 8:-2  is  8,9,10,11,12,13  if there were 15 species.
 
     An empty index in ranges means a extreme:
-        --species=":,DirectOffspring=8"
+        --species=":;DirectOffspring=8"
     means change all species
     """))
 
@@ -1021,6 +1098,17 @@ def readInitConfFile(fileName):
 
     return conf
 
+# def readInitConfFileBeta(fileName):
+#     """Load config from init file"""
+#     with open(fileName) as f:
+#         conf = json.load(f)
+
+#     for i in range(conf["species"]):
+#         if ("GroupPartner" in conf["species"][i] and
+#             type(conf["species"][i]["GroupPartner"]) != list):
+#             conf["species"][i]["GroupPartner"] = [conf["species"][i]["GroupPartner"]]
+#     return conf
+
 def replaceArgsInConf(conf, args):
     """Replace the conf args with the args provided in the command line"""
     def parseSpeciesArgs(s):
@@ -1032,7 +1120,7 @@ def replaceArgsInConf(conf, args):
                 return False
 
         lenSpecies = len(conf["species"])
-        l = s.split(',')
+        l = s.split(';')
         indxsRead = True
         for arg in l:
             if isInt(arg) or ':' in arg:   # int (+-) or range
@@ -1112,9 +1200,6 @@ else:
 # 2. …and newWorld and newConf cont out
 gNewConfCompFileName, gNewWorldCompFileName = completeDataFileNames(newInitFileNameBase, gInDir)
 
-
-
-
 gConf = replaceArgsInConf(readInitConfFile(gInitConfCompName), gArgs)
 
 gNumberOfSpecies = len(gConf["species"])
@@ -1157,16 +1242,10 @@ if gArgs["outFName"]:
     gGlobalExcel = os.path.join(gOutDir, gOutDir + ".xlsx")
     gOutFNameBase = gArgs["outFName"]
 
-
-
-
 printv(gConf)
 printv(gArgs)
 
-
-
-
-
+# exit(0)
 
 # ########## #
 # LETS DO IT #
@@ -1178,18 +1257,18 @@ if gArgs["setRandomSeed"] != -1:
 
 gWorld, gStatsAnt, gStatsPost = newWorld()
 
-if "egoism" in gArgs:
-    calcEgoism()
+# if "egoism" in gArgs:
+#     calcEgoism()
 
 doInitialDistribution()
 
 print("     %s" % " ".join([gConf["species"][i]["id"] for i in range(gNumberOfSpecies)]))
 for genNumber in range(1, gArgs["numGen"]+1):
-    doGrouping()
+    doGroupingBeta()
     print("%3d: %s Tot Grouping: %d" % (genNumber, gWorld[:,:,0].sum(axis=1),  gWorld[:,:,0].sum(axis=1).sum()))
     doAssociation()
     doConsumeAndOffspring()
-    doUngroup()
+    doUngroupBeta()
     doDistribute()
 
     if gToSaveExcel:

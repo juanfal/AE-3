@@ -12,7 +12,7 @@
         {
             "AssociatedSpecies": "",
             "DirectOffspring": 3,
-            "GroupPartner": "",
+            "GroupPartner": [],
             "IndirectOffspring": 0,
             "NumberOfItems": 198,
             "PhenotypicFlexibility": 0.0,

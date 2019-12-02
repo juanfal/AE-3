@@ -15,7 +15,7 @@
             "AssociatedSpecies": "Pavo",
             "DirectOffspring": 42,
             "FitnessVariationLimit": 10,
-            "GroupPartner": "",
+            "GroupPartner": [],
             "IndirectOffspring": 8,
             "NumberOfItems": 613,
             "PhenotypicFlexibility": 0.0,

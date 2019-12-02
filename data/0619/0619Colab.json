@@ -10,7 +10,7 @@
         "NumberOfItems": 100,
         "DirectOffspring": 5,
         "Distribution": "100r",
-        "GroupPartner":   "",
+        "GroupPartner": [],
         "PhenotypicFlexibility": 0.0,
 
         "AssociatedSpecies":   "",
@@ -22,7 +22,7 @@
         "NumberOfItems": 100,
         "DirectOffspring": 0,
         "Distribution": "100r",
-        "GroupPartner":   "",
+        "GroupPartner": [],
         "PhenotypicFlexibility": 0.0,
 
         "AssociatedSpecies":   "Eusocial bess",
@@ -34,7 +34,7 @@
         "NumberOfItems": 100,
         "DirectOffspring": 3,
         "Distribution": "100r",
-        "GroupPartner":   "",
+        "GroupPartner": [],
         "PhenotypicFlexibility": 0.0,
 
         "AssociatedSpecies":   "Collaborating bees",

@@ -9,8 +9,8 @@
         "id": "Pavo",
         "NumberOfItems": 100,
         "DirectOffspring": 0,
-        
-        "GroupPartner":   "",
+
+        "GroupPartner": [],
         "PhenotypicFlexibility": 0.0,
 
         "AssociatedSpecies":   "Pavo",

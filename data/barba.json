@@ -9,8 +9,8 @@
         "id": "A",
         "NumberOfItems": 100,
         "DirectOffspring": 1,
-        
-        "GroupPartner":   "A",
+
+        "GroupPartner": ["A"],
         "PhenotypicFlexibility": 0.5,
 
         "AssociatedSpecies":   "B",
@@ -21,8 +21,8 @@
         "id": "B",
         "NumberOfItems": 100,
         "DirectOffspring": 2,
-        
-        "GroupPartner":   "",
+
+        "GroupPartner": [],
         "PhenotypicFlexibility": 0.0,
 
         "AssociatedSpecies":   "",
@@ -33,8 +33,8 @@
         "id": "A|A",
         "NumberOfItems": 0,
         "DirectOffspring": 2,
-        
-        "GroupPartner":   "",
+
+        "GroupPartner": [],
         "PhenotypicFlexibility": 0.0,
 
         "AssociatedSpecies":   "",

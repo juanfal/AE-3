@@ -10,7 +10,7 @@
         "NumberOfItems": 100,
         "DirectOffspring": 1,
 
-        "GroupPartner":   "N",
+        "GroupPartner": ["N"],
         "PhenotypicFlexibility": 0.40,
 
         "AssociatedSpecies":   "N",
@@ -22,7 +22,7 @@
         "NumberOfItems": 100,
         "DirectOffspring": 2,
 
-        "GroupPartner":   "",
+        "GroupPartner": [],
         "PhenotypicFlexibility": 0.0,
 
         "AssociatedSpecies":   "",
@@ -34,7 +34,7 @@
         "NumberOfItems": 0,
         "DirectOffspring": 4,
 
-        "GroupPartner":   "",
+        "GroupPartner": [],
         "PhenotypicFlexibility": 0.0,
 
         "AssociatedSpecies":   "",

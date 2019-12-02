@@ -15,7 +15,7 @@
             "AssociatedSpecies": "",
             "DirectOffspring": 1,
             "FitnessVariationLimit": 0,
-            "GroupPartner": "",
+            "GroupPartner": [],
             "IndirectOffspring": -5,
             "NumberOfItems": 329,
             "PhenotypicFlexibility": 0.0,

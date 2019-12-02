@@ -8,7 +8,7 @@
         {
             "AssociatedSpecies": "",
             "DirectOffspring": 0,
-            "GroupPartner": "B",
+            "GroupPartner": ["B"],
             "InclusiveFitness": 0,
             "IndirectOffspring": 0,
             "NumberOfItems": 100,
@@ -19,7 +19,7 @@
         {
             "AssociatedSpecies": "",
             "DirectOffspring": 0,
-            "GroupPartner": "",
+            "GroupPartner": [],
             "InclusiveFitness": 0,
             "IndirectOffspring": 0,
             "NumberOfItems": 10,
@@ -30,7 +30,7 @@
         {
             "AssociatedSpecies": "",
             "DirectOffspring": 20,
-            "GroupPartner": "",
+            "GroupPartner": [],
             "InclusiveFitness": 20,
             "IndirectOffspring": 0,
             "NumberOfItems": 0,

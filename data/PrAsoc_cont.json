@@ -8,7 +8,7 @@
         {
             "AssociatedSpecies": "ACM",
             "DirectOffspring": 3,
-            "GroupPartner": "",
+            "GroupPartner": [],
             "IndirectOffspring": 2,
             "NumberOfItems": 500,
             "PhenotypicFlexibility": 0.0,

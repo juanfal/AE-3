@@ -10,7 +10,7 @@
         "NumberOfItems": 500,
         "DirectOffspring": 3,
 
-        "GroupPartner":   "",
+        "GroupPartner": [],
         "PhenotypicFlexibility": 0.0,
 
         "AssociatedSpecies":   "ACM",

@@ -11,7 +11,7 @@
         "DirectOffspring": 5,
         "Distribution": "69r",
 
-        "GroupPartner":   "A",
+        "GroupPartner": ["A"],
         "PhenotypicFlexibility": 0.5,
 
         "AssociatedSpecies":   "B",
@@ -23,7 +23,7 @@
         "NumberOfItems": 100,
         "DirectOffspring": 5,
 
-        "GroupPartner":   "",
+        "GroupPartner": [],
         "PhenotypicFlexibility": 0.8,
 
         "AssociatedSpecies":   "B|A",
@@ -35,7 +35,7 @@
         "NumberOfItems": 20,
         "DirectOffspring": 5,
 
-        "GroupPartner":   "",
+        "GroupPartner": [],
         "PhenotypicFlexibility": 0.5,
 
         "AssociatedSpecies":   "",
@@ -47,7 +47,7 @@
         "NumberOfItems": 30,
         "DirectOffspring": 5,
 
-        "GroupPartner":   "B",
+        "GroupPartner": ["B"],
         "PhenotypicFlexibility": 0.8,
 
         "AssociatedSpecies":   "",
@@ -59,7 +59,7 @@
         "NumberOfItems": 30,
         "DirectOffspring": 5,
 
-        "GroupPartner":   "",
+        "GroupPartner": [],
         "PhenotypicFlexibility": 0.9,
 
         "AssociatedSpecies":   "A|A|B",

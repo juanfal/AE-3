@@ -9,7 +9,7 @@
         "NumberOfItems": 100,
         "DirectOffspring": 5,
 
-        "GroupPartner":   "A",
+        "GroupPartner":   ["A"],
         "PhenotypicFlexibility": 0.0,
 
         "AssociatedSpecies":   "",
@@ -20,13 +20,12 @@
         "NumberOfItems": 0,
         "DirectOffspring": 0,
 
-        "GroupPartner":   "",
+        "GroupPartner":   [],
         "PhenotypicFlexibility": 0.0,
 
         "AssociatedSpecies":   "",
         "IndirectOffspring": 2,
         "FitnessVariationLimit": 0
         }
-
     ]
 }

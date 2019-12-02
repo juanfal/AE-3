@@ -10,7 +10,7 @@
         "NumberOfItems": 50,
         "DirectOffspring": 0,
         "Distribution": "100r",
-        "GroupPartner":   "",
+        "GroupPartner": [],
         "PhenotypicFlexibility": 0.0,
 
         "AssociatedSpecies":   "Carricero",
@@ -22,7 +22,7 @@
         "NumberOfItems": 100,
         "DirectOffspring": 2,
         "Distribution": "100r",
-        "GroupPartner":   "",
+        "GroupPartner": [],
         "PhenotypicFlexibility": 0.0,
 
         "AssociatedSpecies":   "Cuco",

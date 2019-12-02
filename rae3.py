@@ -34,7 +34,7 @@ def frange(x, y, jump):
 
 def buildList(pyExpr):
     r = []
-    tmp = pyExpr.split(";")
+    tmp = pyExpr.split(",")
     for item in tmp:
         if item.count(':') == 1:
             first, last = item.split(':')
@@ -63,7 +63,7 @@ def buildList(pyExpr):
 
 def expandArg(anArg):
     r = []
-    if "[" not in anArg:
+    if "[" not in anArg or anArg.startswith("GroupPartner"):
         r = ["", [anArg]]
     else:
         r = anArg.strip()[:-1].split("[")
@@ -90,10 +90,10 @@ def fileNumbering(n):
 
 if "-h" == sys.argv[1]:
     print("""Examples:
-          rae3.py --outDir=kkkkkkkk 0619Amen2 --species="-1,IndirectOffspring=[-8:-4;2],0,DirectOffspring=[1;2]"
-          rae3.py --outDir=kkkkkkkk 0619Amen2 --NumberOfCells=[100:10000:100] --species="-1,IndirectOffspring=[-8:-4;2],0,DirectOffspring=[1;2]"
-          rae3.py --outDir=kkkkkkkk -t 0619Amen2 --NumberOfCells=[100:103] --species="-1,IndirectOffspring=[-8:-4;2],0,DirectOffspring=[1;2]"
-          rae3.py --outDir=kkkkkkkk -t 0619Amen2 --NumberOfCells="[100:110:3;8;10:14:2]" --species="-1,IndirectOffspring=[-8:-4:2;2],0,DirectOffspring=[1;2]"
+          rae3.py --outDir=kkkkkkkk 0619Amen2 --species="-1;IndirectOffspring=[-8:-4,2];0;DirectOffspring=[1,2]"
+          rae3.py --outDir=kkkkkkkk 0619Amen2 --NumberOfCells=[100:10000:100] --species="-1;IndirectOffspring=[-8:-4,2];0;DirectOffspring=[1,2]"
+          rae3.py --outDir=kkkkkkkk -t 0619Amen2 --NumberOfCells=[100:103] --species="-1;IndirectOffspring=[-8:-4,2];0;DirectOffspring=[1,2]"
+          rae3.py --outDir=kkkkkkkk -t 0619Amen2 --NumberOfCells="[100:110:3,8,10:14:2]" --species="-1;IndirectOffspring=[-8:-4:2,2];0;DirectOffspring=[1,2]"
 
 
           You must express an output directory in the first parameter:
@@ -127,7 +127,7 @@ for arg in sys.argv[1:]:
     if not arg.startswith("--species"):
         ranges.append(expandArg(arg))
     else:
-        ranges.append(["", build("--species=", map(expandArg, arg[10:].split(",")), "," )])
+        ranges.append(["", build("--species=", map(expandArg, arg[10:].split(";")), ";" )])
 
 commandList = build("ae3.py --setRandomSeed=1 ", ranges, " ")
 
@@ -158,7 +158,7 @@ for command in commandList:
     print(command)
     if not testMode:
         print(command, file=listing)
-        os.system(command)
+        # os.system(command)
     n += 1
 
 

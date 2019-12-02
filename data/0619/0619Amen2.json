@@ -10,7 +10,7 @@
         "NumberOfItems": 100,
         "DirectOffspring": 3,
 
-        "GroupPartner":   "Sensitive",
+        "GroupPartner": ["Sensitive"],
         "PhenotypicFlexibility": 0.10,
 
         "AssociatedSpecies":   "",
@@ -22,7 +22,7 @@
         "NumberOfItems": 100,
         "DirectOffspring": 3,
 
-        "GroupPartner":   "",
+        "GroupPartner": [],
         "PhenotypicFlexibility": 0.0,
 
         "AssociatedSpecies":   "",
@@ -34,7 +34,7 @@
         "NumberOfItems": 0,
         "DirectOffspring": 3,
 
-        "GroupPartner":   "",
+        "GroupPartner": [],
         "PhenotypicFlexibility": 0.0,
 
         "AssociatedSpecies":   "Sensitive",

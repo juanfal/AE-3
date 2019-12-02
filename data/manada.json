@@ -10,7 +10,7 @@
         "NumberOfItems": 100,
         "DirectOffspring": 200,
         "Distribution": "100r",
-        "GroupPartner":   "",
+        "GroupPartner": [],
         "PhenotypicFlexibility": 0.0,
 
         "AssociatedSpecies":   "",
@@ -22,7 +22,7 @@
         "NumberOfItems": 100,
         "DirectOffspring": 5,
         "Distribution": "100r",
-        "GroupPartner":   "",
+        "GroupPartner": [],
         "PhenotypicFlexibility": 0.0,
 
         "AssociatedSpecies":   "Manada",
@@ -34,7 +34,7 @@
         "NumberOfItems": 100,
         "DirectOffspring": 200,
         "Distribution": "100n",
-        "GroupPartner":   "",
+        "GroupPartner": [],
         "PhenotypicFlexibility": 0.0,
 
         "AssociatedSpecies":   "",
@@ -46,7 +46,7 @@
         "NumberOfItems": 100,
         "DirectOffspring": 5,
         "Distribution": "100r",
-        "GroupPartner":   "",
+        "GroupPartner": [],
         "PhenotypicFlexibility": 0.0,
 
         "AssociatedSpecies":   "Solitario",

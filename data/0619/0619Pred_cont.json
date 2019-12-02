@@ -14,7 +14,7 @@
             "DirectOffspring": 2,
             "Distribution": "100r",
             "FitnessVariationLimit": 0,
-            "GroupPartner": "",
+            "GroupPartner": [],
             "IndirectOffspring": 0,
             "NumberOfItems": 7412,
             "PhenotypicFlexibility": 0.0,
