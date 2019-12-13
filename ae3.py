@@ -4,7 +4,7 @@
 # Carlos Villagrasa, Javier Falgueras
 # juanfc 2019-02-16
 
-__version__ = 0.091 # 2019-12-02
+__version__ = 0.093 # 2019-12-13
 
 import os
 import sys
@@ -151,43 +151,7 @@ def doDistribute():
             gWorld[iSpecies, :, INDIVIDUAL] = wildDist
     gStdDevDistr = around(std(gWorld[:,:,INDIVIDUAL], axis=1), decimals=1)
 
-# def doGrouping():
-#     """Form the groups following the group partner"""
-#     for iCell in range(gNumberOfCells):
-#         n = 0
-#         # printv("Cell grouping %d" % n)
-#         n += 1
-#         stillPossibleGroupInCell = False
-#         permutedListOrigGroups = permutation(gWithPartnerList)
-#         # printv("Grouping permutation list:", permutedListOrigGroups)
-#         for iSpecies in permutedListOrigGroups:
-#             phenFlex = gConf["species"][iSpecies]["PhenotypicFlexibility"]
-#             i_partner = iGetPartner(iSpecies)          # i partner for the group
-#             i_grouped = iGetGroupStartingIn(iSpecies)  # i already formed group that iSpecies starts
-#             # number of iSpecies items in that iCell
-#             ni = gWorld[iSpecies,iCell,INDIVIDUAL]
-
-#             # item to group with
-#             if i_partner != iSpecies:
-#                 ni_partner = gWorld[i_partner,iCell,INDIVIDUAL]
-#             else:
-#                 # if itself, only half available
-#                 ni_partner = ni//2
-
-#             # Phenotypic complexity tells the % (0-1) from the total
-#             # existing particular species, that should be grouped, so we
-#             # compare the current amount of items (ungrouped)
-#             # and check if there is room for more grouping
-#             ni_toGroup = int(ni * phenFlex)
-#             ni_feasible = min(ni_toGroup, ni_partner)
-#             #printv("ni_toGroup: %d with %d, ni_feasible: %d" % (ni_toGroup, i_grouped, ni_feasible))
-#             if ni_feasible > 0:
-#                 gWorld[ iSpecies,iCell,INDIVIDUAL] -= ni_feasible
-#                 gWorld[i_partner,iCell,INDIVIDUAL] -= ni_feasible
-
-#                 gWorld[i_grouped,iCell,INDIVIDUAL] += ni_feasible
-
-def doGroupingBeta():
+def doGrouping():
     """Form the groups following the group partner"""
     for iCell in range(gNumberOfCells):
         n = 0
@@ -198,8 +162,8 @@ def doGroupingBeta():
         # printv("Grouping permutation list:", permutedListOrigGroups)
         for iSpecies in permutedListOrigGroups:
             phenFlex = gConf["species"][iSpecies]["PhenotypicFlexibility"]
-            i_partnerList = iGetPartnerBeta(iSpecies)      # list of i partners for the groups
-            i_groupedList = iGetGroupStartingInBeta(iSpecies)  # i already formed group that iSpecies starts
+            i_partnerList = iGetPartner(iSpecies)      # list of i partners for the groups
+            i_groupedList = iGetGroupStartingIn(iSpecies)  # i already formed group that iSpecies starts
             # number of iSpecies items in that iCell
             ni = gWorld[iSpecies,iCell,INDIVIDUAL]
 
@@ -219,7 +183,7 @@ def doGroupingBeta():
             # and check if there is room for more grouping
             ni_toGroup = int(ni * phenFlex)
             ni_total_partners = ni_partner.sum()
-            if ni_total_partners < ni_toGroup:
+            if ni_toGroup < ni_total_partners:
                 ni_toGroupList = trunc(ni_partner/ni_total_partners * ni_toGroup).astype(int)
             else:
                 ni_toGroupList = ni_partner
@@ -404,29 +368,10 @@ def doEnqueueing(iCell):
     # print(queue)
     return queue
 
-# def doUngroup():
-#     for iCell in range(gNumberOfCells):
-#         for iOrigGroup in gWithPartnerList:
-#             #printv("Ungrouping iOrigGroup:", iOrigGroup)
-#             iGroup = iGetGroupStartingIn(iOrigGroup)
-#             phenFlex = gConf["species"][iGroup]["PhenotypicFlexibility"]
-
-#             # number of iGroup items in that iCell
-#             ni = gWorld[iGroup,iCell,INDIVIDUAL] # form index is 0 always
-
-#             ni_unGroup = int(round(ni * (1.0 - phenFlex)))
-
-#             if ni_unGroup > 0:
-#                 gWorld[iOrigGroup,iCell,INDIVIDUAL] += ni_unGroup
-#                 iPartner = iGetPartner(iOrigGroup)
-#                 gWorld[iPartner,iCell,INDIVIDUAL] += ni_unGroup
-
-#                 gWorld[iGroup,iCell,INDIVIDUAL] -= ni_unGroup
-
-def doUngroupBeta():
+def doUngroup():
     for iCell in range(gNumberOfCells):
         for iOrig in gWithPartnerList:
-            iGroupList = iGetGroupStartingInBeta(iOrig)
+            iGroupList = iGetGroupStartingIn(iOrig)
             for iGroup in iGroupList:
                 phenFlex = gConf["species"][iGroup]["PhenotypicFlexibility"]
 
@@ -508,21 +453,12 @@ def iFrom_id(id):
         i -= 1
     return i
 
-# def iGetPartner(iSpecies):
-#     "returns index of the partner grouping"
-#     toFindId = gConf["species"][iSpecies]["GroupPartner"]
-#     return iFrom_id(toFindId)
-
-def iGetPartnerBeta(iSpecies):
+def iGetPartner(iSpecies):
     "returns a list of indexes of the partners for grouping"
     toFindIdList = gConf["species"][iSpecies]["GroupPartner"]
     return [iFrom_id(toFindId) for toFindId in toFindIdList]
 
-# def iGetGroupStartingIn(iSpecies):
-#     toFindId = gConf["species"][iSpecies]["id"] + '|' + gConf["species"][iSpecies]["GroupPartner"]
-#     return iFrom_id(toFindId)
-
-def iGetGroupStartingInBeta(iSpecies):
+def iGetGroupStartingIn(iSpecies):
     idOrig = gConf["species"][iSpecies]["id"]
     toFindIList = [idOrig + '|' + idPartner for idPartner in gConf["species"][iSpecies]["GroupPartner"]]
     return [iFrom_id(toFindId) for toFindId in toFindIList]
@@ -533,7 +469,7 @@ def iGetPartnerFromOrigAndGroup(iOrig, iGroup):
     return iFrom_id(idGroup[len(idOrig)+1:])
 
 def getListOfOrigGroups():
-    theList = [i for i in range(gNumberOfSpecies) if gConf["species"][i]["GroupPartner"]!=""]
+    theList = [i for i in range(gNumberOfSpecies) if len(gConf["species"][i]["GroupPartner"])]
 
     # Puts complex groups first
     theList.sort(key = lambda i:
@@ -824,7 +760,7 @@ def checkConf(conf):
             problems += "Species %d. Both DistType/DisVal values must be provided when one of them is provided\n" % i
 
         theId = confi["id"]
-        partnerId = confi["GroupPartner"]
+        # partnerId = confi["GroupPartner"]
         if theId in previousIds:
             problems += "Id '%s' REPEATED\n" % theId
         else:
@@ -1098,17 +1034,6 @@ def readInitConfFile(fileName):
 
     return conf
 
-# def readInitConfFileBeta(fileName):
-#     """Load config from init file"""
-#     with open(fileName) as f:
-#         conf = json.load(f)
-
-#     for i in range(conf["species"]):
-#         if ("GroupPartner" in conf["species"][i] and
-#             type(conf["species"][i]["GroupPartner"]) != list):
-#             conf["species"][i]["GroupPartner"] = [conf["species"][i]["GroupPartner"]]
-#     return conf
-
 def replaceArgsInConf(conf, args):
     """Replace the conf args with the args provided in the command line"""
     def parseSpeciesArgs(s):
@@ -1264,11 +1189,11 @@ doInitialDistribution()
 
 print("     %s" % " ".join([gConf["species"][i]["id"] for i in range(gNumberOfSpecies)]))
 for genNumber in range(1, gArgs["numGen"]+1):
-    doGroupingBeta()
+    doGrouping()
     print("%3d: %s Tot Grouping: %d" % (genNumber, gWorld[:,:,0].sum(axis=1),  gWorld[:,:,0].sum(axis=1).sum()))
     doAssociation()
     doConsumeAndOffspring()
-    doUngroupBeta()
+    doUngroup()
     doDistribute()
 
     if gToSaveExcel:
