@@ -26,6 +26,7 @@ import sys
 import os
 from pathlib import Path
 import argparse
+import re
 
 def frange(x, y, jump):
   while x < y:
@@ -85,6 +86,13 @@ def build(base, ranges, sep):
     return commandList
 
 
+def quoteSpecies(commandList):
+    r = []
+    for command in commandList:
+        r.append( re.sub(r'--species=([^ ]+)', r'--species="\1"', command))
+    return r
+
+
 def fileNumbering(n):
     return "%04d" % n
 
@@ -127,9 +135,12 @@ for arg in sys.argv[1:]:
     if not arg.startswith("--species"):
         ranges.append(expandArg(arg))
     else:
+        #print("*****************", arg[10:])
         ranges.append(["", build("--species=", map(expandArg, arg[10:].split(";")), ";" )])
 
 commandList = build("ae3.py --setRandomSeed=1 ", ranges, " ")
+print(commandList)
+commandList = quoteSpecies(commandList)
 
 
 if not outDir:
@@ -158,7 +169,7 @@ for command in commandList:
     print(command)
     if not testMode:
         print(command, file=listing)
-        # os.system(command)
+        os.system(command)
     n += 1
 
 

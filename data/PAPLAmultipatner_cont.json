@@ -4,8 +4,8 @@
     "MultilevelDeath1Percent": 0.0,
     "NumberOfCells": 100,
     "NumberOfRsrcsInEachCell": 100,
-    "initFile": "PreLECA",
-    "numGen": 600,
+    "initFile": "PAPLAmultipatner",
+    "numGen": 6,
     "outDir": null,
     "outFName": null,
     "saveExcel": false,
@@ -17,12 +17,13 @@
             "Distribution": "2n",
             "FitnessVariationLimit": 0,
             "GroupPartner": [
-                "PA"
+                "Asg",
+                "PAPLA"
             ],
             "IndirectOffspring": 0,
-            "NumberOfItems": 3338,
-            "PhenotypicFlexibility": 0.0,
-            "id": "Asg"
+            "NumberOfItems": 3119,
+            "PhenotypicFlexibility": 0.5,
+            "id": "PA"
         },
         {
             "AssociatedSpecies": "",
@@ -31,31 +32,42 @@
             "FitnessVariationLimit": 0,
             "GroupPartner": [],
             "IndirectOffspring": 0,
-            "NumberOfItems": 3300,
+            "NumberOfItems": 2202,
             "PhenotypicFlexibility": 0.0,
-            "id": "PA"
+            "id": "Asg"
         },
         {
-            "AssociatedSpecies": "SRB",
-            "DirectOffspring": 2,
+            "AssociatedSpecies": "",
+            "DirectOffspring": 3,
             "Distribution": "2n",
             "FitnessVariationLimit": 0,
             "GroupPartner": [],
-            "IndirectOffspring": 1,
+            "IndirectOffspring": 0,
             "NumberOfItems": 0,
             "PhenotypicFlexibility": 0.0,
-            "id": "Asg|PA"
+            "id": "PA|Asg"
         },
         {
-            "AssociatedSpecies": "Asg|PA",
+            "AssociatedSpecies": "",
+            "DirectOffspring": 3,
+            "Distribution": "2n",
+            "FitnessVariationLimit": 0,
+            "GroupPartner": [],
+            "IndirectOffspring": 0,
+            "NumberOfItems": 5676,
+            "PhenotypicFlexibility": 0.9,
+            "id": "PA|PAPLA"
+        },
+        {
+            "AssociatedSpecies": "",
             "DirectOffspring": 2,
             "Distribution": "2n",
             "FitnessVariationLimit": 0,
             "GroupPartner": [],
-            "IndirectOffspring": 1,
-            "NumberOfItems": 3362,
+            "IndirectOffspring": 0,
+            "NumberOfItems": 955,
             "PhenotypicFlexibility": 0.0,
-            "id": "SRB"
+            "id": "PAPLA"
         }
     ],
     "varia": false,

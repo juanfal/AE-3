@@ -4,7 +4,7 @@
 # Carlos Villagrasa, Javier Falgueras
 # juanfc 2019-02-16
 
-__version__ = 0.093 # 2019-12-13
+__version__ = 0.094 # 2019-12-18
 
 import os
 import sys
