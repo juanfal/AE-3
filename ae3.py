@@ -4,7 +4,7 @@
 # Carlos Villagrasa, Javier Falgueras
 # juanfc 2019-02-16
 
-__version__ = 0.094 # 2019-12-18
+__version__ = 0.095 # 2020-01-27
 
 import os
 import sys
@@ -168,25 +168,18 @@ def doGrouping():
             ni = gWorld[iSpecies,iCell,INDIVIDUAL]
 
             # item to group with
-            ni_partner = []
-            for i_partner in i_partnerList:
-                if i_partner != iSpecies:
-                    ni_partner.append(gWorld[i_partner,iCell,INDIVIDUAL])
-                else:
-                    # if itself, only half available
-                    ni_partner.append(ni//2)
-            ni_partner = array(ni_partner)
+            ni_partnerList = array([ gWorld[i_partner,iCell,INDIVIDUAL] for i_partner in i_partnerList ])
 
             # Phenotypic complexity tells the % (0-1) from the total
             # existing particular species, that should be grouped, so we
             # compare the current amount of items (ungrouped)
             # and check if there is room for more grouping
             ni_toGroup = int(ni * phenFlex)
-            ni_total_partners = ni_partner.sum()
+            ni_total_partners = ni_partnerList.sum()
             if ni_toGroup < ni_total_partners:
-                ni_toGroupList = trunc(ni_partner/ni_total_partners * ni_toGroup).astype(int)
+                ni_toGroupList = trunc(ni_partnerList/ni_total_partners * ni_toGroup).astype(int)
             else:
-                ni_toGroupList = ni_partner
+                ni_toGroupList = ni_partnerList
 
             ni_feasible = ni_toGroupList.sum()
 
@@ -194,6 +187,8 @@ def doGrouping():
             if ni_feasible > 0:
                 for i in range(len(i_partnerList)):
                     n = ni_toGroupList[i]
+                    if i_partnerList[i]  == iSpecies:
+                        n //= 2
                     gWorld[ iSpecies,iCell,INDIVIDUAL] -= n
                     gWorld[i_partnerList[i],iCell,INDIVIDUAL] -= n
 
@@ -203,17 +198,26 @@ def doAssociation():
     """
     performs the association following their AssociatedSpecies
     """
-    orderOfAssoc = permutation(gListOfAssociationActors)
     for iCell in range(gNumberOfCells):
+        orderOfAssoc = permutation(gListOfAssociationActors)
         for iActor in orderOfAssoc:
             noIndiv = gWorld[iActor, iCell, INDIVIDUAL]
-            iAssoc = iAssociatedTarget(iActor) # must exist
+            iAssoc = iAssociatedTarget(iActor) # must exist ## -> iAssocList
+            ## construir lista de poblaciones de cada asociable -> ni_assocList
+            ## ni_total_assoc = ni_assoc.sum()
+            ## if noIndiv < ni_total_assoc:
+            ##    ni_toAssocList = trunc(ni_assocList/ni_total_assoc * noIndiv).astype(int)
+            ## else:
+            ##    ni_toAssocList = ni_assocList
+
             # Kind of association
             # IRAR: Individual, Recipient, Actor, Reciprocal
+            ## for iAssoc in iAssocList:
+            ##
             if iActor == iAssoc: # is Reciprocal intraspecific  A><A
-                nWidows = noIndiv % 2
-                gWorld[iActor, iCell, RECIPROCAL] = noIndiv - nWidows
-                gWorld[iActor, iCell, INDIVIDUAL] = nWidows
+                theSingle = noIndiv % 2
+                gWorld[iActor, iCell, RECIPROCAL] = noIndiv - theSingle
+                gWorld[iActor, iCell, INDIVIDUAL] = theSingle
             else:
 
                 # either A><B or A>B>C, A>B
@@ -236,7 +240,7 @@ def doAssociation():
         gStatsAnt[iSpecies, RECIPIENT] = gWorld[iSpecies,:, RECIPIENT].sum()
         gStatsAnt[iSpecies,RECIPROCAL] = gWorld[iSpecies,:,RECIPROCAL].sum()
 
-def doConsumeAndOffspring():
+def doEnqueuingConsumeAndOffspring():
     """
     Set up a queue with every form of every species, for each cell
     Independent consume:
@@ -306,14 +310,6 @@ def doConsumeAndOffspring():
             rsrc -= toEat
             i += 1
 
-        # if isThereForItsRecipient.sum() != 0 or cntAssocAlreadyConsidered.sum() != 0:
-        #     print("ERROR IN ASSOCIATES QUEUE", end=": ")
-        #     if isThereForItsRecipient.sum() != 0:
-        #         print(isThereForItsRecipient)
-        #     if cntAssocAlreadyConsidered.sum() != 0:
-        #         print(cntAssocAlreadyConsidered)
-
-            # sys.exit(1)
 
     if gArgs["varia"]:
         for iSpecies in range(gNumberOfSpecies):
@@ -323,50 +319,6 @@ def doConsumeAndOffspring():
                 dirFit = int(round(newDirFit[iSpecies]["sum"] / newDirFit[iSpecies]["N"]))
                 gConf["species"][iSpecies]["DirectOffspring"] = dirFit
                 gConf["species"][iSpecies]["IndirectOffspring"] = incFit - dirFit
-
-def doEnqueueing(iCell):
-    # Setting up the queue to feed out
-    nTotalInCell = gWorld[:,iCell,:].sum()   # size of the queue, larger than necessary
-    # some forms wont enqueue
-
-    queue = zeros((nTotalInCell), dtype=[("iSp", "int"), ("iForm", "int")])
-    iQueueTop = 0
-    for iSpecies in range(gNumberOfSpecies):
-        iAssoc = iAssociatedTarget(iSpecies) # can not exist
-
-        n = gWorld[iSpecies, iCell, ACTOR]
-        if n > 0:
-            # 2019-06-01
-            # an actor gives IndirectOffspring to its RECIPIENT, so it
-            # eats for it and for its RECIPIENT. When it eats, its recipient eats
-            # We suppose the recipient does not eat by itself, but
-            # through the Actor.
-            # But to simplify, we are adding 2 x  ACTOR so it
-            # doubles the probability of eating as if the RECIPIENT was
-            # also there and made both eat at the same time
-            queue[iQueueTop:iQueueTop+n*2] = 2 * n * [(iSpecies, ACTOR)]
-            iQueueTop += n * 2
-            gWorld[iSpecies, iCell, ACTOR] = 0
-            gWorld[  iAssoc, iCell, RECIPIENT] -= n # iAssoc must exist
-
-        for form in (INDIVIDUAL, RECIPROCAL):
-            n = gWorld[iSpecies, iCell, form]
-            if n > 0:
-                queue[iQueueTop:iQueueTop+n] = n * [(iSpecies, form)]
-                iQueueTop += n
-                gWorld[iSpecies, iCell, form] = 0
-
-
-    # Shrink the queue down to the real number of occupants
-    if iQueueTop != nTotalInCell:
-        print("ERROR: Queue size: %d, Expected: %d" % (iQueueTop, nTotalInCell))
-        sys.exit(1)
-    # queue.resize((iQueueTop))
-
-    #print(queue)
-    shuffle(queue)
-    # print(queue)
-    return queue
 
 def doUngroup():
     for iCell in range(gNumberOfCells):
@@ -386,61 +338,6 @@ def doUngroup():
                     gWorld[iPartner,iCell,INDIVIDUAL] += ni_unGroup
                     gWorld[iGroup,  iCell,INDIVIDUAL] -= ni_unGroup
 
-
-def doMultilevelSelection(q):
-    # perc = gConf["MultilevelDeath1Percent"]
-
-    # i = 0
-    # while i < q.size:
-    #     iSpecies = q[i]["iSp"]
-    #     iForm = q[i]["iForm"]
-    #     # toExtinct =
-    #     i += 1
-
-    return q
-
-# def calcEgoism():
-#     """Computes the global variable gEgoism.
-#     It doesn't need to know what items are there for the estimation is based
-#     only on the corresponding direct fitnesses and association indirect
-#     fitnesses of each species/form
-#     """
-#     global gEgoism # because at start it is not a global structure/object
-#     if not gArgs["egoism"]:
-#         return
-#     if not gEgoism:
-#         gEgoism = zeros((gNumberOfSpecies, NUMBER_OF_FORMS), dtype=float)
-#     else:
-#         gEgoism.fill(0)
-
-#     for iSpecies in range(gNumberOfSpecies):
-#         dfit = gConf["species"][iSpecies]["DirectOffspring"]
-#         gEgoism[iSpecies, INDIVIDUAL] = dfit
-
-#         if gConf["species"][iSpecies]["AssociatedSpecies"]:
-#             ifit = gConf["species"][iSpecies]["IndirectOffspring"]
-#             iAssoc = iAssociatedTarget(iSpecies)
-#             assoc_ifit = gConf["species"][iAssoc]["IndirectOffspring"]
-
-#             # rancour makes associated ind. fit. change sign
-#             gEgoism[iSpecies,      ACTOR] = dfit - abs(ifit)
-#             gEgoism[iSpecies,  RECIPIENT] = dfit + assoc_ifit
-#             gEgoism[iSpecies, RECIPROCAL] = dfit - abs(ifit) + assoc_ifit
-
-
-#     # Do scaling 0.0 - 1.0
-#     minEgo = amin(gEgoism) ; printv("minEgo: ", minEgo)
-#     maxEgo = amax(gEgoism) ; printv("maxEgo: ", maxEgo)
-#     if maxEgo > 0:
-#         gEgoism -= minEgo
-#         gEgoism /= maxEgo-minEgo
-#     printv("scaled egoism: ", gEgoism)
-#     # printv("rank:", gEgoism.argsort(axis=1).argsort(axis=0))
-#     #
-#     # printv("rank:", reshape(gEgoism.flatten().unique().argsort().argsort(), (gNumberOfSpecies, NUMBER_OF_FORMS) ))
-#     # printv("rank:", reshape(gEgoism.flatten().unique().argsort().argsort(), (gNumberOfSpecies, NUMBER_OF_FORMS) ))
-#     # TODO: NOS INTERESA LA JERARQUÍA, rank, MÁS QUE EL VALOR ESCALADO DEL EGOÍSMO
-#     # https://stackoverflow.com/questions/5284646/rank-items-in-an-array-using-python-numpy
 
 # ############################################################################# #
 #                                     TOOLS                                     #
@@ -580,7 +477,6 @@ def checkAndCountPrevWorldNumberOfCells(fName):
     with open(fName) as f:
         line = f.readline()
     return len(line.split('\t'))
-
 
 def initExcel():
     global gExcelCellHeader, gExcelCellID, gExcelWorkbook, gExcelWorksheet, gGlobalExcel
@@ -1192,7 +1088,7 @@ for genNumber in range(1, gArgs["numGen"]+1):
     doGrouping()
     print("%3d: %s Tot Grouping: %d" % (genNumber, gWorld[:,:,0].sum(axis=1),  gWorld[:,:,0].sum(axis=1).sum()))
     doAssociation()
-    doConsumeAndOffspring()
+    doEnqueuingConsumeAndOffspring()
     doUngroup()
     doDistribute()
 

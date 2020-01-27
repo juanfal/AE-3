@@ -170,6 +170,7 @@ for command in commandList:
     if not testMode:
         print(command, file=listing)
         os.system(command)
+
     n += 1
 
 

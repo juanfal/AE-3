@@ -1,15 +1,13 @@
 {
-    "DistType": "n",
-    "DistVal": 100,
     "Distribution": "100n",
     "LambdaForEgoism": 0.0,
     "MultilevelDeath1Percent": 0.0,
     "NumberOfCells": 10,
     "NumberOfRsrcsInEachCell": 1000,
-    "initFile": "0619Amen2",
-    "numGen": 10,
-    "outDir": "juantests",
-    "outFName": "0012",
+    "initFile": "0619/0619Amen2",
+    "numGen": 60,
+    "outDir": null,
+    "outFName": null,
     "saveExcel": false,
     "setRandomSeed": -1,
     "species": [
@@ -17,9 +15,11 @@
             "AssociatedSpecies": "",
             "DirectOffspring": 3,
             "FitnessVariationLimit": 0,
-            "GroupPartner": ["Sensitive"],
+            "GroupPartner": [
+                "Sensitive"
+            ],
             "IndirectOffspring": 0,
-            "NumberOfItems": 9963,
+            "NumberOfItems": 9990,
             "PhenotypicFlexibility": 0.1,
             "id": "Killer"
         },
@@ -29,7 +29,7 @@
             "FitnessVariationLimit": 0,
             "GroupPartner": [],
             "IndirectOffspring": 0,
-            "NumberOfItems": 917,
+            "NumberOfItems": 738,
             "PhenotypicFlexibility": 0.0,
             "id": "Sensitive"
         },
@@ -38,12 +38,12 @@
             "DirectOffspring": 3,
             "FitnessVariationLimit": 0,
             "GroupPartner": [],
-            "IndirectOffspring": -4,
+            "IndirectOffspring": -2,
             "NumberOfItems": 0,
             "PhenotypicFlexibility": 0.0,
             "id": "Killer|Sensitive"
         }
     ],
     "varia": false,
-    "verbose": false
+    "verbose": true
 }

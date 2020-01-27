@@ -4,12 +4,12 @@
     "MultilevelDeath1Percent": 0.0,
     "NumberOfCells": 100,
     "NumberOfRsrcsInEachCell": 100,
-    "initFile": "PAPLAmultipatner",
-    "numGen": 600,
-    "outDir": "Eukary/Multipatner",
-    "outFName": "0030",
+    "initFile": "PruebaMultiGruposAuto",
+    "numGen": 100,
+    "outDir": null,
+    "outFName": null,
     "saveExcel": false,
-    "setRandomSeed": 1,
+    "setRandomSeed": -1,
     "species": [
         {
             "AssociatedSpecies": "",
@@ -17,35 +17,25 @@
             "Distribution": "2n",
             "FitnessVariationLimit": 0,
             "GroupPartner": [
-                "Asg",
-                "PAPLA"
+                "PA",
+                "PAPLA",
+                "Asg"
             ],
             "IndirectOffspring": 0,
-            "NumberOfItems": 1763,
+            "NumberOfItems": 4262,
             "PhenotypicFlexibility": 1.0,
-            "id": "PA"
-        },
-        {
-            "AssociatedSpecies": "",
-            "DirectOffspring": 2,
-            "Distribution": "2n",
-            "FitnessVariationLimit": 0,
-            "GroupPartner": [],
-            "IndirectOffspring": 0,
-            "NumberOfItems": 1749,
-            "PhenotypicFlexibility": 0.0,
             "id": "Asg"
         },
         {
             "AssociatedSpecies": "",
-            "DirectOffspring": 3,
+            "DirectOffspring": 2,
             "Distribution": "2n",
             "FitnessVariationLimit": 0,
             "GroupPartner": [],
             "IndirectOffspring": 0,
-            "NumberOfItems": 0,
+            "NumberOfItems": 4846,
             "PhenotypicFlexibility": 0.0,
-            "id": "PA|Asg"
+            "id": "PA"
         },
         {
             "AssociatedSpecies": "",
@@ -54,9 +44,57 @@
             "FitnessVariationLimit": 0,
             "GroupPartner": [],
             "IndirectOffspring": 0,
-            "NumberOfItems": 8004,
+            "NumberOfItems": 0,
+            "PhenotypicFlexibility": 0.0,
+            "id": "Asg|PA"
+        },
+        {
+            "AssociatedSpecies": "",
+            "DirectOffspring": 3,
+            "Distribution": "2n",
+            "FitnessVariationLimit": 0,
+            "GroupPartner": [
+                "PA"
+            ],
+            "IndirectOffspring": 0,
+            "NumberOfItems": 0,
+            "PhenotypicFlexibility": 0.0,
+            "id": "Asg|PAPLA"
+        },
+        {
+            "AssociatedSpecies": "",
+            "DirectOffspring": 3,
+            "Distribution": "2n",
+            "FitnessVariationLimit": 0,
+            "GroupPartner": [],
+            "IndirectOffspring": 0,
+            "NumberOfItems": 0,
+            "PhenotypicFlexibility": 0.0,
+            "id": "Asg|PAPLA|PA"
+        },
+        {
+            "AssociatedSpecies": "",
+            "DirectOffspring": 3,
+            "Distribution": "2n",
+            "FitnessVariationLimit": 0,
+            "GroupPartner": [],
+            "IndirectOffspring": 0,
+            "NumberOfItems": 0,
+            "PhenotypicFlexibility": 0.0,
+            "id": "PAPLA|PA"
+        },
+        {
+            "AssociatedSpecies": "",
+            "DirectOffspring": 2,
+            "Distribution": "2n",
+            "FitnessVariationLimit": 0,
+            "GroupPartner": [
+                "PA"
+            ],
+            "IndirectOffspring": 0,
+            "NumberOfItems": 5028,
             "PhenotypicFlexibility": 1.0,
-            "id": "PA|PAPLA"
+            "id": "PAPLA"
         },
         {
             "AssociatedSpecies": "",
@@ -65,9 +103,9 @@
             "FitnessVariationLimit": 0,
             "GroupPartner": [],
             "IndirectOffspring": 0,
-            "NumberOfItems": 0,
-            "PhenotypicFlexibility": 0.0,
-            "id": "PAPLA"
+            "NumberOfItems": 2706,
+            "PhenotypicFlexibility": 1.0,
+            "id": "Asg|Asg"
         }
     ],
     "varia": false,
