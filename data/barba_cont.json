@@ -1,35 +1,27 @@
 {
-    "Distribution": "100r",
+    "Distribution": "100n",
     "LambdaForEgoism": 0.0,
     "MultilevelDeath1Percent": 0.0,
     "NumberOfCells": 100,
     "NumberOfRsrcsInEachCell": 100,
     "initFile": "barba",
-    "numGen": 300,
+    "numGen": 200,
     "outDir": null,
     "outFName": null,
-    "saveExcel": true,
+    "saveExcel": false,
     "setRandomSeed": -1,
     "species": [
         {
             "AssociatedSpecies": "B",
-            "DirectOffspring": 1,
-            "FitnessVariationLimit": 0,
-            "GroupPartner": ["A"],
-            "IndirectOffspring": 1,
-            "NumberOfItems": 8828,
-            "PhenotypicFlexibility": 0.5,
-            "id": "A"
-        },
-        {
-            "AssociatedSpecies": "",
             "DirectOffspring": 2,
             "FitnessVariationLimit": 0,
-            "GroupPartner": [],
-            "IndirectOffspring": 0,
-            "NumberOfItems": 4053,
-            "PhenotypicFlexibility": 0.0,
-            "id": "B"
+            "GroupPartner": [
+                "Flo1"
+            ],
+            "IndirectOffspring": 1,
+            "NumberOfItems": 10551,
+            "PhenotypicFlexibility": 0.05,
+            "id": "Flo1"
         },
         {
             "AssociatedSpecies": "",
@@ -39,9 +31,19 @@
             "IndirectOffspring": 0,
             "NumberOfItems": 0,
             "PhenotypicFlexibility": 0.0,
-            "id": "A|A"
+            "id": "Leva"
+        },
+        {
+            "AssociatedSpecies": "Flo1",
+            "DirectOffspring": 6,
+            "FitnessVariationLimit": 0,
+            "GroupPartner": [],
+            "IndirectOffspring": 1,
+            "NumberOfItems": 0,
+            "PhenotypicFlexibility": 0.0,
+            "id": "Flo1|Flo1"
         }
     ],
     "varia": false,
-    "verbose": true
+    "verbose": false
 }

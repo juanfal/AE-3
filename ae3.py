@@ -4,7 +4,7 @@
 # Carlos Villagrasa, Javier Falgueras
 # juanfc 2019-02-16
 
-__version__ = 0.095 # 2020-01-27
+__version__ = 0.097 # 2020-02-11
 
 import os
 import sys
@@ -162,8 +162,8 @@ def doGrouping():
         # printv("Grouping permutation list:", permutedListOrigGroups)
         for iSpecies in permutedListOrigGroups:
             phenFlex = gConf["species"][iSpecies]["PhenotypicFlexibility"]
-            i_partnerList = iGetPartner(iSpecies)      # list of i partners for the groups
-            i_groupedList = iGetGroupStartingIn(iSpecies)  # i already formed group that iSpecies starts
+            i_partnerList = iGetPartnerList(iSpecies)      # list of i partners for the groups
+            i_groupedList = iGetGroupStartingInList(iSpecies)  # i already formed group that iSpecies starts
             # number of iSpecies items in that iCell
             ni = gWorld[iSpecies,iCell,INDIVIDUAL]
 
@@ -192,7 +192,7 @@ def doGrouping():
                     gWorld[ iSpecies,iCell,INDIVIDUAL] -= n
                     gWorld[i_partnerList[i],iCell,INDIVIDUAL] -= n
 
-                    gWorld[i_groupedList,iCell,INDIVIDUAL] += n
+                    gWorld[i_groupedList[i],iCell,INDIVIDUAL] += n
 
 def doAssociation():
     """
@@ -202,17 +202,18 @@ def doAssociation():
         orderOfAssoc = permutation(gListOfAssociationActors)
         for iActor in orderOfAssoc:
             noIndiv = gWorld[iActor, iCell, INDIVIDUAL]
-            iAssoc = iAssociatedTarget(iActor) # must exist ## -> iAssocList
-            ## construir lista de poblaciones de cada asociable -> ni_assocList
-            ## ni_total_assoc = ni_assoc.sum()
-            ## if noIndiv < ni_total_assoc:
-            ##    ni_toAssocList = trunc(ni_assocList/ni_total_assoc * noIndiv).astype(int)
-            ## else:
-            ##    ni_toAssocList = ni_assocList
+            iAssoc = iAssociatedTarget(iActor) # must exist ##TODO -> iAssocList iAssociatedTargetBeta
+            ##TODO construir lista de poblaciones de cada asociable -> ni_assocList
+            ##TODO ni_assocList = array([ gWorld[i_assoc,iCell,INDIVIDUAL] for i_assoc in iAssocList ])
+            ##TODO ni_total_assoc = ni_assocList.sum()
+            ##TODO if noIndiv < ni_total_assoc:
+            ##TODO    ni_toAssocList = trunc(ni_assocList/ni_total_assoc * noIndiv).astype(int)
+            ##TODO else:
+            ##TODO    ni_toAssocList = ni_assocList
 
             # Kind of association
             # IRAR: Individual, Recipient, Actor, Reciprocal
-            ## for iAssoc in iAssocList:
+            ##TODO for iAssoc in iAssocList:
             ##
             if iActor == iAssoc: # is Reciprocal intraspecific  A><A
                 theSingle = noIndiv % 2
@@ -286,19 +287,23 @@ def doEnqueuingConsumeAndOffspring():
             dirFit   = gConf["species"][iSpecies]["DirectOffspring"]
             indirFit = gConf["species"][iSpecies]["IndirectOffspring"]
 
-            if gArgs["varia"]:
-                fitVarLimit   = gConf["species"][iSpecies]["FitnessVariationLimit"]
-                dirFit, indirFit = fitnessVariations(dirFit, indirFit, fitVarLimit)
-                newDirFit[iSpecies]["sum"] += dirFit * dirFit
-                newDirFit[iSpecies]["N"] += dirFit
-
             toEat = 0
             if iForm == INDIVIDUAL or iForm == RECIPIENT:
                 toEat = dirFit
+                ##TODO? toEat = dirFit + abs(indirFit)
+                #       taking advantage of the indirFit for himself
                 if rsrc >= toEat:
-                    gWorld[iSpecies, iCell, INDIVIDUAL] += dirFit
+                    gWorld[iSpecies, iCell, INDIVIDUAL] += toEat
                     gStatsPost[iSpecies, iForm] += 1
             else:
+                if gArgs["varia"]:
+                    ##TODO only for those with list of assoc and after
+                    #      seeing the form
+                    fitVarLimit   = gConf["species"][iSpecies]["FitnessVariationLimit"]
+                    dirFit, indirFit = fitnessVariations(dirFit, indirFit, fitVarLimit)
+                    newDirFit[iSpecies]["sum"] += dirFit * dirFit
+                    newDirFit[iSpecies]["N"] += dirFit
+
                 # The others (ACTOR, and RECIPROCAL) have to give IndirectOffspring
                 toEat = dirFit + abs(indirFit)
                 if rsrc >= toEat:
@@ -323,7 +328,7 @@ def doEnqueuingConsumeAndOffspring():
 def doUngroup():
     for iCell in range(gNumberOfCells):
         for iOrig in gWithPartnerList:
-            iGroupList = iGetGroupStartingIn(iOrig)
+            iGroupList = iGetGroupStartingInList(iOrig)
             for iGroup in iGroupList:
                 phenFlex = gConf["species"][iGroup]["PhenotypicFlexibility"]
 
@@ -350,12 +355,16 @@ def iFrom_id(id):
         i -= 1
     return i
 
-def iGetPartner(iSpecies):
+def iListFrom_idList(idList):
+    """Returns index of species from its id, or -1"""
+    return [iFrom_id(toFindId) for toFindId in idList]
+
+def iGetPartnerList(iSpecies):
     "returns a list of indexes of the partners for grouping"
     toFindIdList = gConf["species"][iSpecies]["GroupPartner"]
     return [iFrom_id(toFindId) for toFindId in toFindIdList]
 
-def iGetGroupStartingIn(iSpecies):
+def iGetGroupStartingInList(iSpecies):
     idOrig = gConf["species"][iSpecies]["id"]
     toFindIList = [idOrig + '|' + idPartner for idPartner in gConf["species"][iSpecies]["GroupPartner"]]
     return [iFrom_id(toFindId) for toFindId in toFindIList]
@@ -374,6 +383,8 @@ def getListOfOrigGroups():
             str(gConf["species"][i]["GroupPartner"]).count('|'), reverse=True)
     return theList
 
+# ------------ Association
+
 def collectAssociationActors():
     "Return a list of indexes of actors which are associated with any other"
     return [i for i in range(gNumberOfSpecies) if gConf["species"][i]["AssociatedSpecies"] != ""]
@@ -382,6 +393,10 @@ def iAssociatedTarget(iSpecies):
     """returns either the index of associated partner or
     if not associated is there, -1"""
     return iFrom_id(gConf["species"][iSpecies]["AssociatedSpecies"])
+
+def iAssociatedTargetBeta(iSpecies):
+    '''list of i '''
+    return iListFrom_idList(gConf["species"][iSpecies]["AssociatedSpecies"])
 
 def getDist(iSpecies):
     """from 45n or 50n returns the integer and the type
@@ -641,6 +656,8 @@ def checkConf(conf):
     if type(conf["species"]) != list or longListSpecies == 0:
         problems += "Species must be a list with species inside\n"
     for i in range(longListSpecies):
+        ##TODO check the IndirectOffspring and variability are 0 when
+        #      the list of associated is empty
         confi = conf["species"][i]
         if "Distribution" in confi and confi["Distribution"][-1] not in "rn":
             problems += "Distribution for species %d must end either in r or n\n" % i
@@ -662,10 +679,10 @@ def checkConf(conf):
         else:
             previousIds.add(theId)
         # if partnerId != "":
-        #     if iGetPartner(i) == -1:
+        #     if iGetPartnerList(i) == -1:
         #         problems += "Species %d, id: '%s' has not the partner species '%s' in the conf\n" % \
         #             (i, theId, partnerId)
-        #     if iGetGroupStartingIn(i) == -1:
+        #     if iGetGroupStartingInList(i) == -1:
         #         problems += "Group id: '%s' is not configured\n" % \
         #             (theId + '|' + partnerId)
         for aId in theId.split('|'):
@@ -1083,10 +1100,16 @@ gWorld, gStatsAnt, gStatsPost = newWorld()
 
 doInitialDistribution()
 
-print("     %s" % " ".join([gConf["species"][i]["id"] for i in range(gNumberOfSpecies)]))
+# print("     %s" % " ".join([gConf["species"][i]["id"] for i in range(gNumberOfSpecies)]))
+
+print(" "*5, end='')
+for i in range(gNumberOfSpecies):
+    print("%8s" % (gConf["species"][i]["id"],), end='')
+print()
+
 for genNumber in range(1, gArgs["numGen"]+1):
     doGrouping()
-    print("%3d: %s Tot Grouping: %d" % (genNumber, gWorld[:,:,0].sum(axis=1),  gWorld[:,:,0].sum(axis=1).sum()))
+    print("%3d: %s Tot: %6d" % (genNumber, gWorld[:,:,0].sum(axis=1),  gWorld[:,:,0].sum(axis=1).sum()))
     doAssociation()
     doEnqueuingConsumeAndOffspring()
     doUngroup()

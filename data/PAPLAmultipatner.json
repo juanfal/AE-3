@@ -11,7 +11,7 @@
         "DirectOffspring": 2,
         "Distribution": "2n",
         "GroupPartner": ["Asg","PAPLA"],
-        "PhenotypicFlexibility": 0.5,
+        "PhenotypicFlexibility": 0.0,
 
         "AssociatedSpecies":   "",
         "IndirectOffspring": 0,
@@ -47,7 +47,7 @@
         "DirectOffspring": 3,
         "Distribution": "2n",
         "GroupPartner": [],
-        "PhenotypicFlexibility": 0.9,
+        "PhenotypicFlexibility": 0.0,
 
         "AssociatedSpecies":   "",
         "IndirectOffspring": 0,

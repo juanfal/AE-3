@@ -1,111 +1,98 @@
 {
-    "Distribution": "2n",
+    "Distribution": "100r",
     "LambdaForEgoism": 0.0,
     "MultilevelDeath1Percent": 0.0,
-    "NumberOfCells": 100,
-    "NumberOfRsrcsInEachCell": 100,
-    "initFile": "PruebaMultiGruposAuto",
-    "numGen": 100,
+    "NumberOfCells": 1,
+    "NumberOfRsrcsInEachCell": 10000,
+    "initFile": "PruebaMultiGrupos2",
+    "numGen": 10,
     "outDir": null,
     "outFName": null,
     "saveExcel": false,
-    "setRandomSeed": -1,
+    "setRandomSeed": 2,
     "species": [
         {
             "AssociatedSpecies": "",
             "DirectOffspring": 2,
-            "Distribution": "2n",
+            "Distribution": "100r",
             "FitnessVariationLimit": 0,
             "GroupPartner": [
-                "PA",
-                "PAPLA",
-                "Asg"
+                "B",
+                "C"
             ],
             "IndirectOffspring": 0,
-            "NumberOfItems": 4158,
+            "NumberOfItems": 1872,
             "PhenotypicFlexibility": 1.0,
-            "id": "Asg"
+            "id": "A"
         },
         {
             "AssociatedSpecies": "",
             "DirectOffspring": 2,
-            "Distribution": "2n",
-            "FitnessVariationLimit": 0,
-            "GroupPartner": [],
-            "IndirectOffspring": 0,
-            "NumberOfItems": 5119,
-            "PhenotypicFlexibility": 0.0,
-            "id": "PA"
-        },
-        {
-            "AssociatedSpecies": "",
-            "DirectOffspring": 3,
-            "Distribution": "2n",
+            "Distribution": "100r",
             "FitnessVariationLimit": 0,
             "GroupPartner": [],
             "IndirectOffspring": 0,
             "NumberOfItems": 0,
             "PhenotypicFlexibility": 0.0,
-            "id": "Asg|PA"
+            "id": "B"
         },
         {
             "AssociatedSpecies": "",
             "DirectOffspring": 3,
-            "Distribution": "2n",
+            "Distribution": "100r",
             "FitnessVariationLimit": 0,
             "GroupPartner": [
-                "PA"
+                "C",
+                "A|C"
             ],
             "IndirectOffspring": 0,
-            "NumberOfItems": 0,
-            "PhenotypicFlexibility": 0.0,
-            "id": "Asg|PAPLA"
+            "NumberOfItems": 9336,
+            "PhenotypicFlexibility": 1.0,
+            "id": "A|B"
         },
         {
             "AssociatedSpecies": "",
             "DirectOffspring": 3,
-            "Distribution": "2n",
+            "Distribution": "100r",
             "FitnessVariationLimit": 0,
             "GroupPartner": [],
             "IndirectOffspring": 0,
             "NumberOfItems": 0,
             "PhenotypicFlexibility": 0.0,
-            "id": "Asg|PAPLA|PA"
-        },
-        {
-            "AssociatedSpecies": "",
-            "DirectOffspring": 3,
-            "Distribution": "2n",
-            "FitnessVariationLimit": 0,
-            "GroupPartner": [],
-            "IndirectOffspring": 0,
-            "NumberOfItems": 0,
-            "PhenotypicFlexibility": 0.0,
-            "id": "PAPLA|PA"
+            "id": "A|C"
         },
         {
             "AssociatedSpecies": "",
             "DirectOffspring": 2,
-            "Distribution": "2n",
-            "FitnessVariationLimit": 0,
-            "GroupPartner": [
-                "PA"
-            ],
-            "IndirectOffspring": 0,
-            "NumberOfItems": 5027,
-            "PhenotypicFlexibility": 1.0,
-            "id": "PAPLA"
-        },
-        {
-            "AssociatedSpecies": "",
-            "DirectOffspring": 2,
-            "Distribution": "2n",
+            "Distribution": "100r",
             "FitnessVariationLimit": 0,
             "GroupPartner": [],
             "IndirectOffspring": 0,
-            "NumberOfItems": 2644,
-            "PhenotypicFlexibility": 1.0,
-            "id": "Asg|Asg"
+            "NumberOfItems": 9998,
+            "PhenotypicFlexibility": 0.0,
+            "id": "C"
+        },
+        {
+            "AssociatedSpecies": "",
+            "DirectOffspring": 3,
+            "Distribution": "100r",
+            "FitnessVariationLimit": 0,
+            "GroupPartner": [],
+            "IndirectOffspring": 0,
+            "NumberOfItems": 0,
+            "PhenotypicFlexibility": 0.0,
+            "id": "A|B|C"
+        },
+        {
+            "AssociatedSpecies": "",
+            "DirectOffspring": 3,
+            "Distribution": "100r",
+            "FitnessVariationLimit": 0,
+            "GroupPartner": [],
+            "IndirectOffspring": 0,
+            "NumberOfItems": 0,
+            "PhenotypicFlexibility": 0.0,
+            "id": "A|B|A|C"
         }
     ],
     "varia": false,

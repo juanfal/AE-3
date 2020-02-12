@@ -10,7 +10,7 @@
         "NumberOfItems": 40,
         "DirectOffspring": 2,
         "Distribution": "100r",
-        "GroupPartner": ["B", "C", "D"],
+        "GroupPartner": ["B", "C"],
         "PhenotypicFlexibility": 1.0,
 
         "AssociatedSpecies":   "",
@@ -34,8 +34,8 @@
         "NumberOfItems": 0,
         "DirectOffspring": 3,
         "Distribution": "100r",
-        "GroupPartner": [],
-        "PhenotypicFlexibility": 0.0,
+        "GroupPartner": ["C", "A|C" ],
+        "PhenotypicFlexibility": 1.0,
 
         "AssociatedSpecies":   "",
         "IndirectOffspring": 0,
@@ -55,7 +55,7 @@
         },
         {
         "id": "C",
-        "NumberOfItems": 5,
+        "NumberOfItems": 60,
         "DirectOffspring": 2,
         "Distribution": "100r",
         "GroupPartner": [],
@@ -66,9 +66,9 @@
         "FitnessVariationLimit": 0
         },
         {
-        "id": "D",
-        "NumberOfItems": 5,
-        "DirectOffspring": 2,
+        "id": "A|B|C",
+        "NumberOfItems": 0,
+        "DirectOffspring": 3,
         "Distribution": "100r",
         "GroupPartner": [],
         "PhenotypicFlexibility": 0.0,
@@ -78,7 +78,7 @@
         "FitnessVariationLimit": 0
         },
         {
-        "id": "A|D",
+        "id": "A|B|A|C",
         "NumberOfItems": 0,
         "DirectOffspring": 3,
         "Distribution": "100r",

@@ -6,19 +6,19 @@
     "Distribution": "100n",
     "species": [
         {
-        "id": "A",
+        "id": "Flo1",
         "NumberOfItems": 100,
-        "DirectOffspring": 1,
+        "DirectOffspring": 2,
 
-        "GroupPartner": ["A"],
-        "PhenotypicFlexibility": 0.5,
+        "GroupPartner": ["Flo1"],
+        "PhenotypicFlexibility": 0.05,
 
         "AssociatedSpecies":   "B",
         "IndirectOffspring": 1,
         "FitnessVariationLimit": 0
         },
         {
-        "id": "B",
+        "id": "Leva",
         "NumberOfItems": 100,
         "DirectOffspring": 2,
 
@@ -30,15 +30,15 @@
         "FitnessVariationLimit": 0
         },
         {
-        "id": "A|A",
+        "id": "Flo1|Flo1",
         "NumberOfItems": 0,
-        "DirectOffspring": 2,
+        "DirectOffspring": 6,
 
         "GroupPartner": [],
         "PhenotypicFlexibility": 0.0,
 
-        "AssociatedSpecies":   "",
-        "IndirectOffspring": 0,
+        "AssociatedSpecies":   "Flo1",
+        "IndirectOffspring": 1,
         "FitnessVariationLimit": 0
         }
     ]
